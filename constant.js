@@ -50,6 +50,7 @@ const CONST = {
   JOINLUDO:"JOINLUDO",
   RollDice:"RollDice",
   MOVEKUKARI:"MOVEKUKARI",
+  KILLKUKARI:"KILLKUKARI",
 
   //================
 
