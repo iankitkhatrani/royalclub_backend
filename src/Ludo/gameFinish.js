@@ -59,7 +59,7 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
 
 }
 
-module.exports.winnerDeclareCall = async (winner, tabInfo) => {
+module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
     try {
         logger.info("winnerDeclareCall winner ::  -->", winner, tabInfo);
         let tbid = tabInfo._id.toString()
@@ -97,9 +97,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         logger.info("getWinner playerInGame ::", playerInGame);
 
         for (let i = 0; i < playerInGame.length; i++) {
-            let winnerState = checkUserCardActions.getWinState(playerInGame[i].cards, tbInfo.hukum);
-            logger.info("winnerState FETCH::", winnerState);
-
+            
             tbInfo.gameTracks.push(
                 {
                     _id: playerInGame[i]._id,
@@ -107,8 +105,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
                     seatIndex: playerInGame[i].seatIndex,
                     cards: playerInGame[i].cards,
                     totalBet: playerInGame[i].totalBet,
-                    playStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
-                    winningCardStatus: winnerState.status
+                    playStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss"
                 }
             )
         }
@@ -120,7 +117,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playStatus == "win") {
-                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "TeenPatti Win", tabInfo);
+                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Ludo Win", tabInfo);
             }
         }
 
@@ -128,7 +125,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         winnerViewResponse.gameId = tbInfo.gameId;
         winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
-        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
+        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNERLUDO, winnerViewResponse);
 
         await roundEndActions.roundFinish(tbInfo);
 
@@ -148,9 +145,7 @@ module.exports.winnerViewResponseFilter = (playerInfos, winnerTrack, winnerIndex
             userInfo.push({
                 _id: playerInfo[i]._id,
                 seatIndex: playerInfo[i].seatIndex,
-                cards: playerInfo[i].cards,
-                playStatus: playerInfo[i].playStatus,
-                cardStatus: playerInfo[i].winningCardStatus
+                playStatus: playerInfo[i].playStatus
             })
         }
     }

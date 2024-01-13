@@ -286,8 +286,22 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             && tb.playerInfo[client.seatIndex].kukaris.k3 == winnernumber
             && tb.playerInfo[client.seatIndex].kukaris.k4 == winnernumber) {
 
-                //Winner Of Ludo 
 
+                let updateData = {
+                    $set: {
+                        playStatus: "win"
+                    }
+                }
+
+                const upWh1 = {
+                    _id: MongoID(client.tbid.toString()),
+                    "playerInfo.seatIndex": Number(client.seatIndex)
+                }
+
+                const tb1 = await playingLudo.findOneAndUpdate(upWh1, updateData, { new: true });
+
+                //Winner Of Ludo 
+                gameFinishActions.winnerDeclareCallLudo([tb1.playerInfo[client.seatIndex]],tb1)
                 return false 
         }
 
@@ -307,4 +321,12 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
     } catch (e) {
         logger.info("Exception chal : ", e);
     }
+}
+
+
+
+module.exports.WinnerOfLudo = async (tb, client) => {
+
+
+
 }

@@ -51,7 +51,7 @@ const CONST = {
   RollDice:"RollDice",
   MOVEKUKARI:"MOVEKUKARI",
   KILLKUKARI:"KILLKUKARI",
-
+  WINNERLUDO:"WINNERLUDO",
   //================
 
   // Socket events names

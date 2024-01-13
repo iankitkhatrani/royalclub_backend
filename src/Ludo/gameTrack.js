@@ -10,12 +10,12 @@ module.exports.gamePlayTracks = async (winner_indexs, playersInfo, table) => {
         logger.info("\ngamePlayTracks  playersInfo : ", playersInfo);
         logger.info("\ngamePlayTracks  table : ", table);
 
-        let totalBet = Number(table.potValue);
+        let totalBet = Number(table.boot*2);
         // let winningAmount = (1 - (table.rate / 100)) * (totalBet);
-        let winningAmount = (1 - (table.boot / 100)) * (totalBet);
+        let winningAmount =totalBet// (1 - (table.boot / 100)) * (totalBet);
         logger.info("\ngamePlayTracks  winningAmount : ", winningAmount);
 
-        let rake = totalBet - winningAmount;
+        let rake = totalBet //totalBet - winningAmount;
         logger.info("\ngamePlayTracks  rake : ", rake);
 
         if (winner_indexs.length > 1) {
@@ -36,9 +36,6 @@ module.exports.gamePlayTracks = async (winner_indexs, playersInfo, table) => {
                 rake: (playersInfo[i].playerStatus == "win") ? rake : 0,
                 winningAmount: (playersInfo[i].playerStatus == "win") ? winningAmount : 0,
                 winningStatus: playersInfo[i].playStatus,
-                winningCardStatus: playersInfo[i].winningCardStatus,
-                hukum: table.hukum,
-                cards: playersInfo[i].cards,
                 betValue: Number(table.boot)
             }
             logger.info("gamePlayTracks Total pushData ::", pushData)
