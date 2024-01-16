@@ -57,12 +57,14 @@ module.exports.setFirstTurn = async (tb) => {
     await this.startUserTurn(tb.dealerSeatIndex, tb, true);
 }
 
-module.exports.nextUserTurnstart = async (tb) => {
+module.exports.nextUserTurnstart = async (tb,nextturn) => {
     try {
 
         logger.info("nextUserTurnstart tb :: ", tb);
-        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0);
+        let nextTurnIndex = (nextturn == undefined  || nextturn == false || nextturn == -1) ? await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0) : nextturn;
+
         logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
+        
         await this.startUserTurn(nextTurnIndex, tb, false);
     } catch (error) {
         logger.error('roundStart.js nextUserTurnstart error : ', error);
@@ -132,7 +134,8 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1){
             // Rboot Logic Start Playing 
-            botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],tb.playerInfo[objData.turnSeatIndex],playerInGame)
+            //botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],tb.playerInfo[objData.turnSeatIndex],movenumber)
+            await gamePlayActionsLudo.MOVEKUKARI({}, {uid:tb.playerInfo[tb.turnSeatIndex].playerId,seatIndex:tb.turnSeatIndex});
         }
 
 

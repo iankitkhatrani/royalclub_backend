@@ -100,8 +100,12 @@ module.exports.RollDice = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            if (UserInfo.Iscom == 0) {
+            if (UserInfo.Iscom == 1) {
                 // Take turn for kukari 
+
+                botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],tb.playerInfo[tb.turnSeatIndex],DiceNumber)
+
+
             }
         }
 
@@ -278,7 +282,9 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             }
 
             commandAcions.sendEventInTable(tb1._id.toString(), CONST.KILLKUKARI, response);
+
         }
+
         let winnernumber = client.seatIndex == 0 ? 57 : 69
         // Winner 
         if (tb.playerInfo[client.seatIndex].kukaris.k1 == winnernumber
@@ -314,7 +320,9 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            await roundStartActions.nextUserTurnstart(tb);
+            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != "" ? client.seatIndex : -1;
+
+            await roundStartActions.nextUserTurnstart(tb,nextTuner);
         }
 
         return true;

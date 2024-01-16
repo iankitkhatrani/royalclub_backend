@@ -158,8 +158,6 @@ function RobotAction(tableInfo, BetInfo, OppPlayer, movenumber) {
         // win thavama najik hoi aene first send karo 
 
 
-        
-
 
 
 
