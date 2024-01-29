@@ -11,6 +11,10 @@ const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
 
 const gamePlayActionsLudo = require('../Ludo');
+const gamePlayActionsJanta = require('../JantaGame');
+const gamePlayActionsRoulette = require('../roulette');
+
+const { userReconnectJanta } = require('../JantaGame/reconnect');
 
 const { registerUser } = require('../helper/signups/signupValidation');
 const mainCtrl = require('./mainController');
@@ -156,6 +160,78 @@ myIo.init = function (server) {
                         await userReconnect(payload.data, socket);
                         break;
                     }
+
+
+
+                    //====================================
+
+                    // JANTA GAME Event 
+                    case CONST.JANTA_GAME_PLAYGAME: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsJanta.JANTA_JOIN_TABLE(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.ACTIONJANTA: {
+                        await gamePlayActionsJanta.actionJanta(payload.data, socket);
+                        break;
+                    }
+
+
+                    case CONST.LEAVETABLESJANTA: {
+                        await gamePlayActionsJanta.leaveTable(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.RECONNECTJANTA: {
+                        await userReconnectJanta(payload.data, socket);
+                        break;
+                    }
+                    //=========================================================================================
+
+
+                    // SPinner GAME Event 
+                    case CONST.ROULETTE_JOIN_TABLE: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsRoulette.ROULETTE_GAME_JOIN_TABLE(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.ACTIONSPINNNER: {
+                        await gamePlayActionsRoulette.actionSpin(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.ClearBet:{
+                        await gamePlayActionsRoulette.ClearBet(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.DoubleBet:{
+                        await gamePlayActionsRoulette.DoubleBet(payload.data, socket);
+                        break;
+                    }
+
+                    
+
+                    case CONST.LEAVETABLESPINNER: {
+                        await gamePlayActionsRoulette.leaveTable(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.RECONNECTSPINNER: {
+                        await userReconnectSpinner(payload.data, socket);
+                        break;
+                    }
+                    
+
+                    //====================================
+
+                    //====================================
 
                     case CONST.BANNER: {
                         const result = await getBannerList(payload.data, socket);
