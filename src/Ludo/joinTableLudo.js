@@ -71,7 +71,7 @@ module.exports.getBetTable = async (BetInfo) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
         boot: Number(BetInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 6 /*BetInfo.maxSeat*/ }
+        activePlayer: { $gte: 0, $lt: 2 /*BetInfo.maxSeat*/ }
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await playingLudo.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -135,7 +135,7 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ", client);
+        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ");
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -232,7 +232,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             diff += CONST.gameStartTime;
         }
 
-        sendEvent(client, CONST.JOIN_SIGN_UP, {});
+        sendEvent(client, CONST.JOINLUDO, {});
 
         //GTI event
         sendEvent(client, CONST.GAME_TABLE_INFO, {
@@ -278,7 +278,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
 module.exports.findEmptySeat = (playerInfo) => {
     for (x in playerInfo) {
-        if (typeof playerInfo[x] == 'object' && playerInfo[x] != null && x == 0 && x==2 &&  typeof playerInfo[x].seatIndex == 'undefined') {
+       
+
+        if (typeof playerInfo[x] == 'object' && playerInfo[x] != null && (x == 0 || x==2) &&  typeof playerInfo[x].seatIndex == 'undefined') {
             return parseInt(x);
             break;
         }
