@@ -21,7 +21,7 @@ module.exports.joinTable = async (requestData, client) => {
         if (typeof client.JT != "undefined" && client.JT) return false;
 
         client.JT = true;
-
+        console.log("requestData ",requestData)
         let bwh = {
             _id: requestData.betId
         }
@@ -35,6 +35,9 @@ module.exports.joinTable = async (requestData, client) => {
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+
+        console.log("BetInfo ",BetInfo)
+
         if (Number(totalWallet) < Number(BetInfo.entryFee)) {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
