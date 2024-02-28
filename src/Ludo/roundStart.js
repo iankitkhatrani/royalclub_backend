@@ -126,9 +126,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         let response = {
             previousTurn: objData.turnSeatIndex,
-            nextTurn: tb.turnSeatIndex,
-            chalValue: tb.chalValue,
-            isShow: isShow
+            nextTurn: tb.turnSeatIndex
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TURN_START, response);
 

@@ -19,30 +19,30 @@ module.exports.cardDealStart = async (tbid) => {
     let tb = await playingLudo.findOne(wh, {}).lean();
     logger.info("collectBoot tb : ", tb);
 
-    let cardDetails = this.getCards(tb.playerInfo);
-    logger.info("collectBoot cardDetails : ", cardDetails);
+    // let cardDetails = this.getCards(tb.playerInfo);
+    // logger.info("collectBoot cardDetails : ", cardDetails);
 
-    const update = {
-        $set: {
-            hukum: cardDetails.hukum,
-            gameState: "CardDealing",
-        }
-    }
-    const cardDealIndexs = await this.setUserCards(cardDetails, tb);
-    logger.info("initRoundState cardDealIndexs : ", cardDealIndexs);
+    // const update = {
+    //     $set: {
+    //         hukum: cardDetails.hukum,
+    //         gameState: "CardDealing",
+    //     }
+    // }
+    // const cardDealIndexs = await this.setUserCards(cardDetails, tb);
+    // logger.info("initRoundState cardDealIndexs : ", cardDealIndexs);
 
-    logger.info("initRoundState update : ", update);
+    // logger.info("initRoundState update : ", update);
 
-    const tabInfo = await playingLudo.findOneAndUpdate(wh, update, { new: true });
-    logger.info("findTableAndJoin tabInfo : ", tabInfo);
+    // const tabInfo = await playingLudo.findOneAndUpdate(wh, update, { new: true });
+    // logger.info("findTableAndJoin tabInfo : ", tabInfo);
 
-    const eventResponse = {
-        hukum: tabInfo.hukum,
-        cardDealIndexs: cardDealIndexs
-    }
-    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
+    // const eventResponse = {
+    //     hukum: tabInfo.hukum,
+    //     cardDealIndexs: cardDealIndexs
+    // }
+    // commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 
-    let tbId = tabInfo._id;
+    let tbId = tb._id;
     let jobId = commandAcions.GetRandomString(10);
     let delay = commandAcions.AddTime(5);
     const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
