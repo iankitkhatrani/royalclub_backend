@@ -46,6 +46,11 @@ module.exports.RollDice = async (requestData, client) => {
             commandAcions.sendDirectEvent(client.sck, CONST.RollDice, requestData, false, "Turn is already taken!");
             return false;
         }
+        console.log("turnSeatIndex ",tabInfo.turnSeatIndex)
+        console.log("client.seatIndex ",client.seatIndex)
+        console.log("requestData ",requestData)
+
+
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("RollDice : client.su ::", client.seatIndex);
             delete client.RollDice;
