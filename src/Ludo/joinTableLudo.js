@@ -169,7 +169,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             coins: totalWallet,
             status: "",
             playerStatus: "",
-            color:seatIndex == 0 ? "blue":"Green",
+            color:seatIndex == 0 ? "blue":"green",
             kukaris:{
                 k1:-1,
                 k2:-1,
