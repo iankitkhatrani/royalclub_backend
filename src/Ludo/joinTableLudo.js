@@ -249,6 +249,11 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             type: tableInfo.gamePlayType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
+            playerRoutePos1:tableInfo.playerRoutePos1,
+            playerRoutePos2:tableInfo.playerRoutePos2,
+            playerRoutePos3:tableInfo.playerRoutePos3,
+            playerRoutePos4:tableInfo.playerRoutePos4,
+            safeDice:tableInfo.safeDice
         });
 
         if(userInfo.Iscom == undefined || userInfo.Iscom == 0)

@@ -236,7 +236,6 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             kukarisindex: tb.playerInfo[client.seatIndex].kukarisindex
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.MOVEKUKARI, response);
-
         // Kill 
         // Opp User Kukari same place 
         let oppseat = client.seatIndex == 0 ? 1 : 0;
