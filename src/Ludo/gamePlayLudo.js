@@ -46,6 +46,11 @@ module.exports.RollDice = async (requestData, client) => {
             commandAcions.sendDirectEvent(client.sck, CONST.RollDice, requestData, false, "Turn is already taken!");
             return false;
         }
+        console.log("turnSeatIndex ",tabInfo.turnSeatIndex)
+        console.log("client.seatIndex ",client.seatIndex)
+        console.log("requestData ",requestData)
+
+
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("RollDice : client.su ::", client.seatIndex);
             delete client.RollDice;
@@ -93,6 +98,9 @@ module.exports.RollDice = async (requestData, client) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.RollDice, response);
         delete client.RollDice;
+
+        
+        //await roundStartActions.nextUserTurnstart(tb,nextTuner);
 
         let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
         logger.info("chal activePlayerInRound :", activePlayerInRound, activePlayerInRound.length);
@@ -197,8 +205,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             return false;
         }
 
-        var DiceNumber = this.GetRandomInt(1, 6);
-
+      
         let updateData = {
             $set: {
                 playStatus: "movekukari",
@@ -285,7 +292,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
         }
 
-        let winnernumber = client.seatIndex == 0 ? 57 : 69
+        let winnernumber = client.seatIndex == 0 ? 58 : 70
         // Winner 
         if (tb.playerInfo[client.seatIndex].kukaris.k1 == winnernumber
             && tb.playerInfo[client.seatIndex].kukaris.k2 == winnernumber

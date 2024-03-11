@@ -29,7 +29,7 @@ module.exports.roundStarted = async (tbid) => {
             return false;
         }
 
-        if (tabInfo.gameState != "CardDealing" || tabInfo.activePlayer < 2) {
+        if (tabInfo.gameState != "CollectBoot" || tabInfo.activePlayer < 2) {
             logger.info("roundStarted table in 2:", tabInfo.gameState, tabInfo.activePlayer);
             return false;
         }
