@@ -5,6 +5,7 @@ const { OK_STATUS, BAD_REQUEST } = require('../../../config');
 const logger = require('../../../logger');
 const mongoose = require('mongoose');
 const playingLudo = mongoose.model("playingLudo");
+const JantaTables = mongoose.model('JantaTables');
 /**
  * @api {post} /admin/signup-admin
  * @apiName  register admin
@@ -50,6 +51,26 @@ router.get('/DeletePlayingLudo', async (req, res) => {
   try {
 
     await playingLudo.deleteMany({})
+
+    res.json({ status: "ok" });
+  } catch (error) {
+    logger.error('admin/dahboard.js post bet-list error => ', error);
+    res.status(config.INTERNAL_SERVER_ERROR).json(error);
+  }
+});
+
+/**
+* @api {get} /admin/DeletePlaying Janata
+* @apiName  add-bet-list
+* @apiGroup  Admin
+* @apiHeader {String}  x-access-token Admin's unique access-key
+* @apiSuccess (Success 200) {Array} badges Array of badges document
+* @apiError (Error 4xx) {String} message Validation or error message.
+*/
+router.get('/DeletePlayingJanat', async (req, res) => {
+  try {
+
+    await JantaTables.deleteMany({})
 
     res.json({ status: "ok" });
   } catch (error) {
