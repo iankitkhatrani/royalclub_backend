@@ -38,11 +38,11 @@ module.exports.gameTimerStart = async (tb) => {
         const tabInfo = await JantaTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("gameTimerStart tabInfo :: ", tabInfo);
 
-        let roundTime = 10;
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.GAME_START_TIMER, { timer: roundTime,history:tabInfo.history });
+        let roundTime = 3;
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_GAME_START_TIMER, { timer: roundTime,history:tabInfo.history });
 
         let tbId = tabInfo._id;
-        let jobId = CONST.GAME_START_TIMER + ":" + tbId;
+        let jobId = CONST.JANTA_GAME_START_TIMER + ":" + tbId;
         let delay = commandAcions.AddTime(roundTime);
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));

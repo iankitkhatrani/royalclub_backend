@@ -15,7 +15,7 @@ const logger = require("../../logger");
 module.exports.leaveTable = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        commandAcions.sendDirectEvent(client.sck, CONST.LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+        commandAcions.sendDirectEvent(client.sck, CONST.LEAVETABLESJANTA, requestData, false, "User session not set, please restart game!");
         return false;
     }
 
@@ -92,8 +92,8 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await JantaTables.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVE_TABLE, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVE_TABLE, response);
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLESJANTA, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLESJANTA, response);
 
 
     await this.manageOnUserLeave(tbInfo);

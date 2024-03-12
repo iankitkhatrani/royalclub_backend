@@ -213,7 +213,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
             client.join(tableInfo._id.toString());
 
-        sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
+        sendDirectEvent(client.tbid.toString(), CONST.JANTA_JOIN_TABLE, {
             ap: tableInfo.activePlayer,
             playerDetail: tableInfo.playerInfo[seatIndex],
         });
