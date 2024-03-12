@@ -72,10 +72,10 @@ module.exports.StartJantaGame = async (tbId) => {
 
         //Genrate Rendom Number 
         logger.info("StartJantaGame GAMELOGICCONFIG.JANTA : ", GAMELOGICCONFIG.JANTA);
-        logger.info("StartJantaGame tb.totalbet : ", tb.card);
+        logger.info("StartJantaGame tb.totalbet : ", tb.cards);
 
         // NORMAL 
-        let cards = _.shuffle(tb.card).slice(0, 3);
+        let cards = _.shuffle(tb.cards).slice(0, 3);
         
         let sumofcard = cards.reduce((accumulator, currentValue) => {
             return accumulator + parseInt(currentValue.split("-")[1])
@@ -118,7 +118,7 @@ module.exports.StartJantaGame = async (tbId) => {
         const tabInfo = await JantaTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("StartJanta tabInfo :: ", tabInfo);
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.STARTSPINNER, { opencards: opencards,sumofcard:sumofcard,timelimit:10 });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:sumofcard,timelimit:10 });
 
         setTimeout(async ()=> {
             
