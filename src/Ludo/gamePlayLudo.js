@@ -182,15 +182,15 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
         console.log("kya number par kukari 6e ", playerInfo.kukaris[requestData.movekukari])
         //kukari haju home 6e and move number 6 nathi 
-        if (playerInfo.kukaris[requestData.movekukari] == -1 && requestData.movenumber != 6) {
-            logger.info("MOVEKUKARI : client.su ::", client.seatIndex);
-            delete client.MOVEKUKARI;
-            commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "It's not your turn!");
-            return false;
-        }
+        // if (playerInfo.kukaris[requestData.movekukari] == -1 && requestData.movenumber != 6) {
+        //     logger.info("MOVEKUKARI : client.su ::", client.seatIndex);
+        //     delete client.MOVEKUKARI;
+        //     commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "It's not your turn!");
+        //     return false;
+        // }
         console.log("kya number par kukari 6e ", playerInfo.kukarisindex[requestData.movekukari])
         // Move no thai home ma java mate na move number nathi so
-        if (playerInfo.kukarisindex[requestData.movekukari] + movenumber > playerRoutePos.length) {
+        if (playerInfo.kukarisindex[requestData.movekukari] + requestData.movenumber > playerRoutePos.length) {
             ogger.info("MOVEKUKARI : client.su ::", client.seatIndex);
             delete client.MOVEKUKARI;
             commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "It's not your turn!");
@@ -210,13 +210,10 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             $set: {
                 playStatus: "movekukari",
 
-            },
-            $inc: {
-
             }
         }
-        updateData["playerInfo.kukaris." + requestData.movekukari] = movenumber
-        updateData["playerInfo.kukarisindex." + requestData.movekukari] = movenumber
+        updateData["$set"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
+        updateData["$set"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
 
         commandAcions.clearJob(tabInfo.job_id);
 
@@ -241,22 +238,22 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         let oppseat = client.seatIndex == 0 ? 1 : 0;
         //Safe No hoi to j kill karvani 
         let kukariname = -1
-        if (tb.playerInfo[client.seatIndex].safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
+        if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
             && tb.playerInfo[oppseat].kukaris.k1 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
             kukariname = "k1"
         }
 
-        if (tb.playerInfo[client.seatIndex].safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
+        if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
             && tb.playerInfo[oppseat].kukaris.k2 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
             kukariname = "k2"
         }
 
-        if (tb.playerInfo[client.seatIndex].safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
+        if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
             && tb.playerInfo[oppseat].kukaris.k3 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
             kukariname = "k3"
         }
 
-        if (tb.playerInfo[client.seatIndex].safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
+        if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
             && tb.playerInfo[oppseat].kukaris.k4 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
             kukariname = "k4"
         }
@@ -267,8 +264,8 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
                 }
             }
-            updateData1["playerInfo.kukaris." + kukariname] = -1
-            updateData1["playerInfo.kukarisindex." + kukariname] = -1
+            updateData1["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + kukariname] = -1
+            updateData1["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + kukariname] = -1
 
 
             const upWh1 = {
@@ -326,7 +323,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != "" ? client.seatIndex : -1;
+            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != "" ? client.seatIndex : -1;
 
             await roundStartActions.nextUserTurnstart(tb,nextTuner);
         }

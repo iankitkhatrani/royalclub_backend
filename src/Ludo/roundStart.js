@@ -139,7 +139,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         let tbid = tb._id.toString();
 
-        let time = 30;
+        let time = 15;
         let turnChangeDelayTimer = commandAcions.AddTime(time);
         logger.info("startUserTurn jobId time ::", jobId, time, new Date(turnChangeDelayTimer), new Date());
 

@@ -32,7 +32,7 @@ module.exports.gameTimerStart = async (tb) => {
         const tabInfo = await playingLudo.findOneAndUpdate(wh, update, { new: true });
         logger.info("gameTimerStart tabInfo :: ", tabInfo);
 
-        let roundTime = 10;
+        let roundTime = 5;
         commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.GAME_START_TIMER, { timer: roundTime });
 
         let tbId = tabInfo._id;
