@@ -210,10 +210,15 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             $set: {
                 playStatus: "movekukari",
 
+            },
+            $inc:{
+
             }
+
         }
-        updateData["$set"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
-        updateData["$set"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
+
+        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
+        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
 
         commandAcions.clearJob(tabInfo.job_id);
 
@@ -235,8 +240,11 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         commandAcions.sendEventInTable(tb._id.toString(), CONST.MOVEKUKARI, response);
         // Kill 
         // Opp User Kukari same place 
-        let oppseat = client.seatIndex == 0 ? 1 : 0;
+        let oppseat = client.seatIndex == 0 ? 2 : 0;
         //Safe No hoi to j kill karvani 
+        logger.info("oppseat  :: ", oppseat);
+        logger.info("tb.playerInfo[oppseat]  :: ", tb.playerInfo[oppseat]);
+
         let kukariname = -1
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
             && tb.playerInfo[oppseat].kukaris.k1 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
@@ -323,7 +331,10 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != -1 ? client.seatIndex : -1;
+            logger.info("Table Change Tunr ::::::::::::::: ", requestData.movenumber);
+            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || parseInt(requestData.movenumber) == 6 || kukariname != -1 ? client.seatIndex : -1;
+
+            logger.info("Table Change Tunr :::::::::::::::11111111111 ",nextTuner);
 
             await roundStartActions.nextUserTurnstart(tb,nextTuner);
         }

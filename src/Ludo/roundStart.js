@@ -61,7 +61,7 @@ module.exports.nextUserTurnstart = async (tb,nextturn) => {
     try {
 
         logger.info("nextUserTurnstart tb :: ", tb);
-        let nextTurnIndex = (nextturn == undefined  || nextturn == false || nextturn == -1) ? await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0) : nextturn;
+        let nextTurnIndex = (nextturn == undefined  || nextturn == -1) ? await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0) : nextturn;
 
         logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
         
