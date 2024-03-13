@@ -201,7 +201,6 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
 
-
       
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.JANTAWINNER, {
             WinnerData:winnerData,
