@@ -258,7 +258,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             kukariname = "k4"
         }
 
-        if (kukariname == "") {
+        if (kukariname != -1) {
             let updateData1 = {
                 $inc: {
 
@@ -323,7 +323,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != "" ? client.seatIndex : -1;
+            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || requestData.movenumber == 6 || kukariname != -1 ? client.seatIndex : -1;
 
             await roundStartActions.nextUserTurnstart(tb,nextTuner);
         }
