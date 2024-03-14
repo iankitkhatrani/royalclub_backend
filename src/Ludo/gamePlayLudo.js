@@ -209,16 +209,21 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         let updateData = {
             $set: {
                 playStatus: "movekukari",
-
             },
             $inc:{
 
             }
-
         }
 
-        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
+        if(playerInfo.kukarisindex[requestData.movekukari] == -1){
+            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = 1
+        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = 1
+        }else{
+            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
         updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
+        }
+
+        
 
         commandAcions.clearJob(tabInfo.job_id);
 
