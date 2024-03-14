@@ -136,16 +136,21 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
     try {
         logger.info("MOVEKUKARI requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
+            logger.info("139  : ", requestData);
+
             commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "User session not set, please restart game!");
             return false;
         }
-        if (typeof client.MOVEKUKARI != "undefined" && client.MOVEKUKARI) return false;
+        if (typeof client.MOVEKUKARI != "undefined" && client.MOVEKUKARI){
+            return false
+        }
 
         client.MOVEKUKARI = true;
 
         const wh = {
             _id: MongoID(client.tbid.toString())
         }
+        
         const project = {
 
         }
@@ -178,7 +183,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         let UserInfo = await GameUser.findOne(gwh, {}).lean();
         logger.info("MOVEKUKARI UserInfo : ", gwh, JSON.stringify(UserInfo));
 
-        let playerRoutePos = client.seatIndex == 0 ? "playerRoutePos1" : "playerRoutePos3"
+        let playerRoutePos = client.seatIndex == 0 ? tabInfo["playerRoutePos1"] : tabInfo["playerRoutePos3"]
 
         console.log("kya number par kukari 6e ", playerInfo.kukaris[requestData.movekukari])
         //kukari haju home 6e and move number 6 nathi 
@@ -189,9 +194,13 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         //     return false;
         // }
         console.log("kya number par kukari 6e ", playerInfo.kukarisindex[requestData.movekukari])
+        console.log("requestData.movenumber",requestData.movenumber)
+        console.log("playerRoutePos.length",playerRoutePos.length)
+
+
         // Move no thai home ma java mate na move number nathi so
         if (playerInfo.kukarisindex[requestData.movekukari] + requestData.movenumber > playerRoutePos.length) {
-            ogger.info("MOVEKUKARI : client.su ::", client.seatIndex);
+            logger.info("MOVEKUKARI : client.su ::", client.seatIndex);
             delete client.MOVEKUKARI;
             commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "It's not your turn!");
             return false;
