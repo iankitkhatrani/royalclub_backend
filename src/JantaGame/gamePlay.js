@@ -127,7 +127,8 @@ module.exports.actionJanta = async (requestData, client) => {
 
         let response = {
             bet: chalvalue,
-            item:requestData.item
+            item:requestData.item,
+            type:requestData.type,
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONJANTA, response, false, "");
