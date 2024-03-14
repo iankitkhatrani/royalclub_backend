@@ -78,7 +78,7 @@ module.exports.StartJantaGame = async (tbId) => {
         let cards = _.shuffle(tb.cards).slice(0, 3);
         
         let sumofcard = cards.reduce((accumulator, currentValue) => {
-            return accumulator + parseInt(currentValue.split("-")[1])
+            return accumulator + parseInt(currentValue.split("-")[1] == "10"?0:currentValue.split("-")[1])
         },0);
 
         // if(CONST.SORATLOGIC == "Client"){ // Client SIDE
@@ -90,11 +90,15 @@ module.exports.StartJantaGame = async (tbId) => {
         // }else if(CONST.SORATLOGIC == "User"){  // User SIDE
         //      Number = this.generateNumber()
         // }   
+        let WinnerNumber = -1
+        if(sumofcard.toString().length > 1){
+            WinnerNumber  = sumofcard.toString()[1]
+        }else{
+            WinnerNumber = sumofcard.toString()
 
-        sumofcard = sumofcard >= 10 ? 0  : sumofcard
+        }
 
-
-        console.log("sumofcard ",sumofcard)
+        console.log("WinnerNumber ::::::::::::::::",WinnerNumber)
         
         let wh = {
             _id: tbId
@@ -102,13 +106,13 @@ module.exports.StartJantaGame = async (tbId) => {
         let update = {
             $set: {
                 gameState: "StartJanta",
-                sumofcard:sumofcard,
+                sumofcard:WinnerNumber,
                 opencards:cards,
                 turnStartTimer:new Date()
             },
             $push:{
                 "history": {
-                    $each: [sumofcard],
+                    $each: [WinnerNumber],
                     $slice: -7
                 }
             }
@@ -118,11 +122,11 @@ module.exports.StartJantaGame = async (tbId) => {
         const tabInfo = await JantaTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("StartJanta tabInfo :: ", tabInfo);
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:sumofcard,timelimit:10 });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:WinnerNumber,timelimit:10 });
 
         setTimeout(async ()=> {
             
-            this.winnerJanta(tabInfo,sumofcard);
+            this.winnerJanta(tabInfo,WinnerNumber);
         },10000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)

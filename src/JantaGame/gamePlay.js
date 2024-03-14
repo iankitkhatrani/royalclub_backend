@@ -16,8 +16,6 @@ const walletActions = require("./updateWallet");
         item:0,    0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
         bet:10,
         type:"NORMAL" || Odd || Even || onetofive || sixtozero
-
-
     }
 
 */
@@ -86,29 +84,29 @@ module.exports.actionJanta = async (requestData, client) => {
         if(requestData.type == "NORMAL"){
             updateData.$inc["playerInfo.$.selectObj."+requestData.item] = chalvalue;
         }else if(requestData.type == "Odd"){
-            updateData.$inc["playerInfo.$.selectObj.1"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.3"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.5"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.7"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.9"] = chalvalue;
+            updateData.$inc["playerInfo.$.selectObj.1"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.3"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.5"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.7"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.9"] = chalvalue/5;
 
         }else if(requestData.type == "Even"){
-            updateData.$inc["playerInfo.$.selectObj.2"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.4"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.6"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.8"] = chalvalue;
+            updateData.$inc["playerInfo.$.selectObj.2"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.4"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.6"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.8"] = chalvalue/5;
         }else if(requestData.type == "onetofive"){
-            updateData.$inc["playerInfo.$.selectObj.1"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.2"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.3"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.4"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.5"] = chalvalue;
+            updateData.$inc["playerInfo.$.selectObj.1"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.2"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.3"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.4"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.5"] = chalvalue/5;
         }else if(requestData.type == "sixtozero"){
-            updateData.$inc["playerInfo.$.selectObj.6"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.7"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.8"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.9"] = chalvalue;
-            updateData.$inc["playerInfo.$.selectObj.0"] = chalvalue;
+            updateData.$inc["playerInfo.$.selectObj.6"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.7"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.8"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.9"] = chalvalue/5;
+            updateData.$inc["playerInfo.$.selectObj.0"] = chalvalue/5;
         }
         
         updateData.$inc["playerInfo.$.totalbet"] = chalvalue;
@@ -129,7 +127,8 @@ module.exports.actionJanta = async (requestData, client) => {
 
         let response = {
             bet: chalvalue,
-            item:requestData.item
+            item:requestData.item,
+            type:requestData.type,
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONJANTA, response, false, "");
