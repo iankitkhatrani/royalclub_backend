@@ -91,7 +91,7 @@ module.exports.StartJantaGame = async (tbId) => {
         //      Number = this.generateNumber()
         // }   
 
-        sumofcard = sumofcard == 10 ? 0  : sumofcard
+        sumofcard = sumofcard >= 10 ? 0  : sumofcard
 
 
         console.log("sumofcard ",sumofcard)
@@ -146,6 +146,9 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         let tbid = tabInfo._id.toString()
         logger.info("winnerSorat tbid ::", tbid);
 
+        logger.info("winnerSorat tbselectObjid ::", tabInfo.playerInfo[0].selectObj);
+
+
         const tb = await JantaTables.findOne({
             _id: MongoID(tbid.toString()),
         }, {})
@@ -182,7 +185,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         console.log("itemIndex ",itemIndex)
         for (let i = 0; i < tbInfo.playerInfo.length; i++) {
             if(tbInfo.playerInfo[i].seatIndex != undefined){
-
+                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ",tbInfo.playerInfo[i].selectObj[itemIndex])
                 if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
                     winnerData.push({
                         uid:tbInfo.playerInfo[i]._id,
