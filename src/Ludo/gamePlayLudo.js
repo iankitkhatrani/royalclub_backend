@@ -225,7 +225,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         }
 
         if(playerInfo.kukarisindex[requestData.movekukari] == -1){
-            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = 1
+            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = playerRoutePos[0]
         updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = 1
         }else{
             updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
@@ -257,7 +257,9 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         let oppseat = client.seatIndex == 0 ? 2 : 0;
         //Safe No hoi to j kill karvani 
         logger.info("oppseat  :: ", oppseat);
-        logger.info("tb.playerInfo[oppseat]  :: ", tb.playerInfo[oppseat]);
+        logger.info("tb.playerInfo[oppseat]  :: ", tb.playerInfo[oppseat].kukaris);
+        logger.info("tb.playerInfo[client.seatIndex].kukaris  :: ", tb.playerInfo[client.seatIndex].kukaris);
+
 
         let kukariname = -1
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
@@ -279,7 +281,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             && tb.playerInfo[oppseat].kukaris.k4 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
             kukariname = "k4"
         }
-
+        console.log("kukariname KILLL ",kukariname)
         if (kukariname != -1) {
             let updateData1 = {
                 $inc: {
