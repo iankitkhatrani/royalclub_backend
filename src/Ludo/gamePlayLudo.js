@@ -310,6 +310,10 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
             commandAcions.sendEventInTable(tb1._id.toString(), CONST.KILLKUKARI, response);
 
+            let jobId = commandAcions.GetRandomString(10);
+            let delay = commandAcions.AddTime(5);
+            const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+            
         }
 
         let winnernumber = client.seatIndex == 0 ? 58 : 70
