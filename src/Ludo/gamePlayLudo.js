@@ -219,15 +219,14 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             $set: {
                 playStatus: "movekukari",
             },
-            $inc:{
-
-            }
+            
         }
 
         if(playerInfo.kukarisindex[requestData.movekukari] == -1){
-            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = playerRoutePos[0]
-        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = 1
+            updateData["$set"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = playerRoutePos[0]
+            updateData["$set"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = 0
         }else{
+            updateData["$inc"] = {}
             updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
         updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
         }
@@ -284,12 +283,12 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         console.log("kukariname KILLL ",kukariname)
         if (kukariname != -1) {
             let updateData1 = {
-                $inc: {
+                $set: {
 
                 }
             }
-            updateData1["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + kukariname] = -1
-            updateData1["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + kukariname] = -1
+            updateData1["$set"]["playerInfo."+ oppseat+".kukaris." + kukariname] = -1
+            updateData1["$set"]["playerInfo."+ oppseat+".kukarisindex." + kukariname] = -1
 
 
             const upWh1 = {
