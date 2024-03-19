@@ -262,22 +262,38 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
         let kukariname = -1
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
-            && tb.playerInfo[oppseat].kukaris.k1 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
+            && tb.playerInfo[oppseat].kukaris.k1 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] 
+            && tb.playerInfo[oppseat].kukaris.k1 != tb.playerInfo[oppseat].kukaris.k2
+            && tb.playerInfo[oppseat].kukaris.k1 != tb.playerInfo[oppseat].kukaris.k3
+            && tb.playerInfo[oppseat].kukaris.k1 != tb.playerInfo[oppseat].kukaris.k4
+            ) {
             kukariname = "k1"
         }
 
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
-            && tb.playerInfo[oppseat].kukaris.k2 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
+            && tb.playerInfo[oppseat].kukaris.k2 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]
+            && tb.playerInfo[oppseat].kukaris.k2 != tb.playerInfo[oppseat].kukaris.k1
+            && tb.playerInfo[oppseat].kukaris.k2 != tb.playerInfo[oppseat].kukaris.k3
+            && tb.playerInfo[oppseat].kukaris.k2 != tb.playerInfo[oppseat].kukaris.k4
+            ) {
             kukariname = "k2"
         }
 
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
-            && tb.playerInfo[oppseat].kukaris.k3 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
+            && tb.playerInfo[oppseat].kukaris.k3 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]
+            && tb.playerInfo[oppseat].kukaris.k3 != tb.playerInfo[oppseat].kukaris.k1
+            && tb.playerInfo[oppseat].kukaris.k3 != tb.playerInfo[oppseat].kukaris.k2
+            && tb.playerInfo[oppseat].kukaris.k3 != tb.playerInfo[oppseat].kukaris.k4
+            ) {
             kukariname = "k3"
         }
 
         if (tb.safeDice.indexOf(tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) == -1
-            && tb.playerInfo[oppseat].kukaris.k4 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]) {
+            && tb.playerInfo[oppseat].kukaris.k4 == tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari]
+            && tb.playerInfo[oppseat].kukaris.k4 != tb.playerInfo[oppseat].kukaris.k1
+            && tb.playerInfo[oppseat].kukaris.k4 != tb.playerInfo[oppseat].kukaris.k2
+            && tb.playerInfo[oppseat].kukaris.k4 != tb.playerInfo[oppseat].kukaris.k3
+            ) {
             kukariname = "k4"
         }
         console.log("kukariname KILLL ",kukariname)
