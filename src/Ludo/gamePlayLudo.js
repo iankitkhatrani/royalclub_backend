@@ -227,8 +227,8 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             updateData["$set"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = 0
         }else{
             updateData["$inc"] = {}
-            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = requestData.movenumber
-        updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
+            updateData["$set"]["playerInfo."+ client.seatIndex+".kukaris." + requestData.movekukari] = playerRoutePos[(playerInfo.kukarisindex[requestData.movekukari] + requestData.movenumber)]
+            updateData["$inc"]["playerInfo."+ client.seatIndex+".kukarisindex." + requestData.movekukari] = requestData.movenumber
         }
 
         
@@ -310,7 +310,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
             commandAcions.sendEventInTable(tb1._id.toString(), CONST.KILLKUKARI, response);
 
             let jobId = commandAcions.GetRandomString(10);
-            let delay = commandAcions.AddTime(5);
+            let delay = commandAcions.AddTime(requestData.movenumber*0.2);
             const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
             
         }
@@ -350,10 +350,10 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
-            logger.info("Table Change Tunr ::::::::::::::: ", requestData.movenumber);
-            let nextTuner =tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber || parseInt(requestData.movenumber) == 6 || kukariname != -1 ? client.seatIndex : -1;
+            logger.info("Table Change Tunr ::::::::::::::: ", kukariname);
+            let nextTuner =((tb.playerInfo[client.seatIndex].kukaris[requestData.movekukari] == winnernumber) || (parseInt(requestData.movenumber) == 6) || (kukariname != -1)) ? client.seatIndex : -1;
 
-            logger.info("Table Change Tunr :::::::::::::::11111111111 ",nextTuner);
+            logger.info("Table Change Tunr :::::::::::::::11111111111nextTuner ",nextTuner,kukariname);
 
             await roundStartActions.nextUserTurnstart(tb,nextTuner);
         }
