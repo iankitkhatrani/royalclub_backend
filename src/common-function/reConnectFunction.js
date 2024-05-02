@@ -1,12 +1,12 @@
-const { findDisconnectTable } = require('../disconnectHandle');
+const { findDisconnectTable } = require('../helper/disconnectHandle');
 const CONST = require('../../constant');
 const logger = require('../../logger');
 const { reconnect } = require('./reconnect');
-const { GetRandomString, socketUserRedis } = require('../socketFunctions');
+const { GetRandomString, socketUserRedis } = require('../helper/socketFunctions');
 const schedule = require('node-schedule');
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model("playingTable");
+const PlayingTables = mongoose.model("rummyPlayingTables");
 
 const userReconnect = async (payload, socket) => {
   try {

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const Commission = mongoose.model('commissions');
 const Users = mongoose.model('users');
 const TableHistory = mongoose.model('tableHistory');
@@ -9,9 +9,9 @@ const { omit } = require('lodash');
 
 const logger = require('../../logger');
 const CONST = require('../../constant');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const roundEndActions = require('./roundEnd');
-const commonHelper = require('../commonHelper');
+const commonHelper = require('../helper/commonHelper');
 const gameTrackActions = require('../common-function/gameTrack');
 const { getPlayingUserInRound, winnerViewResponseFilter } = require('../common-function/manageUserFunction');
 const { countPlayerScore, getScore } = require('../common-function/cardFunction');

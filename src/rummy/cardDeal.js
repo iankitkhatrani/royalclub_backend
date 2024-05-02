@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const MongoID = mongoose.Types.ObjectId;
 
 const fortuna = require('javascript-fortuna');
@@ -7,10 +7,10 @@ fortuna.init();
 
 const logger = require('../../logger');
 const CONST = require('../../constant');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const roundStartActions = require('../rummy/roundStart');
-const { createDealer } = require('../helperFunction');
-const { checkWinCard } = require('../botFunction');
+const { createDealer } = require('../helper/helperFunction');
+const { checkWinCard } = require('../helper/botFunction');
 
 module.exports.cardDealStart = async (tbid) => {
   try {

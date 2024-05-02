@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const Users = mongoose.model('users');
 const IdCounter = mongoose.model('idCounter');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const CONST = require('../../constant');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const { getPlayingUserInRound } = require('../common-function/manageUserFunction');
 const cardDealActions = require('./cardDeal');
 const logger = require('../../logger');
@@ -213,14 +213,14 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
           mainwalletdeduct = true
         } else if (totalWallet >= mainchipscut) {
           mainwalletdeduct = true
-        } 
+        }
         // else if (totalbonus >= bonuscutchips && totalWinWallet >= mainchipscut) {
         //   winwalletdeduct = true
         //   bonuswalletdeduct = true
         // } else if (totalWinWallet >= mainchipscut) {
         //   winwalletdeduct = true
         // } 
-        
+
         else if (totalbonus >= bonuscutchips) {
           bonuswalletdeduct = true
         }

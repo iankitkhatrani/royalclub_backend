@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('playingTables');
 
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const CONST = require('../../constant');
 const logger = require('../../logger');
-const { ifSocketDefine } = require('../helperFunction');
+const { ifSocketDefine } = require('../helper/helperFunction');
 
 module.exports.chatPanel = async (requestData, client) => {
   try {

@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const Users = mongoose.model('users');
 
 const CONST = require('../../constant');
 const logger = require('../../logger');
 
 const { leaveTable } = require('./leaveTable');
-const { pic, mycardGroup, easyPic } = require('../botFunction');
+const { pic, mycardGroup, easyPic } = require('../helper/botFunction');
 const { getPlayingUserInRound } = require('../common-function/manageUserFunction');
 const { lastUserWinnerDeclareCall } = require('./gameFinish');
-const { clearJob, GetRandomString, AddTime, setDelay, sendEventInTable, sendDirectEvent } = require('../socketFunctions');
+const { clearJob, GetRandomString, AddTime, setDelay, sendEventInTable, sendDirectEvent } = require('../helper/socketFunctions');
 
 
 module.exports.roundStarted = async (tbid) => {
@@ -234,7 +234,7 @@ module.exports.userTurnExpaire = async (tbid) => {
 
     if (upRes.playerInfo[upRes.currentPlayerTurnIndex].turnMissCounter >= 3) {
       let sckId = upRes.playerInfo[upRes.currentPlayerTurnIndex].sck
-      sendDirectEvent(sckId, CONST.USER_MESSAGE, { msg: 'User Drop Out for Missed 3 turn',uid:upRes.playerInfo[upRes.currentPlayerTurnIndex]._id });
+      sendDirectEvent(sckId, CONST.USER_MESSAGE, { msg: 'User Drop Out for Missed 3 turn', uid: upRes.playerInfo[upRes.currentPlayerTurnIndex]._id });
       this.handleTimeOut(upRes.playerInfo[upRes.currentPlayerTurnIndex], tbid);
       return;
     }

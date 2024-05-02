@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const BetLists = mongoose.model('betLists');
-const PoolBetLists = mongoose.model('poolbetLists');
-const DealBetLists = mongoose.model('dealbetLists');
+// const PoolBetLists = mongoose.model('poolbetLists');
+// const DealBetLists = mongoose.model('dealbetLists');
 
 const CONST = require('../../constant');
 const logger = require('../../logger');
-const { sendEvent } = require('../socketFunctions');
+const { sendEvent } = require('../helper/socketFunctions');
 
 module.exports.getPoolBet = async (requestData, socket) => {
   try {

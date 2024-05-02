@@ -9,7 +9,7 @@ const CONST = require('../../constant');
 const signupActions = require('../helper/signups/index');
 const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
-const gamePlayActionsRummy = require('./rummy');
+const gamePlayActionsRummy = require('../rummy');
 
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');

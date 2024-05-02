@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const MongoID = mongoose.Types.ObjectId;
 
 const CONST = require('../../constant');
@@ -7,7 +7,7 @@ const logger = require('../../logger');
 const gamePlay = require('./gamePlay');
 const gameFinishActions = require('./gameFinish');
 const { getScore } = require('../common-function/cardFunction');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 
 module.exports.winnercall = async (tb, client) => {
   try {

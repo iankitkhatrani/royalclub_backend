@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 
 const roundStartActions = require('./roundStart');
 const gameFinishActions = require('./gameFinish');
 const logger = require('../../logger');
 const CONST = require('../../constant');
 
-const { ifSocketDefine } = require('../helperFunction');
+const { ifSocketDefine } = require('../helper/helperFunction');
 const { pushPlayerScoreToPlayerScoreBoard } = require('../common-function/cardFunction');
-const { sendDirectEvent, clearJob, sendEventInTable, AddTime, setDelay } = require('../socketFunctions');
+const { sendDirectEvent, clearJob, sendEventInTable, AddTime, setDelay } = require('../helper/socketFunctions');
 const { getPlayingUserInTable, getPlayingUserInRound, filterBeforeSendSPEvent, getPlayingRealUserInRound } = require('../common-function/manageUserFunction');
 
 module.exports.leaveTable = async (requestInfo, client) => {

@@ -4,7 +4,7 @@ const { leaveTable, playerSwitch } = require('./leaveTable');
 const { getBetList, getPoolBet, getDealList } = require('../common-function/betList');
 const { getWalletDetails } = require('../common-function/walletTrackTransaction');
 const { chatPanel, openChatPanel } = require('../common-function/chatPanel');
-const { disconnectTableHandle, findDisconnectTable } = require('../disconnectHandle');
+const { disconnectTableHandle, findDisconnectTable } = require('../helper/disconnectHandle');
 const { pickCard, disCard, cardGroup, declare, playerFinish, playerDrop, playerLastScoreBoard, playerFinishDeclare } = require('./gamePlay');
 
 module.exports = {

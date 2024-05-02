@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const _ = require("underscore");
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const MongoID = mongoose.Types.ObjectId;
 
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const roundStartActions = require('./roundStart');
 const gameFinishActions = require('./gameFinish');
 const checkWinnerActions = require('./checkWinner');
@@ -13,7 +13,7 @@ const logger = require('../../logger');
 const { getPlayingUserInRound } = require('../common-function/manageUserFunction');
 
 const { pushPlayerScoreToPlayerScoreBoard } = require('../common-function/cardFunction');
-const { ifSocketDefine, shuffle } = require('../helperFunction');
+const { ifSocketDefine, shuffle } = require('../helper/helperFunction');
 
 module.exports.pickCard = async (requestData, client) => {
   try {

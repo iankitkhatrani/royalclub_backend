@@ -1,17 +1,17 @@
 const mongoose = require('mongoose');
 //const { omit } = require('lodash');
 
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 const BetLists = mongoose.model('betLists');
 const Users = mongoose.model('users');
 const MongoID = mongoose.Types.ObjectId;
 
 const logger = require('../../logger');
 const CONST = require('../../constant');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const gameStartActions = require('./gameStart');
 const { getPlayingUserInRound, getPlayingUserInTable, filterBeforeSendSPEvent } = require('../common-function/manageUserFunction');
-const botLogic = require('../botFunction');
+const botLogic = require('../helper/botFunction');
 
 module.exports.roundFinish = async (tb) => {
   try {

@@ -1,7 +1,7 @@
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('playingTables');
 
 
 module.exports.getPlayingUserInRound = async (p) => {

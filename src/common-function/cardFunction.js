@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('playingTables');
 
 const logger = require('../../logger');
 const _ = require("underscore");

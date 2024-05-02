@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const UserWalletTracks = mongoose.model('walletTrackTransaction');
 const GameUser = mongoose.model('users');
 const CONST = require('../../constant');
-const commandAcions = require('../socketFunctions');
+const commandAcions = require('../helper/socketFunctions');
 const logger = require('../../logger');
 const MongoID = mongoose.Types.ObjectId;
 

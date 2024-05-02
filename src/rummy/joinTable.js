@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const BetLists = mongoose.model('betLists');
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('playingTable');
+const PlayingTables = mongoose.model('rummyPlayingTables');
 
 const gameStartActions = require('./gameStart');
-const botLogic = require('../botFunction');
+const botLogic = require('../helper/botFunction');
 const CONST = require('../../constant');
 const logger = require('../../logger');
 
