@@ -9,6 +9,7 @@ const CONST = require('../../constant');
 const signupActions = require('../helper/signups/index');
 const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
+const gamePlayActionsRummy = require('./rummy');
 
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');
@@ -206,17 +207,17 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.ClearBet:{
+                    case CONST.ClearBet: {
                         await gamePlayActionsRoulette.ClearBet(payload.data, socket);
                         break;
                     }
 
-                    case CONST.DoubleBet:{
+                    case CONST.DoubleBet: {
                         await gamePlayActionsRoulette.DoubleBet(payload.data, socket);
                         break;
                     }
 
-                    
+
 
                     case CONST.LEAVETABLESPINNER: {
                         await gamePlayActionsRoulette.leaveTable(payload.data, socket);
@@ -227,7 +228,7 @@ myIo.init = function (server) {
                         await userReconnectSpinner(payload.data, socket);
                         break;
                     }
-                    
+
 
                     //====================================
 
@@ -248,15 +249,159 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.RollDice:{
+                    case CONST.RollDice: {
 
                         await gamePlayActionsLudo.RollDice(payload.data, socket);
                         break;
                     }
 
-                    case CONST.MOVEKUKARI:{
+                    case CONST.MOVEKUKARI: {
 
                         await gamePlayActionsLudo.MOVEKUKARI(payload.data, socket);
+                        break;
+                    }
+
+                    //Rummy ------------------------------
+                    case CONST.R_GET_BET_LIST: {
+                        try {
+                            await gamePlayActions.getBetList(payload.data, socket);
+                        } catch (error) {
+                            logger.error('socketServer.js GET_BET_LIST error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_JOIN_SIGN_UP: {
+                        try {
+                            socket.uid = payload.data.playerId;
+                            socket.sck = socket.id;
+
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActions.joinTable(payload.data, socket);
+                                    break;
+                            }
+                        } catch (error) {
+                            logger.error('socketServer.js JOIN_SIGN_UP error => ', error);
+                            sendEvent(socket, CONST.ERROR, error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_PICK_CARD: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                // POINT RUMMY
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.pickCard(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('socketServer.js PICK_CARD error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_DISCARD: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.disCard(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('Disk card Card error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_CARD_GROUP: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.cardGroup(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('socketServer.js Group Card error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_DECLARE: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.declare(payload.data, socket);
+                                    break;
+
+
+                            }
+                        } catch (error) {
+                            logger.error('socketServer.js Declare Table error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_DROPPED: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.playerDrop(payload.data, socket);
+                                    break;
+
+
+                            }
+                        } catch (error) {
+                            console.log('DROP Table error => ', error);
+                        }
+
+                        break;
+                    }
+
+                    case CONST.R_PLAYER_FINISH_DECLARE_TIMER: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.playerFinishDeclare(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_FINISH: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.playerFinish(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('Finsih Table error => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_LEAVE: {
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await gamePlayActionsRummy.leaveTable(payload.data, socket);
+                                    break;
+
+
+                            }
+                        } catch (error) {
+                            logger.error('socketServer.js LEAVE Table error => ', error);
+                        }
                         break;
                     }
 
