@@ -4,6 +4,8 @@ const GameUser = mongoose.model('users');
 const RouletteTables = mongoose.model('RouletteTables');
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
+const _ = require("underscore")
+
 const gameStartActions = require("./gameStart");
 const CONST = require("../../constant");
 const logger = require("../../logger");
@@ -44,25 +46,26 @@ module.exports.ROULETTE_GAME_JOIN_TABLE = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable( client)
+        await this.findTable( client,requestData)
     } catch (error) {
         console.info("ROULETTE_GAME_JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (client) => {
-    logger.info("findTable  : ");
+module.exports.findTable = async (client,requestData) => {
+    logger.info("findTable  : ",requestData);
 
-    let tableInfo = await this.getBetTable();
+    let tableInfo = await this.getBetTable(requestData);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
     console.log("tableInfo ",tableInfo)
-    await this.findEmptySeatAndUserSeat(tableInfo, client);
+    await this.findEmptySeatAndUserSeat(tableInfo, client,requestData);
 }
 
-module.exports.getBetTable = async () => {
-    logger.info("getBetTable  : ");
+module.exports.getBetTable = async (requestData) => {
+    logger.info("getBetTable  : ",requestData);
     let wh = {
-        activePlayer: { $gte: 1}
+        activePlayer: { $gte: 1 },
+        whichTable:requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await RouletteTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -70,18 +73,22 @@ module.exports.getBetTable = async () => {
     if (tableInfo.length > 0) {
         return tableInfo[0];
     }
-    let table = await this.createTable({});
+    let table = await this.createTable(requestData);
     return table;
 }
 
-module.exports.createTable = async () => {
+module.exports.createTable = async (requestData) => {
     try {
         let insertobj = {
             gameId: "",
             activePlayer: 0,
-            playerInfo: [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}],
+            playerInfo: [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
+                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}
+            ],
             gameState: "",
-            history:[],
+            history:_.shuffle([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36]),
             betamount:[5,10,50,100,500,1000],
             TableObject:[
                 "0","1","2","3","4",
@@ -95,8 +102,10 @@ module.exports.createTable = async () => {
                 "1st12","2nd12","3rd12",
                 "1to18","19to36","even","odd",
                 "red","black"
-            ]
+            ],
+            whichTable:requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
         };
+        console.log("requestData ",requestData)
         logger.info("createTable insertobj : ", insertobj);
 
         let insertInfo = await RouletteTables.create(insertobj);
@@ -110,7 +119,7 @@ module.exports.createTable = async () => {
     }
 }
 
-module.exports.findEmptySeatAndUserSeat = async (table, client) => {
+module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
     try {
         logger.info("findEmptySeatAndUserSeat table :=> ", table + " client :=> ", client);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
@@ -156,6 +165,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
                 0,0,0,0,
                 0,0
             ],
+            betObject:[],
+            pastbetObject:[],
             totalbet:0,
             turnMissCounter: 0,
             turnCount: 0,
@@ -189,7 +200,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
 
         let setPlayerInfo = {
             $set: {
-                gameState: ""
+                //gameState: ""
             },
             $inc: {
                 activePlayer: 1
@@ -236,8 +247,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
             tableid: tableInfo._id,
             gamePlayType: tableInfo.gamePlayType,
             tableAmount: tableInfo.tableAmount,
+            tableType: tableInfo.whichTable,
+            history:tableInfo.history
         });
-
+        console.log("tableType: tableInfo.whichTable ",tableInfo.whichTable)
         if(userInfo.Iscom == undefined || userInfo.Iscom == 0)
         client.join(tableInfo._id.toString());
 
@@ -248,7 +261,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
 
         delete client.JT;
 
-        if (tableInfo.gameState == "") {
+        if (tableInfo.gameState == "" && tableInfo.activePlayer == 1) {
 
             let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
             clearJob(jobId)

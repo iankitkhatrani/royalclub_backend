@@ -14,8 +14,10 @@ const gamePlayActionsRummy = require('../rummy');
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');
 const gamePlayActionsRoulette = require('../roulette');
+const { userReconnectRoulette } = require('../roulette/reConnectFunction');
 
 const { userReconnectJanta } = require('../JantaGame/reconnect');
+
 
 const { registerUser } = require('../helper/signups/signupValidation');
 const mainCtrl = require('./mainController');
@@ -193,19 +195,25 @@ myIo.init = function (server) {
                     //=========================================================================================
 
 
-                    // SPinner GAME Event 
+                    // ROULETTE GAME Event 
                     case CONST.ROULETTE_JOIN_TABLE: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
-
+                        logger.info("Table Name =======> ", payload.data.whichTable);
                         await gamePlayActionsRoulette.ROULETTE_GAME_JOIN_TABLE(payload.data, socket);
                         break;
                     }
 
-                    case CONST.ACTIONSPINNNER: {
+                    case CONST.ACTIONROULETTE: {
                         await gamePlayActionsRoulette.actionSpin(payload.data, socket);
                         break;
                     }
+
+                    case CONST.REMOVEBETROULETTE: {
+                        await gamePlayActionsRoulette.REMOVEBETROULETTE(payload.data, socket);
+                        break;
+                    }
+
 
                     case CONST.ClearBet: {
                         await gamePlayActionsRoulette.ClearBet(payload.data, socket);
@@ -217,17 +225,34 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.NEIGHBORBET: {
+                        await gamePlayActionsRoulette.NEIGHBORBET(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.PASTBET: {
+                        await gamePlayActionsRoulette.PASTBET(payload.data, socket);
+                        break;
+                    }
 
 
-                    case CONST.LEAVETABLESPINNER: {
+                    case CONST.LEAVETABLEROULETTE: {
                         await gamePlayActionsRoulette.leaveTable(payload.data, socket);
                         break;
                     }
 
-                    case CONST.RECONNECTSPINNER: {
-                        await userReconnectSpinner(payload.data, socket);
+                    case CONST.RECONNECTROULETTE: {
+                        await userReconnectRoulette(payload.data, socket);
                         break;
                     }
+
+
+                    case CONST.HISTORY: {
+                        await gamePlayActionsRoulette.HISTORY(payload.data, socket);
+                        break;
+                    }
+
+                    //====================================
 
 
                     //====================================

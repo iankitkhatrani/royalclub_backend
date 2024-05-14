@@ -49,37 +49,13 @@ module.exports.leaveTable = async (requestData, client) => {
             activePlayer: -1
         }
     }
-    if (tb.activePlayer == 2 && tb.gameState == "SpinnerGameStartTimer") {
+    if (tb.activePlayer == 0 && tb.gameState == "RouletteGameStartTimer") {
         let jobId = CONST.GAME_START_TIMER + ":" + tb._id.toString();
         commandAcions.clearJob(jobId)
         updateData["$set"]["gameState"] = "";
     }
-    if (tb.activePlayer == 1) {
-        let jobId = "LEAVE_SINGLE_USER:" + tb._id;
-        commandAcions.clearJob(jobId)
-    }
+    
 
-    if (tb.gameState == "RoundStated") {
-        if (client.seatIndex == tb.turnSeatIndex) {
-            commandAcions.clearJob(tb.jobId)
-        }
-        if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playStatus) != -1) {
-
-                let userTrack = {
-                    _id: playerInfo._id,
-                    username: playerInfo.username,
-                    cards: playerInfo.cards,
-                    seatIndex: playerInfo.seatIndex,
-                    totalBet: playerInfo.totalBet,
-                    playStatus: "leaveTable"
-                }
-                updateData["$push"] = {
-                    "gameTracks": userTrack
-                }
-            }
-        }
-    }
 
     logger.info("leaveTable updateData : ", wh, updateData);
 
@@ -92,8 +68,8 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await RouletteTables.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVE_TABLE, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVE_TABLE, response);
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLEROULETTE, response);
+    //commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLEROULETTE, response);
 
 
     await this.manageOnUserLeave(tbInfo);
@@ -105,22 +81,16 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
-    if (tb.gameState == "RoundStated" || tb.gameState == "CollectBoot") {
-        if (playerInGame.length >= 2) {
-            await roundStartActions.nextUserTurnstart(tb, false);
-        } else if (playerInGame.length == 1) {
-            await gameFinishActions.lastUserWinnerDeclareCall(tb);
+    
+    if (playerInGame.length == 0 && tb.activePlayer == 0) {
+        let wh = {
+            _id: MongoID(tb._id.toString())
         }
-    } else if (["", "SpinnerGameStartTimer"].indexOf(tb.gameState) != -1) {
-        if (playerInGame.length == 0 && tb.activePlayer == 0) {
-            let wh = {
-                _id: MongoID(tb._id.toString())
-            }
-            await RouletteTables.deleteOne(wh);
-        } else if (tb.activePlayer == 0) {
-            this.leaveSingleUser(tb._id)
-        }
+        await RouletteTables.deleteOne(wh);
+    } else if (tb.activePlayer == 0) {
+        this.leaveSingleUser(tb._id)
     }
+    
 
 }
 

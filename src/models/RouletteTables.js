@@ -20,7 +20,9 @@ const PlayingTablesSchema = new Schema({
     betamount:[],
     totalbet:{ type: Number, default: 0 },
     TableObject:[],
-    uuid:{ type: String, default: "" }
+    uuid:{ type: String, default: "" },
+    whichTable:{ type: String, default: "" }
+
 }, { versionKey: false });
 
 module.exports = mongoose.model(collectionName, PlayingTablesSchema, collectionName);
