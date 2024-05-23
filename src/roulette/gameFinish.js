@@ -120,7 +120,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playStatus == "win") {
-                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Sorat Win", tabInfo);
+                await walletActions.addWalletAdmin(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Sorat Win", tabInfo);
             }
         }
 

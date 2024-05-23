@@ -12,7 +12,7 @@ const RouletteTables = mongoose.model('RouletteTables');
 const MongoID = mongoose.Types.ObjectId;
 
 module.exports.
-userReconnectSpinner = async (requestData, client) => {
+reconnect = async (requestData, client) => {
         try {
             if (requestData.playerId !== '' && requestData.playerId !== null && requestData.playerId !== undefined) {
                 let gwh = {
@@ -29,24 +29,25 @@ userReconnectSpinner = async (requestData, client) => {
                     ...newData,
                 };
                 logger.info('Reconnect Final Data => ', finaldata);
-                let responseResult = await filterBeforeSendSPEvent(result);
+                // let responseResult = await filterBeforeSendSPEvent(result);
 
-                if (requestData.tableId == '') {
-                    const response = {
-                        login: true,
-                        ...responseResult,
-                        sceneName: CONST.DASHBOARD,
+                // if (requestData.tableId == '') {
+                //     const response = {
+                //         login: true,
+                //         ...responseResult,
+                //         sceneName: CONST.DASHBOARD,
 
-                    };
+                //     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
-                    return false;
-                }
+                //     sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, response);
+                //     return false;
+                // }
 
 
                 //when player in table
                 const wh = {
                     _id: MongoID(client.tbid),
+                    'playerInfo._id': MongoID(requestData.playerId),
                 };
 
                 const project = {};
@@ -59,7 +60,7 @@ userReconnectSpinner = async (requestData, client) => {
                         sceneName: CONST.DASHBOARD,
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, response);
                     return false;
                 }
 
@@ -73,34 +74,70 @@ userReconnectSpinner = async (requestData, client) => {
                     tableid: tabInfo._id,
                     gamePlayType: tabInfo.gamePlayType,
                     sceneName: CONST.GAMEPLAY,
+                    whichTable : tabInfo.whichTable
                 };
 
-                if (tabInfo.gameState === "SpinnerGameStartTimer") {
-                    let currentDateTime = new Date();
-                    let time = currentDateTime.getSeconds();
+                if (tabInfo.gameState === "StartSpinner") {
+                    // let currentDateTime = new Date();
+                    // let time = currentDateTime.getSeconds();
 
+                    // let turnTime = new Date(tabInfo.turnStartTimer);
+                    // let Gtime = turnTime.getSeconds();
+                    // let diff = Gtime - time;
+
+                    let currentDateTime = new Date();
                     let turnTime = new Date(tabInfo.turnStartTimer);
-                    let Gtime = turnTime.getSeconds();
-                    let diff = Gtime - time;
+
+                    let diff = (currentDateTime - turnTime);
+
+                    console.log("diff ",diff)
+                    console.log("currentDateTime ",currentDateTime)
+                    console.log("turnTime ",turnTime)
 
                     const responseRS = {
                         ...response,
-                        currentTurnTimer: diff,
+                        currentTurnUserSeatIndex: tabInfo.turnSeatIndex,
+                        currentTurnTimer: (12 - (diff/1000)),
                     };
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRS);
-                } else if (tabInfo.gameState === "SpinnerGameStartTimer") {
+                    sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, responseRS);
+                } else if (tabInfo.gameState === "RouletteGameStartTimer") { //RouletteGameStartTimer
+                    // let currentDateTime = new Date();
+                    // let time = currentDateTime.getSeconds();
+                    // let turnTime = new Date(tabInfo.gameTimer.GST);
+                    // let Gtime = turnTime.getSeconds();
+                    // let diff = Gtime - time;
+
+                    // const responseRST = {
+                    //     ...response,
+                    //     timer: diff,
+                    // };
+
+                    // sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, responseRST);
+
                     let currentDateTime = new Date();
-                    let time = currentDateTime.getSeconds();
                     let turnTime = new Date(tabInfo.gameTimer.GST);
-                    let Gtime = turnTime.getSeconds();
-                    let diff = Gtime - time;
+
+                    let diff = (currentDateTime - turnTime);
+
+                    console.log("diff ",diff)
+                    console.log("currentDateTime ",currentDateTime)
+                    console.log("turnTime ",turnTime)
+
+                    let roundTime = CONST.BLUETABLETIMER;
+
+                    if(tabInfo.whichTable == "blueTable")
+                        roundTime = CONST.BLUETABLETIMER+2;
+                    else
+                        roundTime = CONST.GREENTABLETIMER+2;
+
 
                     const responseRST = {
                         ...response,
-                        timer: diff,
+                        timer: (roundTime-(diff/1000)),
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRST);
+                    sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, responseRST);
+                    
                 } else if (tabInfo.gameState === "WinnerDecalre") {
                     // const scoreBoard = tabInfo.playersScoreBoard;
                     // let winnerViewResponse = winnerViewResponseFilter(scoreBoard);
@@ -117,9 +154,9 @@ userReconnectSpinner = async (requestData, client) => {
                         // GSB: responseRSB,
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRE);
+                    sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, responseRE);
                 } else {
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.RECONNECTROULETTE, response);
                 }
                 return;
             } else {
@@ -127,7 +164,7 @@ userReconnectSpinner = async (requestData, client) => {
                     login: false,
                     sceneName: CONST.DASHBOARD,
                 };
-                sendDirectEvent(client.id, CONST.RECONNECT, response, {
+                sendDirectEvent(client.id, CONST.RECONNECTROULETTE, response, {
                     flag: false,
                     msg: 'Player Id not found!',
                 });

@@ -20,7 +20,7 @@ module.exports.disconnectTableHandle = async (client) => {
         _id: MongoID(client.tbid),
       };
 
-      const tabInfo = await PlayingTables.findOne(whe, {}).lean();
+      const tabInfo = await RouletteTables.findOne(whe, {}).lean();
       logger.info('Find Table when user Disconnect =>', tabInfo);
 
       if (tabInfo === null) return false;
@@ -36,7 +36,7 @@ module.exports.disconnectTableHandle = async (client) => {
           'playerInfo.$': 1,
         };
 
-        const tbInfo = await PlayingTables.findOne(wh, project);
+        const tbInfo = await RouletteTables.findOne(wh, project);
         logger.info('check user rejoin status', tbInfo);
 
         if (tbInfo !== null && tabInfo.playerInfo[0].rejoin !== true) {
