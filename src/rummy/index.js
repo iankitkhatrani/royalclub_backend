@@ -1,4 +1,5 @@
 const { joinTable } = require('./joinTable');
+const { rummyGetBetList } = require('./betList');
 const { reconnect } = require('../common-function/reconnect');
 const { leaveTable, playerSwitch } = require('./leaveTable');
 const { getBetList, getPoolBet, getDealList } = require('../common-function/betList');
@@ -28,4 +29,5 @@ module.exports = {
   getWalletDetails: getWalletDetails,
   findDisconnectTable: findDisconnectTable,
   disconnectTableHandle: disconnectTableHandle,
+  rummyGetBetList: rummyGetBetList
 };

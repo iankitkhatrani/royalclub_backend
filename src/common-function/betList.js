@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const BetLists = mongoose.model('betLists');
+const BetLists = mongoose.model('betList');
 // const PoolBetLists = mongoose.model('poolbetLists');
 // const DealBetLists = mongoose.model('dealbetLists');
 

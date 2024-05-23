@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const BetLists = mongoose.model('betLists');
+const BetLists = mongoose.model('rummyBetList');
 const Users = mongoose.model('users');
 const PlayingTables = mongoose.model('rummyPlayingTables');
 

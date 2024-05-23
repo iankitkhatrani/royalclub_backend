@@ -12,7 +12,7 @@ const CONST = require("../../constant");
 const _ = require("underscore");
 // let io = require('socket.io-client')
 const schedule = require('node-schedule');
-const { getRandomNumber } = require("./helperFunction");
+const { getRandomNumber } = require("../helper/helperFunction");
 const roundStartActions = require('../rummy/roundStart');
 const checkWinnerActions = require('../rummy/checkWinner');
 

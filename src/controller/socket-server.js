@@ -162,10 +162,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-
-
-                    //====================================
-
                     // JANTA GAME Event 
                     case CONST.JANTA_GAME_PLAYGAME: {
                         socket.uid = payload.data.playerId;
@@ -180,7 +176,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-
                     case CONST.LEAVETABLESJANTA: {
                         await gamePlayActionsJanta.leaveTable(payload.data, socket);
                         break;
@@ -190,7 +185,6 @@ myIo.init = function (server) {
                         await userReconnectJanta(payload.data, socket);
                         break;
                     }
-                    //=========================================================================================
 
 
                     // SPinner GAME Event 
@@ -217,8 +211,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-
-
                     case CONST.LEAVETABLESPINNER: {
                         await gamePlayActionsRoulette.leaveTable(payload.data, socket);
                         break;
@@ -229,9 +221,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-
-                    //====================================
-
                     //====================================
 
                     case CONST.BANNER: {
@@ -239,7 +228,6 @@ myIo.init = function (server) {
                         sendEvent(socket, CONST.BANNER, result);
                         break;
                     }
-
 
                     case CONST.JOINLUDO: {
                         socket.uid = payload.data.playerId;
@@ -250,13 +238,11 @@ myIo.init = function (server) {
                     }
 
                     case CONST.RollDice: {
-
                         await gamePlayActionsLudo.RollDice(payload.data, socket);
                         break;
                     }
 
                     case CONST.MOVEKUKARI: {
-
                         await gamePlayActionsLudo.MOVEKUKARI(payload.data, socket);
                         break;
                     }
@@ -264,7 +250,7 @@ myIo.init = function (server) {
                     //Rummy ------------------------------
                     case CONST.R_GET_BET_LIST: {
                         try {
-                            await gamePlayActions.getBetList(payload.data, socket);
+                            await gamePlayActionsRummy.rummyGetBetList(payload.data, socket);
                         } catch (error) {
                             logger.error('socketServer.js GET_BET_LIST error => ', error);
                         }

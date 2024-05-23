@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const collectionName = 'betLists';
+const collectionName = 'rummyBetList';
 
 const BetListSchema = new Schema(
   {
