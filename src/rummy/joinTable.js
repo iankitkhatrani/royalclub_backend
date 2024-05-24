@@ -21,7 +21,7 @@ module.exports.joinTable = async (requestData, socket) => {
     // logger.info("requestData joinTable entryFee", typeof entryFee, entryFee)
 
     if (typeof socket.uid === 'undefined') {
-      sendEvent(socket, CONST.JOIN_TABLE, requestData, {
+      sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
         flag: false,
         msg: 'Please restart game!!',
       });
@@ -76,7 +76,7 @@ module.exports.joinTable = async (requestData, socket) => {
       return await this.findTable(betInfo, socket, userInfo);
     }
   } catch (error) {
-    sendEvent(socket, CONST.JOIN_TABLE, requestData, {
+    sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
       flag: false,
       msg: 'Something Went Wrong!!',
     });
@@ -285,10 +285,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
       diff += CONST.gameStartTime;
     }
 
-    sendEvent(socket, CONST.JOIN_SIGN_UP, {});
+    sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
 
     //GTI event
-    sendEvent(socket, CONST.GAME_TABLE_INFO, {
+    sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
       gst: diff,
       pi: tableInfo.playerInfo,
@@ -302,10 +302,11 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
     });
 
     //JT event
-    if (userInfo.isBot == undefined || userInfo.isBot == false)
+    if (userInfo.isBot == undefined || userInfo.isBot == false) {
       socket.join(tableInfo._id.toString());
+    }
 
-    sendDirectEvent(socket.tbid.toString(), CONST.JOIN_TABLE, {
+    sendDirectEvent(socket.tbid.toString(), CONST.R_JOIN_TABLE, {
       ap: tableInfo.activePlayer,
       playerDetail: tableInfo.playerInfo[seatIndex],
     });
@@ -330,6 +331,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
     }
 
 
+    /*
     if (tableInfo.activePlayer == 1) {
       setTimeout(() => {
         if (tableInfo.maxSeat === 2 && tableInfo.activePlayer < 2) {
@@ -353,7 +355,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
         }, 1000)
       }
     }
-
+*/
 
   } catch (error) {
     logger.error('joinTable.js findEmptySeatAndUserSeat error=> ', error, table);

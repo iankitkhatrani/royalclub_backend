@@ -28,7 +28,7 @@ module.exports.gameTimerStart = async (tb) => {
     });
 
     let roundTime = CONST.gameStartTime;
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.GAME_TIME_START, { sec: CONST.gameStartTime });
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_GAME_TIME_START, { sec: CONST.gameStartTime });
 
     let tableId = tableInfo._id;
     let jobId = CONST.GAME_TIME_START + ':' + tableId;

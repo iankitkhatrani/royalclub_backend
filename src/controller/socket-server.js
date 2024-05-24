@@ -294,7 +294,7 @@ myIo.init = function (server) {
 
                             switch (payload.data.gamePlayType) {
                                 case CONST.GAME_TYPE.POINT_RUMMY:
-                                    await gamePlayActions.joinTable(payload.data, socket);
+                                    await gamePlayActionsRummy.joinTable(payload.data, socket);
                                     break;
                             }
                         } catch (error) {

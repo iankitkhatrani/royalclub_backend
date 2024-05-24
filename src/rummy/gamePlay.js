@@ -17,7 +17,7 @@ const { ifSocketDefine, shuffle } = require('../helper/helperFunction');
 
 module.exports.pickCard = async (requestData, client) => {
   try {
-    if (!ifSocketDefine(requestData, client, CONST.PICK_CARD)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_PICK_CARD)) {
       return false;
     }
     if (typeof client.pickCard !== 'undefined' && client.pickCard) {
@@ -42,13 +42,13 @@ module.exports.pickCard = async (requestData, client) => {
     if (tableInfo.turnDone) {
       logger.info('pickCard : client.su ::', client.seatIndex);
       delete client.pickCard;
-      commandAcions.sendDirectEvent(client.sck, CONST.PICK_CARD, requestData, false, 'Turn is already taken!');
+      commandAcions.sendDirectEvent(client.sck, CONST.R_PICK_CARD, requestData, false, 'Turn is already taken!');
       return false;
     }
 
     if (parseInt(tableInfo.currentPlayerTurnIndex) !== parseInt(client.seatIndex)) {
       delete client.pickCard;
-      commandAcions.sendDirectEvent(client.sck, CONST.PICK_CARD, requestData, false, "It's not your turn!");
+      commandAcions.sendDirectEvent(client.sck, CONST.R_PICK_CARD, requestData, false, "It's not your turn!");
       return false;
     }
 
@@ -71,7 +71,7 @@ module.exports.pickCard = async (requestData, client) => {
       if ((words[0] === 'J' || tableInfo.wildCard.split('-')[1] === words[1]) && tableInfo.openDeck.length != 0) {
         logger.info("JOKER");
         delete client.pickCard;
-        commandAcions.sendDirectEvent(client.sck, CONST.PICK_CARD, requestData, false, "You can't pick the joker!");
+        commandAcions.sendDirectEvent(client.sck, CONST.R_PICK_CARD, requestData, false, "You can't pick the joker!");
         return false;
       }
 
@@ -148,7 +148,7 @@ module.exports.pickCard = async (requestData, client) => {
       deck: requestData.deck,
       closedecklength: tableInfo.closeDeck.length,
     };
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.PICK_CARD, response);
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_PICK_CARD, response);
 
     delete client.pickCard;
     return true;
@@ -159,7 +159,7 @@ module.exports.pickCard = async (requestData, client) => {
 
 module.exports.disCard = async (requestData, client) => {
   try {
-    if (!ifSocketDefine(requestData, client, CONST.DISCARD)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_DISCARD)) {
       return false;
     }
 
@@ -191,13 +191,13 @@ module.exports.disCard = async (requestData, client) => {
     if (tabInfo.turnDone) {
       logger.info('disc card : client.su ::', client.seatIndex);
       delete client.disCard;
-      commandAcions.sendDirectEvent(client.sck, CONST.DISCARD, requestData, false, 'Turn is already taken!');
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DISCARD, requestData, false, 'Turn is already taken!');
       return false;
     }
 
     if (tabInfo.currentPlayerTurnIndex !== client.seatIndex) {
       delete client.disCard;
-      commandAcions.sendDirectEvent(client.sck, CONST.DISCARD, requestData, false, "It's not your turn!");
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DISCARD, requestData, false, "It's not your turn!");
       return false;
     }
 
@@ -244,7 +244,7 @@ module.exports.disCard = async (requestData, client) => {
     };
 
 
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.DISCARD, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.R_DISCARD, response);
 
     delete client.disCard;
     let activePlayerInRound = await getPlayingUserInRound(tb.playerInfo);
@@ -263,7 +263,7 @@ module.exports.disCard = async (requestData, client) => {
 module.exports.cardGroup = async (requestData, client) => {
   try {
 
-    if (!ifSocketDefine(requestData, client, CONST.CARD_GROUP)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_CARD_GROUP)) {
       return false;
     }
 
@@ -322,7 +322,7 @@ module.exports.declare = async (requestData, client) => {
   try {
     logger.info('declare Request Data =>', requestData);
 
-    if (client.isbot == undefined && !ifSocketDefine(requestData, client, CONST.DECLARE)) {
+    if (client.isbot == undefined && !ifSocketDefine(requestData, client, CONST.R_DECLARE)) {
       return false;
     }
 
@@ -347,13 +347,13 @@ module.exports.declare = async (requestData, client) => {
     if (tableInfo.turnDone) {
       logger.info('Player Declare : client.su ::', client.seatIndex);
       delete client.declare;
-      commandAcions.sendDirectEvent(client.sck, CONST.DECLARE, requestData, false, 'Turn is already taken!');
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DECLARE, requestData, false, 'Turn is already taken!');
       return false;
     }
     if (tableInfo.currentPlayerTurnIndex !== client.seatIndex) {
       logger.info('Player Declare : client.su ::', client.seatIndex);
       delete client.declare;
-      commandAcions.sendDirectEvent(client.sck, CONST.DECLARE, requestData, false, "It's not your turn!");
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DECLARE, requestData, false, "It's not your turn!");
       return false;
     }
 
@@ -394,9 +394,9 @@ module.exports.declare = async (requestData, client) => {
     });
     //logger.info('Player InValid tb : ', tb);
 
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.DECLARE, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.R_DECLARE, response);
 
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.DECLARE_TIMER_SET, { pi: playerDetails._id });
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.R_DECLARE_TIMER_SET, { pi: playerDetails._id });
 
     // logger.info("playerInGame ", playerInGame)
     roundStartActions.DealerRobotLogicCard(playerInGame, parseInt(tableInfo.wildCard.split("-")[1]), tb._id.toString())
@@ -405,7 +405,7 @@ module.exports.declare = async (requestData, client) => {
 
     let roundTime = CONST.finishTimer;
     let tableId = tb._id;
-    let finishJobId = CONST.DECLARE_TIMER_SET + ':' + tableId;
+    let finishJobId = CONST.R_DECLARE_TIMER_SET + ':' + tableId;
     let delay = commandAcions.AddTime(roundTime);
 
     await commandAcions.setDelay(finishJobId, new Date(delay));
@@ -511,7 +511,7 @@ module.exports.invalidDeclare = async (table, client) => {
       discardCard: tabInfo.discardCard,
     };
 
-    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.INVALID_DECLARE, response);
+    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.R_INVALID_DECLARE, response);
 
     delete client.invalidDeclare;
 
@@ -569,7 +569,7 @@ module.exports.invalidDeclare = async (table, client) => {
 
 module.exports.playerFinish = async (requestData, client) => {
   try {
-    if (!ifSocketDefine(requestData, client, CONST.FINISHED)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_FINISHED)) {
       return false;
     }
 
@@ -641,7 +641,7 @@ module.exports.playerFinish = async (requestData, client) => {
 module.exports.playerDrop = async (requestData, client) => {
   try {
     if (typeof client.tbid === 'undefined' || typeof client.uid === 'undefined' || typeof client.seatIndex === 'undefined') {
-      commandAcions.sendDirectEvent(client.sck, CONST.DROPPED, requestData, false, 'User session not set, please restart game!');
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DROPPED, requestData, false, 'User session not set, please restart game!');
       return false;
     }
     if (typeof client.drop !== 'undefined' && client.drop) {
@@ -666,7 +666,7 @@ module.exports.playerDrop = async (requestData, client) => {
     if (tabInfo.currentPlayerTurnIndex !== client.seatIndex) {
       logger.info('playerDrop : client.su ::', client.seatIndex);
       delete client.drop;
-      commandAcions.sendDirectEvent(client.sck, CONST.DROPPED, requestData, false, "It's not your turn!", 'Error!');
+      commandAcions.sendDirectEvent(client.sck, CONST.R_DROPPED, requestData, false, "It's not your turn!", 'Error!');
       return false;
     }
 
@@ -715,7 +715,7 @@ module.exports.playerDrop = async (requestData, client) => {
       status: playerInfo.status,
       discardCard: tabInfo.discardCard,
     };
-    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.DROPPED, response);
+    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.R_DROPPED, response);
 
     let userTrack = {
       _id: playerInfo._id,
@@ -811,9 +811,9 @@ module.exports.playerLastScoreBoard = async (requestData, client) => {
     };
 
     if (length !== 0) {
-      commandAcions.sendDirectEvent(client.sck, CONST.LAST_GAME_SCORE_BOARD, tabInfo.lastGameScoreBoard[length - 1]);
+      commandAcions.sendDirectEvent(client.sck, CONST.R_LAST_GAME_SCORE_BOARD, tabInfo.lastGameScoreBoard[length - 1]);
     } else {
-      commandAcions.sendDirectEvent(client.sck, CONST.LAST_GAME_SCORE_BOARD, msg);
+      commandAcions.sendDirectEvent(client.sck, CONST.R_LAST_GAME_SCORE_BOARD, msg);
     }
 
     return true;
@@ -824,7 +824,7 @@ module.exports.playerLastScoreBoard = async (requestData, client) => {
 
 module.exports.playerFinishDeclare = async (requestData, client) => {
   try {
-    if (!ifSocketDefine(requestData, client, CONST.PLAYER_FINISH_DECLARE_TIMER)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_PLAYER_FINISH_DECLARE_TIMER)) {
       return false;
     }
 

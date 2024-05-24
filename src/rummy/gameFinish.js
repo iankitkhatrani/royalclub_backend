@@ -112,13 +112,13 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
     let tblInfo = await PlayingTables.findOneAndUpdate(qu, updatedata, { new: true });
     logger.info('set gamePlaytracks and pointPoolTable =>', tblInfo);
 
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.WIN, response);
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_WIN, response);
 
     const jobId = commandAcions.GetRandomString(10);
     const delay = commandAcions.AddTime(4);
     await commandAcions.setDelay(jobId, new Date(delay));
 
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.GAME_SCORE_BOARD, GSBResponse);
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_GAME_SCORE_BOARD, GSBResponse);
 
     const gamePlayData = JSON.parse(JSON.stringify(tableInfo));
     const rest = omit(gamePlayData, ['_id']);
@@ -227,7 +227,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
       totalLostChips: tableInfo.tableAmount,
     };
 
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.WIN, response);
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_WIN, response);
     const gsbResponse = { ...response, wildCard: tableInfo.wildCard, gamePlayType: tableInfo.gamePlayType };
 
     const addLastScoreBoard = tableInfo.lastGameScoreBoard.push(gsbResponse);
@@ -251,7 +251,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
     let delay = commandAcions.AddTime(4);
     await commandAcions.setDelay(jobId, new Date(delay));
 
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.GAME_SCORE_BOARD, gsbResponse);
+    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_GAME_SCORE_BOARD, gsbResponse);
 
     let gamePlayData = JSON.parse(JSON.stringify(tableInfo));
     const rest = omit(gamePlayData, ['_id']);

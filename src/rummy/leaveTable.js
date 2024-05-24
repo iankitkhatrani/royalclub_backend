@@ -19,7 +19,7 @@ module.exports.leaveTable = async (requestInfo, client) => {
 
     requestData = requestData !== null ? requestData : {};
 
-    if (!ifSocketDefine(requestData, client, CONST.LEAVE_TABLE)) {
+    if (!ifSocketDefine(requestData, client, CONST.R_LEAVE_TABLE)) {
       return false;
     }
 
@@ -163,8 +163,8 @@ module.exports.leaveTable = async (requestInfo, client) => {
       ap: activePlayerInRound.length,
     };
 
-    sendDirectEvent(client.sck.toString(), CONST.LEAVE, response);
-    sendEventInTable(tbInfo._id.toString(), CONST.LEAVE, response);
+    sendDirectEvent(client.sck.toString(), CONST.R_LEAVE, response);
+    sendEventInTable(tbInfo._id.toString(), CONST.R_LEAVE, response);
 
     let userDetails = await Users.findOne({
       _id: MongoID(playerInfo._id.toString()),
