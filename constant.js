@@ -251,6 +251,7 @@ const CONST = {
   R_GAME_SCORE_BOARD: 'RGSB',
   R_LAST_GAME_SCORE_BOARD: 'RLGSB',
   R_LEAVE_TABLE: "RLT",
+  R_RECONNECT: "RRE",
 
   // Timer
   userTurnTimer: 30,

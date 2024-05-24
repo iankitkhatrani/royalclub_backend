@@ -23,6 +23,7 @@ const { registerUser } = require('../helper/signups/signupValidation');
 const mainCtrl = require('./mainController');
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
 const { userReconnect } = require('../teenpatti/reConnectFunction');
+const rummyRe = require('../rummy/reConnectFunction');
 const { getBannerList } = require('./adminController');
 
 
@@ -163,6 +164,8 @@ myIo.init = function (server) {
                         await userReconnect(payload.data, socket);
                         break;
                     }
+
+
 
                     // JANTA GAME Event 
                     case CONST.JANTA_GAME_PLAYGAME: {
@@ -418,6 +421,11 @@ myIo.init = function (server) {
                         } catch (error) {
                             logger.error('socketServer.js LEAVE Table error => ', error);
                         }
+                        break;
+                    }
+
+                    case CONST.R_RECONNECT: {
+                        await rummyRe.userReconnect(payload.data, socket);
                         break;
                     }
 
