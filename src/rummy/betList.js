@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const CONST = require("../../constant");
 const logger = require('../../logger');
+const { sendEvent } = require('../helper/socketFunctions');
 const RummyBetLists = mongoose.model('rummyBetList');
 
 module.exports.rummyGetBetList = async (requestData, socket) => {

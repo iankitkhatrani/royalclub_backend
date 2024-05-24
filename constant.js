@@ -306,6 +306,13 @@ const CONST = {
     SIGNUP: 'signup',
   },
 
+  
+  GAME_TYPE: {
+    POINT_RUMMY: 'pointrummy',
+    POOL_RUMMY: 'poolrummy',
+    DEAL_RUMMY: 'dealrummy',
+  },
+
   COUNTRY_CODE: process.env.COUNTRY_CODE || '+91',
 
   MONTHS: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
