@@ -231,6 +231,8 @@ const CONST = {
   //Rummy
   R_GET_BET_LIST: "RGBL",
   R_JOIN_SIGN_UP: "RSP",
+  R_JOIN_TABLE: "RJT",
+  R_GAME_TABLE_INFO: 'RGTI',
   R_PICK_CARD: "RPIC",
   R_DISCARD: "RDIC",
   R_CARD_GROUP: "RCG",
@@ -306,7 +308,7 @@ const CONST = {
     SIGNUP: 'signup',
   },
 
-  
+
   GAME_TYPE: {
     POINT_RUMMY: 'pointrummy',
     POOL_RUMMY: 'poolrummy',

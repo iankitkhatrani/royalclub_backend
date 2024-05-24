@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTables");
-const BetLists = mongoose.model("betList")
+const PlayingTables = mongoose.model("rummyPlayingTables");
+const BetLists = mongoose.model("rummyBetList")
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
@@ -14,8 +14,10 @@ const botLogic = require("./botLogic");
 
 module.exports.joinTable = async (requestData, client) => {
     try {
+        logger.info("requestData-->", requestData);
+
         if (typeof client.uid == "undefined") {
-            sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please restart game!!");
+            sendEvent(client, CONST.R_JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
         }
         if (typeof client.JT != "undefined" && client.JT) return false;
@@ -36,7 +38,7 @@ module.exports.joinTable = async (requestData, client) => {
 
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
         if (Number(totalWallet) < Number(BetInfo.entryFee)) {
-            sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please add Wallet!!");
+            sendEvent(client, CONST.R_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
             return false;
         }
@@ -48,7 +50,7 @@ module.exports.joinTable = async (requestData, client) => {
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
         if (tableInfo != null) {
-            sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Already In playing table!!");
+            sendEvent(client, CONST.R_JOIN_TABLE, requestData, false, "Already In playing table!!");
             delete client.JT
             return false;
         }
@@ -160,7 +162,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerSocketId: client.id,
             playerLostChips: 0,
             isSee: false,
-            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0
+            Iscom: userInfo.Iscom != undefined ? userInfo.Iscom : 0
         }
 
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);
@@ -207,10 +209,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             diff += CONST.gameStartTime;
         }
 
-        sendEvent(client, CONST.JOIN_SIGN_UP, {});
+        sendEvent(client, CONST.R_JOIN_SIGN_UP, {});
 
         //GTI event
-        sendEvent(client, CONST.GAME_TABLE_INFO, {
+        sendEvent(client, CONST.R_GAME_TABLE_INFO, {
             ssi: tableInfo.playerInfo[seatIndex].seatIndex,
             gst: diff,
             pi: tableInfo.playerInfo,
@@ -223,10 +225,10 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             tableAmount: tableInfo.tableAmount,
         });
 
-        if(userInfo.Iscom == undefined || userInfo.Iscom == 0)
-        client.join(tableInfo._id.toString());
+        if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
+            client.join(tableInfo._id.toString());
 
-        sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
+        sendDirectEvent(client.tbid.toString(), CONST.R_JOIN_TABLE, {
             ap: tableInfo.activePlayer,
             playerDetail: tableInfo.playerInfo[seatIndex],
         });
@@ -239,12 +241,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             clearJob(jobId)
 
             await gameStartActions.gameTimerStart(tableInfo);
-        }else{
+        } else {
 
-            setTimeout(()=>{
-                botLogic.JoinRobot(tableInfo,betInfo)
-            },2000)
-  
+            setTimeout(() => {
+                botLogic.JoinRobot(tableInfo, betInfo)
+            }, 2000)
+
         }
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);

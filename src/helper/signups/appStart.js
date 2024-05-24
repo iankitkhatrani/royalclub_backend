@@ -5,7 +5,6 @@ const IdCounter = mongoose.model('idCounter');
 //const bcrypt = require('bcrypt');
 const CONST = require('../../../constant');
 const logger = require('../../../logger');
-const { createClient } = require('redis');
 const commandAcions = require('../socketFunctions');
 
 module.exports.appLunchDetails = async (requestData, client) => {
@@ -168,43 +167,43 @@ module.exports.getCountDetails = async (type) => {
 };
 
 module.exports.userSesssionSet = async (userData, client) => {
-  //logger.info('Redis User Session ', userData);
   try {
+    // Validate userData
+    if (!userData || typeof userData !== 'object' || !userData._id) {
+      logger.error('Invalid userData. Missing required fields.');
+      return;
+    }
+
+    // Validate client
+    if (!client || typeof client !== 'object' || !client.id) {
+      logger.error('Invalid client. Missing required fields.');
+      return
+    }
+
+    //update user socket Id
+    const updateSocketId = await GameUser.findOneAndUpdate(
+      { _id: MongoID(userData._id) },
+      { $set: { sckId: client.id } },
+      { new: true }
+    );
+
+    logger.info('User Update Socket Id  :: ', updateSocketId);
+
+    // Set user session in Redis
     client.uid = userData._id.toString();
     client.uniqueId = userData.uniqueId;
 
-    // eslint-disable-next-line no-unused-vars
-    let redisSet = {
-      _id: userData._id.toString(),
-      uid: userData.id,
-      mobileNumber: userData.mobileNumber,
-      uniqueId: userData.uniqueId,
-    };
-
     const { _id, uniqueId, mobileNumber, email } = userData;
-    let rdlClient = createClient();
-    rdlClient.hmset(`socket-${_id.toString()}`, 'socketId', client.id.toString(), 'userId', _id.toString(), 'mobileNumber', mobileNumber, 'uniqueId', uniqueId, 'email', email);
 
-    let wh = {
-      _id: userData._id,
-    };
+    // Set user session data in Redis hash
+    // await rClient.hmset(`socket-${_id.toString()}`, 'socketId', client.id.toString(), 'userId', _id.toString(), 'mobileNumber', mobileNumber, 'uniqueId', uniqueId, 'email', email);
 
-    let update = {
-      $set: {
-        sckId: client.id,
-      },
-
-    };
-    logger.info('\nuserSesssionSet wh : ', wh, update);
-
-    let res = await GameUser.findOneAndUpdate(wh, update, { upsert: true, new: true });
-    logger.info('\n userSesssionSet result  : ', res);
     return true;
-  } catch (e) {
-    logger.info('user Session -->', e);
+  } catch (error) {
+    logger.error('Error setting user session:', error);
+    return false;
   }
 };
-
 module.exports.filterBeforeSendSPEvent = async (userData) => {
   //logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', userData);
 
