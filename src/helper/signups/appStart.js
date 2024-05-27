@@ -205,7 +205,7 @@ module.exports.userSesssionSet = async (userData, client) => {
   }
 };
 module.exports.filterBeforeSendSPEvent = async (userData) => {
-  //logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', userData);
+  logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', userData);
 
   let res = {
     _id: userData._id,
