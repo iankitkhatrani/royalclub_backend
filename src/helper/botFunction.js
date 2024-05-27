@@ -227,7 +227,7 @@ const picOld = async (tableInfo, playerId, gamePlayType, deck) => {
                         // logger.info('select Discard followers Card => ', selectDiscardCard.followers + ' select Discard followers Card => ' + selectDiscardCard.pair);
 
                         // const isWinner = checkPairAndFollowers(playerCards);
-                        // console.info('isWinner => ', isWinner);
+                        // logger.info('isWinner => ', isWinner);
 
                         // const throwCard = selectThrowcard(playerCards, selectDiscardCard.followers, selectDiscardCard.pair)
                         logger.info('DIS throwCard => ', throwCard);
@@ -699,7 +699,7 @@ const pic = async (tableInfo, playerId, gamePlayType, deck) => {
                                                 // logger.info('select Discard followers Card => ', selectDiscardCard.followers + ' select Discard followers Card => ' + selectDiscardCard.pair);
 
                                                 // const isWinner = checkPairAndFollowers(playerCards);
-                                                // console.info('isWinner => ', isWinner);
+                                                // logger.info('isWinner => ', isWinner);
 
                                                 // const throwCard = selectThrowcard(playerCards, selectDiscardCard.followers, selectDiscardCard.pair)
                                                 logger.info('DIS throwCard => ', throwCard);
@@ -1120,7 +1120,7 @@ const easyPic = async (tableInfo, playerId, gamePlayType, deck) => {
                                                 // logger.info('select Discard followers Card => ', selectDiscardCard.followers + ' select Discard followers Card => ' + selectDiscardCard.pair);
     
                                                 // const isWinner = checkPairAndFollowers(playerCards);
-                                                // console.info('isWinner => ', isWinner);
+                                                // logger.info('isWinner => ', isWinner);
     
                                                 // const throwCard = selectThrowcard(playerCards, selectDiscardCard.followers, selectDiscardCard.pair)
                                                 logger.info('DIS throwCard => ', throwCard);
@@ -1297,7 +1297,7 @@ function getRandomInt(min, max) {
 const checkCardMatched = (card, checkCard) => {
     try {
 
-        console.info('checkCard => ', checkCard);
+        logger.info('checkCard => ', checkCard);
         let cardType = []
         let cardNumber = []
         let status = false;
@@ -1411,7 +1411,7 @@ const convertCardPairAndFollowers = (cards) => {
         dwd = dwd.concat(cardNumber)
         dwd.sort(function (a, b) { return a - b });
         cardNumber.sort(function (a, b) { return a - b });
-        console.info('After Copy and dwd => ', dwd);
+        logger.info('After Copy and dwd => ', dwd);
 
         for (let i = 0; i < dwd.length - 1; i++) {
             let dif = dwd[i] - dwd[i + 1];
@@ -1426,7 +1426,7 @@ const convertCardPairAndFollowers = (cards) => {
         }
         for (let i = 0; i < cardNumber.length - 1; i++) {
             let dif = cardNumber[i] - cardNumber[i + 1];
-            console.info('dif Followers=> ', dif);
+            logger.info('dif Followers=> ', dif);
 
             if (dif !== 0) {
                 followers.push(cardNumber[i], cardNumber[i + 1])
@@ -1469,7 +1469,7 @@ const checkPairAndFollowers = (card) => {
     dwd = dwd.concat(cardNumber)
     dwd.sort(function (a, b) { return a - b });
     cardNumber.sort(function (a, b) { return a - b });
-    console.info('After Copy and dwd => ', dwd);
+    logger.info('After Copy and dwd => ', dwd);
 
     for (let i = 0; i < dwd.length - 1; i++) {
         let dif = dwd[i] - dwd[i + 1];
@@ -1492,7 +1492,7 @@ const checkPairAndFollowers = (card) => {
 
     for (let i = 0; i < cardNumber.length - 1; i++) {
         let dif = cardNumber[i] - cardNumber[i + 1];
-        console.info('dif Followers=> ', dif);
+        logger.info('dif Followers=> ', dif);
 
         if (cardNumber[i] > 10) {
             if (dif == -1 || dif == -2) {
@@ -1511,10 +1511,8 @@ const checkPairAndFollowers = (card) => {
 
     }
 
-
-
-    console.info('<= pair => ', pair);
-    console.info('<= followers => ', followers);
+    logger.info('<= pair => ', pair);
+    logger.info('<= followers => ', followers);
 
     for (let i = 0; i < pair.length - 1; i++) {
         let dif = pair[i] - pair[i + 1];
@@ -1578,10 +1576,10 @@ const checkPairAndFollowers = (card) => {
 
 const selectThrowcard = (playerCards, followersCard, pair) => {
     let throwCard = ""
-    console.info('followersCard.length => ', followersCard.length + "| followersCard |" + followersCard);
+    logger.info('followersCard.length => ', followersCard.length + "| followersCard |" + followersCard);
 
     if (followersCard.length !== 0) {
-        console.info('Thorw card select by followers=> ');
+        logger.info('Thorw card select by followers=> ');
         for (let i = 0; i < playerCards.length; i++) {
 
             let facevalue = parseInt(playerCards[i].split("-")[1]);
@@ -1592,7 +1590,7 @@ const selectThrowcard = (playerCards, followersCard, pair) => {
             }
         }
     } else {
-        console.info('Thorw card select by pair=> ');
+        logger.info('Thorw card select by pair=> ');
         for (let i = 0; i < playerCards.length; i++) {
             let facevalue = parseInt(playerCards[i].split("-")[1]);
 
@@ -1602,7 +1600,7 @@ const selectThrowcard = (playerCards, followersCard, pair) => {
             }
         }
     }
-    console.info('Select throw Card => ', throwCard);
+    logger.info('Select throw Card => ', throwCard);
 
     return throwCard;
 }

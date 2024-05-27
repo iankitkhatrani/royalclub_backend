@@ -16,61 +16,60 @@ module.exports.cardDealStart = async (tbid) => {
   try {
     let wh = { _id: tbid };
     let table = await PlayingTables.findOne(wh, {}).lean();
-    this.getCards(table.playerInfo, table, table.maxSeat, async (cardDetails) => {
+    let cardDetails = await this.getCards(table.playerInfo)//, table, table.maxSeat, async (cardDetails) => {
+    logger.info("Rummy cardDetails", cardDetails)
 
-      logger.info("cardDetails", cardDetails)
+    table.openDeck.push(cardDetails.openCard);
+    let dealerSeatIndex = createDealer(table.activePlayer - 1);
 
-      table.openDeck.push(cardDetails.openCard);
-      let dealerSeatIndex = createDealer(table.activePlayer - 1);
+    const update = {
+      $set: {
+        openCard: cardDetails.openCard,
+        closeDeck: cardDetails.closeDeck,
+        wildCard: cardDetails.wildCard,
+        openDeck: table.openDeck,
+        dealerSeatIndex,
+        currentPlayerTurnIndex: dealerSeatIndex,
+        gameState: CONST.CARD_DEALING,
+      },
+    };
 
-      const update = {
-        $set: {
-          openCard: cardDetails.openCard,
-          closeDeck: cardDetails.closeDeck,
-          wildCard: cardDetails.wildCard,
-          openDeck: table.openDeck,
-          dealerSeatIndex,
-          currentPlayerTurnIndex: dealerSeatIndex,
-          gameState: CONST.CARD_DEALING,
-        },
-      };
+    const cardDealIndexs = await this.setUserCards(cardDetails, table);
 
-      const cardDealIndexs = await this.setUserCards(cardDetails, table);
-
-      const tableInfo = await PlayingTables.findOneAndUpdate(wh, update, {
-        new: true,
-      });
-
-      const eventResponse = {
-        si: cardDealIndexs,
-        di: tableInfo.dealerSeatIndex,
-        wd: tableInfo.wildCard,
-        openCard: tableInfo.openCard,
-        closeDeck: tableInfo.closeDeck,
-        closedecklength: tableInfo.closeDeck.length,
-      };
-
-      logger.info("cardDealStart tableInfo.playerInfo ->", tableInfo.playerInfo)
-      logger.info("cardDealStart tableInfo.playerInfo ->", new Date())
-
-      tableInfo.playerInfo.forEach((player) => {
-        if (player && typeof player.seatIndex !== 'undefined' && player.status === 'PLAYING' && player.isBot !== true) {
-          eventResponse.card = player.cards;
-          logger.info("cardDealStart tableInfo.playerInfo -> send Time ", new Date())
-
-          commandAcions.sendDirectEvent(player.sck.toString(), CONST.GAME_CARD_DISTRIBUTION, eventResponse);
-        }
-      });
-      logger.info("cardDealStart tableInfo.playerInfo after  ->", new Date())
-
-      let tbId = tableInfo._id;
-      // let jobId = commandAcions.GetRandomString(10);
-      // let delay = commandAcions.AddTime(4);
-
-      // await commandAcions.setDelay(jobId, new Date(delay));
-
-      await roundStartActions.roundStarted(tbId);
+    const tableInfo = await PlayingTables.findOneAndUpdate(wh, update, {
+      new: true,
     });
+
+    const eventResponse = {
+      si: cardDealIndexs,
+      di: tableInfo.dealerSeatIndex,
+      wd: tableInfo.wildCard,
+      openCard: tableInfo.openCard,
+      closeDeck: tableInfo.closeDeck,
+      closedecklength: tableInfo.closeDeck.length,
+    };
+
+    logger.info("cardDealStart tableInfo.playerInfo ->", tableInfo.playerInfo)
+    logger.info("cardDealStart tableInfo.playerInfo ->", new Date())
+
+    tableInfo.playerInfo.forEach((player) => {
+      if (player && typeof player.seatIndex !== 'undefined' && player.status === 'PLAYING' && player.isBot !== true) {
+        eventResponse.card = player.cards;
+        logger.info("cardDealStart tableInfo.playerInfo -> send Time ", new Date())
+
+        commandAcions.sendDirectEvent(player.sck.toString(), CONST.R_GAME_CARD_DISTRIBUTION, eventResponse);
+      }
+    });
+    logger.info("cardDealStart tableInfo.playerInfo after  ->", new Date())
+
+    let tbId = tableInfo._id;
+    // let jobId = commandAcions.GetRandomString(10);
+    // let delay = commandAcions.AddTime(4);
+
+    // await commandAcions.setDelay(jobId, new Date(delay));
+
+    await roundStartActions.roundStarted(tbId);
+
   } catch (err) {
     logger.error('cardDeal.js cardDealStart error => ', err);
   }
@@ -108,9 +107,10 @@ module.exports.setUserCards = async (cardsInfo, tableInfo) => {
   }
 };
 
-module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
+module.exports.getCards = async (playerInfo) => {
   try {
-    let deckCards = maxSeat == 6 ? Object.assign([], CONST.deckOne) : Object.assign([], CONST.singaldeckOne)
+    // let deckCards = maxSeat == 6 ? Object.assign([], CONST.deckOne) : Object.assign([], CONST.singaldeckOne)
+    let deckCards = Object.assign([], CONST.deckOne)
     deckCards = shuffle(deckCards);
 
     let ran = parseInt(fortuna.random() * deckCards.length);
@@ -129,8 +129,21 @@ module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
 
     // Array fillter si all robot asi 
     // rendom si 
+    let cards = [];
 
+    for (let i = 0; i < playerInfo.length; i++) {
+      if (typeof playerInfo[i].seatIndex !== 'undefined' && playerInfo[i].status === 'PLAYING') {
+        let card = [];
+        for (let i = 0; i < 13; i++) {
+          let ran = parseInt(fortuna.random() * deckCards.length);
+          card.push(deckCards[ran]);
+          deckCards.splice(ran, 1);
+        }
+        cards.push(card);
+      }
+    }
 
+    /*
     checkWinCard(deckCards, wildCard, async (ress) => {
       logger.info("BOT RES ::::::::::::::::::", ress)
       let cards = [];
@@ -138,35 +151,36 @@ module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
       let issueEasyCard = true
 
       for (let i = 0; i < playerInfo.length; i++) {
-        if (typeof playerInfo[i].seatIndex !== 'undefined' && playerInfo[i].status === 'PLAYING' && playerInfo[i].isBot && issueEasyCard) {
+        // if (typeof playerInfo[i].seatIndex !== 'undefined' && playerInfo[i].status === 'PLAYING' && playerInfo[i].isBot && issueEasyCard) {
 
-          cards.push(ress.card);
-          issueEasyCard = false
-          logger.info("Update a bot win status==>", playerInfo[i].playerId, playerInfo[i].name);
+        //   cards.push(ress.card);
+        //   issueEasyCard = false
+        //   logger.info("Update a bot win status==>", playerInfo[i].playerId, playerInfo[i].name);
 
-          // Update user bot state
-          const upWh = {
-            _id: MongoID(table._id.toString()),
-            'playerInfo.seatIndex': Number(playerInfo[i].seatIndex), // Fixed variable name
-          };
+        //   // Update user bot state
+        //   const upWh = {
+        //     _id: MongoID(table._id.toString()),
+        //     'playerInfo.seatIndex': Number(playerInfo[i].seatIndex), // Fixed variable name
+        //   };
 
-          const updateData = {
-            $set: {
-              'playerInfo.$.isEasy': true,
-              "playerInfo.$.gCard": {
-                pure: ress.pure,
-                impure: ress.impure,
-                set: ress.set,
-                dwd: []
-              }
-            },
-          };
+        //   const updateData = {
+        //     $set: {
+        //       'playerInfo.$.isEasy': true,
+        //       "playerInfo.$.gCard": {
+        //         pure: ress.pure,
+        //         impure: ress.impure,
+        //         set: ress.set,
+        //         dwd: []
+        //       }
+        //     },
+        //   };
 
-          const tbl = await PlayingTables.findOneAndUpdate(upWh, updateData, {
-            new: true,
-          });
-          logger.info('Declared table: ', tbl);
-        } else if (typeof playerInfo[i].seatIndex !== 'undefined' && playerInfo[i].status === 'PLAYING') {
+        //   const tbl = await PlayingTables.findOneAndUpdate(upWh, updateData, {
+        //     new: true,
+        //   });
+        //   logger.info('Declared table: ', tbl);
+        // } else 
+        if (typeof playerInfo[i].seatIndex !== 'undefined' && playerInfo[i].status === 'PLAYING') {
           let card = [];
           for (let i = 0; i < 13; i++) {
             let ran = parseInt(fortuna.random() * deckCards.length);
@@ -176,23 +190,23 @@ module.exports.getCards = async (playerInfo, table, maxSeat, callback) => {
           cards.push(card);
         }
       }
+      */
 
-      let shuffleDeack = shuffle(deckCards);
-      logger.info("returnr ", {
-        openCard,
-        cards,
-        wildCard,
-        closeDeck: shuffleDeack,
-        openDeck: [],
-      })
-      return callback({
-        openCard,
-        cards,
-        wildCard,
-        closeDeck: shuffleDeack,
-        openDeck: [],
-      });
+    let shuffleDeack = shuffle(deckCards);
+    logger.info("returnr ", {
+      openCard,
+      cards,
+      wildCard,
+      closeDeck: shuffleDeack,
+      openDeck: [],
     })
+    return {
+      openCard,
+      cards,
+      wildCard,
+      closeDeck: shuffleDeack,
+      openDeck: [],
+    };
   } catch (err) {
     logger.error('cardDeal.js getCards error => ', err);
   }

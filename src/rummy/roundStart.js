@@ -128,7 +128,7 @@ module.exports.startUserTurn = async (seatIndex, objData) => {
       deck,
     };
 
-    sendEventInTable(tb._id.toString(), CONST.USER_TURN_START, response);
+    sendEventInTable(tb._id.toString(), CONST.R_USER_TURN_START, response);
 
     //Assign to bot
     let plid = tb.playerInfo[tb.currentPlayerTurnIndex]._id
