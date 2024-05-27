@@ -14,7 +14,7 @@ const roundEndActions = require('./roundEnd');
 const commonHelper = require('../helper/commonHelper');
 const gameTrackActions = require('../common-function/gameTrack');
 const { getPlayingUserInRound, winnerViewResponseFilter } = require('../common-function/manageUserFunction');
-const { countPlayerScore, getScore } = require('../common-function/cardFunction');
+const { rummyCountPlayerScore, getScore } = require('../common-function/cardFunction');
 const walletActions = require('../common-function/walletTrackTransaction');
 
 module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
@@ -77,7 +77,7 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
       });
     }
 
-    const winnerTrack = await gameTrackActions.gamePlayTracks(tableInfo.gameTracks, tableInfo);
+    const winnerTrack = await gameTrackActions.rummyGamePlayTracks(tableInfo.gameTracks, tableInfo);
 
     for (let i = 0; i < tableInfo.gameTracks.length; i++) {
       if (tableInfo.gameTracks[i].result === CONST.WON) {
@@ -203,7 +203,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
       });
     }
 
-    const winnerTrack = await gameTrackActions.gamePlayTracks(tableInfo.gameTracks, tableInfo);
+    const winnerTrack = await gameTrackActions.rummyGamePlayTracks(tableInfo.gameTracks, tableInfo);
     logger.info(' Game Winner Track =>', winnerTrack);
 
     logger.info('tableInfo.gameTracks Game Winner Track =>', tableInfo.gameTracks);
@@ -219,8 +219,10 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
       }
     }
 
-    const playersScoreBoard = await countPlayerScore(tableInfo);
+    const playersScoreBoard = await rummyCountPlayerScore(tableInfo);
     let winnerViewResponse = winnerViewResponseFilter(playersScoreBoard);
+    logger.info('playersScoreBoard ==>', playersScoreBoard);
+    logger.info('winnerViewResponse ==>', winnerViewResponse);
 
     const response = {
       playersScoreBoard: winnerViewResponse.userInfo,
@@ -251,16 +253,16 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
     let delay = commandAcions.AddTime(4);
     await commandAcions.setDelay(jobId, new Date(delay));
 
-    commandAcions.sendEventInTable(tableInfo._id.toString(), CONST.R_GAME_SCORE_BOARD, gsbResponse);
+    commandAcions.sendEventInTable(tblInfo._id.toString(), CONST.R_GAME_SCORE_BOARD, gsbResponse);
 
-    let gamePlayData = JSON.parse(JSON.stringify(tableInfo));
+    let gamePlayData = JSON.parse(JSON.stringify(tblInfo));
     const rest = omit(gamePlayData, ['_id']);
-    let tableHistory = { ...rest, tableId: tableInfo._id };
+    let tableHistory = { ...rest, tableId: tblInfo._id };
 
     let tableHistoryData = await commonHelper.insert(TableHistory, tableHistory);
     logger.info('gameFinish.js tableHistory Data => ', tableHistoryData);
 
-    await roundEndActions.roundFinish(tableInfo);
+    await roundEndActions.roundFinish(tblInfo);
   } catch (err) {
     logger.error('gameFinish.js  WinnerDeclareCall => ', err);
   }

@@ -70,8 +70,6 @@ module.exports.roundFinish = async (tb) => {
             commandAcions.sendDirectEvent(player.sck.toString(), CONST.BORROW_USER_CHIPS, result);
 
 
-            logger.info('roundFinish update the gameChips -> ', tbInfo);
-
             let resp = await gameStartActions.RoundFinishdeduct(tb, player, Math.abs(diff));
             logger.info('checlll ===? Player Deduct Coins', resp);
 

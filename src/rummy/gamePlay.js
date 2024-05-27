@@ -12,7 +12,7 @@ const CONST = require('../../constant');
 const logger = require('../../logger');
 const { getPlayingUserInRound } = require('../common-function/manageUserFunction');
 
-const { pushPlayerScoreToPlayerScoreBoard } = require('../common-function/cardFunction');
+const { rummyPushPlayerScoreToPlayerScoreBoard } = require('../common-function/cardFunction');
 const { ifSocketDefine, shuffle } = require('../helper/helperFunction');
 
 module.exports.pickCard = async (requestData, client) => {
@@ -550,7 +550,7 @@ module.exports.invalidDeclare = async (table, client) => {
     let playerDetails = tb.playerInfo[client.seatIndex];
 
     // eslint-disable-next-line no-unused-vars
-    await pushPlayerScoreToPlayerScoreBoard(tb, playerDetails);
+    await rummyPushPlayerScoreToPlayerScoreBoard(tb, playerDetails);
 
     let activePlayerInRound = await getPlayingUserInRound(tb.playerDetails);
     logger.info('PACK activePlayerInRound :', activePlayerInRound, activePlayerInRound.length);
@@ -770,7 +770,7 @@ module.exports.playerDrop = async (requestData, client) => {
     let playerDetails = tb.playerInfo[client.seatIndex];
 
     // eslint-disable-next-line no-unused-vars
-    await pushPlayerScoreToPlayerScoreBoard(tb, playerDetails);
+    await rummyPushPlayerScoreToPlayerScoreBoard(tb, playerDetails);
 
     let activePlayerInRound = await getPlayingUserInRound(tb.playerDetails);
     logger.info('PACK activePlayerInRound :', activePlayerInRound, activePlayerInRound.length);

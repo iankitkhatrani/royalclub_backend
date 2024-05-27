@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const GamePlayTracks = mongoose.model('gamePlayTracks');
+const RummyGamePlayTracks = mongoose.model('rummyGamePlayTracks');
 const PlayingTables = mongoose.model('playingTables');
+const RummyPlayingTables = mongoose.model('rummyPlayingTables');
 const CONST = require('../../constant');
 const logger = require('../../logger');
 const MongoID = mongoose.Types.ObjectId;
@@ -38,6 +40,57 @@ module.exports.gamePlayTracks = async (playersInfo, table) => {
       };
 
       let tblInfo = await PlayingTables.findOneAndUpdate(qu, updatedata, { new: true });
+
+      return {
+        winningAmount: tblInfo.tableAmount,
+      };
+    } else {
+      // Table is null
+      logger.info('gameTrack.js Table is null => ');
+    }
+  } catch (e) {
+    logger.error('gameTrack.js gamePlayTracks => ', e);
+    return {
+      winningAmount: 0,
+    };
+  }
+};
+
+module.exports.rummyGamePlayTracks = async (playersInfo, table) => {
+  try {
+    if (table !== null) {
+      logger.info('gamePlayTracks => playersInfo =>', playersInfo);
+
+      let pushData;
+      for (let i = 0; i < playersInfo.length; i++) {
+        pushData = {
+          tableId: MongoID(table._id),
+          gameId: Number(table.gameId),
+          userId: MongoID(playersInfo[i]._id),
+          gameType: table.gamePlayType,
+          deductAmount: table.entryFee,
+          winningAmount: playersInfo[i].playerStatus === CONST.WON ? table.tableAmount : 0,
+          winningStatus: playersInfo[i].result,
+          gCard: playersInfo[i].gCard,
+          score: playersInfo[i].score,
+          cards: playersInfo[i].cards,
+        };
+        await RummyGamePlayTracks.create(pushData);
+      }
+
+      const qu = {
+        _id: MongoID(table._id),
+      };
+
+      let updatedata = {
+        $set: {
+          gameTracks: pushData,
+        },
+
+      };
+
+      let tblInfo = await RummyPlayingTables.findOneAndUpdate(qu, updatedata, { new: true });
+      logger.info('gameTrack.js tblInfo => ', tblInfo);
 
       return {
         winningAmount: tblInfo.tableAmount,

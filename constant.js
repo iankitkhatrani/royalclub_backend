@@ -254,6 +254,7 @@ const CONST = {
   R_LEAVE_TABLE: "RLT",
   R_RECONNECT: "RRE",
   R_GAME_CARD_DISTRIBUTION: 'RGCD',
+  R_FINISH_TIMER_SET: 'RFTS',
 
   // Timer
   userTurnTimer: 30,

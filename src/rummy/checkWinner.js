@@ -18,7 +18,7 @@ module.exports.winnercall = async (tb, client) => {
     const tabInfo = await PlayingTables.findOne(wh, {}).lean();
 
     let tableId = tabInfo._id;
-    let jobId = CONST.DECLARE_TIMER_SET + ':' + tableId;
+    let jobId = CONST.R_DECLARE_TIMER_SET + ':' + tableId;
 
     await commandAcions.clearJob(jobId);
 
@@ -44,7 +44,7 @@ module.exports.winnercall = async (tb, client) => {
     if (winner === 0) {
       //Valid Declare
       let playerDetails = tbInfo.playerInfo[client.seatIndex];
-      commandAcions.sendEventInTable(tb._id.toString(), CONST.FINISH_TIMER_SET, { pi: playerDetails._id, result: true });
+      commandAcions.sendEventInTable(tb._id.toString(), CONST.R_FINISH_TIMER_SET, { pi: playerDetails._id, result: true });
 
       let declareJobId = CONST.FINISH_TIMER_SET + ':' + tb._id;
       let delay = commandAcions.AddTime(20);

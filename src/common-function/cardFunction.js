@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model('playingTables');
+const RummyPlayingTables = mongoose.model('rummyPlayingTables');
 
 const logger = require('../../logger');
 const _ = require("underscore");
@@ -405,7 +406,24 @@ const getScoreCard = (card) => {
 
 const countPlayerScore = async (table) => {
   try {
+    // Validate the table object
+    if (!table) {
+      logger.error('countPlayerScore error => table is null or undefined');
+      return false;
+    }
+
     logger.info('countPlayerScore Table =>', table);
+
+    // Ensure table.playerInfo and table.playersScoreBoard are defined
+    if (!table.playerInfo || !Array.isArray(table.playerInfo)) {
+      logger.error('countPlayerScore error => table.playerInfo is not defined or not an array');
+      return false;
+    }
+
+    if (!table.playersScoreBoard) {
+      table.playersScoreBoard = [];
+    }
+
     let finalplayersScoreBoard = [];
     logger.info('\n countPlayerScore table.playerInfo =>', table.playerInfo);
 
@@ -413,7 +431,7 @@ const countPlayerScore = async (table) => {
 
     let alreadyCalculatedScorePlayersIds = table.playersScoreBoard.map(({ playerId }) => playerId);
 
-    playerInGame.map((player) => {
+    playerInGame.forEach((player) => {
       logger.info('countPlayerScore Player =>', player);
       if (alreadyCalculatedScorePlayersIds.indexOf(player.playerId) < 0) {
         finalplayersScoreBoard.push({
@@ -423,7 +441,6 @@ const countPlayerScore = async (table) => {
           cards: player.cards,
           chips: player.point,
           point: player.point,
-          //lostChips: player.point * table.entryFee,
           lostChips: player.playerLostChips,
           gameChips: player.gameChips,
           gCards: player.gCard,
@@ -433,7 +450,86 @@ const countPlayerScore = async (table) => {
     });
 
     logger.info('finalplayersScoreBoard', finalplayersScoreBoard);
-    // eslint-disable-next-line no-param-reassign
+
+    // Concatenate new scores to the existing playersScoreBoard
+    table.playersScoreBoard = table.playersScoreBoard.concat(finalplayersScoreBoard);
+
+    let wh = {
+      _id: MongoID(table._id),
+    };
+
+    let updateData = {
+      $set: {
+        playersScoreBoard: table.playersScoreBoard,
+      },
+    };
+
+    let tbInfo = await RummyPlayingTables.findOneAndUpdate(wh, updateData, {
+      new: true,
+    });
+
+    logger.info('Table Info =>', tbInfo);
+
+    if (!tbInfo) {
+      logger.error('countPlayerScore error => Failed to update the table');
+      return false;
+    }
+
+    return tbInfo.playersScoreBoard;
+  } catch (error) {
+    logger.error('cardFunction.js countPlayerScore error => ', error);
+    return false;
+  }
+};
+
+const rummyCountPlayerScore = async (table) => {
+  try {
+    // Validate the table object
+    if (!table) {
+      logger.error('countPlayerScore error => table is null or undefined');
+      return false;
+    }
+
+    logger.info('countPlayerScore Table =>', table);
+
+    // Ensure table.playerInfo and table.playersScoreBoard are defined
+    if (!table.playerInfo || !Array.isArray(table.playerInfo)) {
+      logger.error('countPlayerScore error => table.playerInfo is not defined or not an array');
+      return false;
+    }
+
+    if (!table.playersScoreBoard) {
+      table.playersScoreBoard = [];
+    }
+
+    let finalplayersScoreBoard = [];
+    logger.info('\n countPlayerScore table.playerInfo =>', table.playerInfo);
+
+    const playerInGame = await getPlayingUserInRound(table.playerInfo);
+
+    let alreadyCalculatedScorePlayersIds = table.playersScoreBoard.map(({ playerId }) => playerId);
+
+    playerInGame.forEach((player) => {
+      logger.info('countPlayerScore Player =>', player);
+      if (alreadyCalculatedScorePlayersIds.indexOf(player.playerId) < 0) {
+        finalplayersScoreBoard.push({
+          playerId: player._id,
+          playerName: player.name,
+          result: player.playerStatus,
+          cards: player.cards,
+          chips: player.point,
+          point: player.point,
+          lostChips: player.playerLostChips,
+          gameChips: player.gameChips,
+          gCards: player.gCard,
+          avatar: player.avatar,
+        });
+      }
+    });
+
+    logger.info('finalplayersScoreBoard', finalplayersScoreBoard);
+
+    // Concatenate new scores to the existing playersScoreBoard
     table.playersScoreBoard = table.playersScoreBoard.concat(finalplayersScoreBoard);
 
     let wh = {
@@ -449,7 +545,13 @@ const countPlayerScore = async (table) => {
     let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, {
       new: true,
     });
-    logger.info(' Table Info =>', tbInfo);
+
+    logger.info('Table Info =>', tbInfo);
+
+    if (!tbInfo) {
+      logger.error('countPlayerScore error => Failed to update the table');
+      return false;
+    }
 
     return tbInfo.playersScoreBoard;
   } catch (error) {
@@ -493,6 +595,41 @@ const pushPlayerScoreToPlayerScoreBoard = async (table, player) => {
   }
 };
 
+const rummyPushPlayerScoreToPlayerScoreBoard = async (table, player) => {
+  try {
+    table.playersScoreBoard.push({
+      playerId: player.playerId,
+      playerName: player.name,
+      result: player.playerStatus,
+      cards: player.cards,
+      point: player.point,
+      gCards: player.gCard,
+      gameChips: player.gameChips,
+      debitChips: player.debitChips,
+      lostChips: player.lostChips,
+      avatar: player.avatar,
+    });
+
+    let wh = {
+      _id: MongoID(table._id.toString()),
+    };
+
+    let updateData = {
+      $set: {
+        playersScoreBoard: table.playersScoreBoard,
+      },
+    };
+
+    let tbInfo = await RummyPlayingTables.findOneAndUpdate(wh, updateData, {
+      new: true,
+    });
+
+    return tbInfo.playersScoreBoard;
+  } catch (error) {
+    logger.error('cardFunction.jsr pushPlayerScoreToPlayerScoreBoard error=> ', error);
+  }
+};
+
 
 
 module.exports = {
@@ -507,4 +644,6 @@ module.exports = {
   countPlayerScore,
   pushPlayerScoreToPlayerScoreBoard,
   getScoreCard,
+  rummyPushPlayerScoreToPlayerScoreBoard,
+  rummyCountPlayerScore
 };
