@@ -85,7 +85,7 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
       }
     }
 
-    const playersScoreBoard = await countPlayerScore(tableInfo);
+    const playersScoreBoard = await rummyCountPlayerScore(tableInfo);
     const winnerViewResponse = winnerViewResponseFilter(playersScoreBoard);
 
     const response = {
@@ -96,7 +96,7 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
     const GSBResponse = { ...response, wildCard: tableInfo.wildCard, gamePlayType: tableInfo.gamePlayType };
 
     const addLastScoreBoard = tableInfo.lastGameScoreBoard.push(GSBResponse);
-    // logger.info('lastUserWinnerDeclareCall Score board ==>', addLastScoreBoard);
+    logger.info('lastUserWinnerDeclareCall Score board ==>', addLastScoreBoard);
 
     const qu = {
       _id: MongoID(tbid),
