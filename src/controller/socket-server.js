@@ -118,6 +118,7 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    //Teenpatti
                     case CONST.GET_TEEN_PATTI_ROOM_LIST: {
                         try {
                             await gamePlayActions.getBetList(payload.data, socket);
