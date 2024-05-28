@@ -6,6 +6,7 @@ const logger = require('../../../logger');
 const mongoose = require('mongoose');
 const playingLudo = mongoose.model("playingLudo");
 const JantaTables = mongoose.model('JantaTables');
+
 /**
  * @api {post} /admin/signup-admin
  * @apiName  register admin
