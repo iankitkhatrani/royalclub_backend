@@ -8,6 +8,7 @@ const gameStartActions = require("./gameStart");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
+const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
 
 module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
@@ -44,19 +45,21 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable(client)
+        
+        
+        await this.findTable(client,requestData)
     } catch (error) {
         console.info("JANTA_JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (client) => {
+module.exports.findTable = async (client,requestData) => {
     logger.info("findTable  : ");
 
     let tableInfo = await this.getBetTable();
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
     console.log("tableInfo ", tableInfo)
-    await this.findEmptySeatAndUserSeat(tableInfo, client);
+    await this.findEmptySeatAndUserSeat(tableInfo, client,requestData);
 }
 
 module.exports.getBetTable = async () => {
@@ -104,7 +107,7 @@ module.exports.createTable = async () => {
     }
 }
 
-module.exports.findEmptySeatAndUserSeat = async (table, client) => {
+module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
     try {
         logger.info("findEmptySeatAndUserSeat table :=> ", table + " client :=> ", client);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
@@ -195,6 +198,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
         }
 
         sendEvent(client, CONST.JANTA_JOIN_TABLE, {}); //JOIN_SIGN_UP
+        const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),0)
 
         //GTI event
         sendEvent(client, CONST.JANTA_GAME_TABLE_INFO, {
@@ -208,15 +212,18 @@ module.exports.findEmptySeatAndUserSeat = async (table, client) => {
             type: tableInfo.gamePlayType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
+            tokenNo:tokenNO
         });
+
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
-            client.join(tableInfo._id.toString());
-
-        sendDirectEvent(client.tbid.toString(), CONST.JANTA_JOIN_TABLE, {
-            ap: tableInfo.activePlayer,
-            playerDetail: tableInfo.playerInfo[seatIndex],
-        });
+        client.join(tableInfo._id.toString());
+    
+    sendDirectEvent(client.tbid.toString(), CONST.JANTA_JOIN_TABLE, {
+        ap: tableInfo.activePlayer,
+        playerDetail: tableInfo.playerInfo[seatIndex],
+    });
+    console.log(getToken("2882a472e675475fb09710e134a38977","a1e36929d5e84f36b227913768981b82","Unity",0));
 
         delete client.JT;
 

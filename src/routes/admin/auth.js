@@ -6,6 +6,7 @@ const logger = require('../../../logger');
 const mongoose = require('mongoose');
 const playingLudo = mongoose.model("playingLudo");
 const JantaTables = mongoose.model('JantaTables');
+const RoueletteTables = mongoose.model('RouletteTables');
 
 /**
  * @api {post} /admin/signup-admin
@@ -72,6 +73,18 @@ router.get('/DeletePlayingJanat', async (req, res) => {
   try {
 
     await JantaTables.deleteMany({})
+
+    res.json({ status: "ok" });
+  } catch (error) {
+    logger.error('admin/dahboard.js post bet-list error => ', error);
+    res.status(config.INTERNAL_SERVER_ERROR).json(error);
+  }
+});
+
+router.get('/RoulletDeletePlaying', async (req, res) => {
+  try {
+
+    await RoueletteTables .deleteMany({})
 
     res.json({ status: "ok" });
   } catch (error) {
