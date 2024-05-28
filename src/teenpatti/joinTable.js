@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("rummyPlayingTables");
-const BetLists = mongoose.model("rummyBetList")
+const PlayingTables = mongoose.model("playingTables");
+const BetLists = mongoose.model("betList")
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
