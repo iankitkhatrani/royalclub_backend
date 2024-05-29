@@ -11,6 +11,9 @@ module.exports = Object.freeze({
   AES_IV: '1234567887654321',
 
 
+  REDIS_HOST: process.env.REDIS_HOST,
+  REDIS_PWD: process.env.REDIS_PWD,
+  
   OBJECT_ID: require('mongoose').Types.ObjectId,
 
   // HTTP Status
