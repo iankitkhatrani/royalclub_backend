@@ -287,7 +287,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
     }
 
     sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
-    const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),0)
+    const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),requestData.agoraUid)
     //GTI event
     sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -300,7 +300,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
       type: tableInfo.gamePlayType,
       openDecks: tableInfo.openDeck,
       tableAmount: tableInfo.tableAmount,
-      tokenNo:tokenNO
+      tokenNo:tokenNO,
+      agoraUid:requestData.agoraUid
     });
 
     //JT event

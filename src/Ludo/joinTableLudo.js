@@ -238,7 +238,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
         }
 
         sendEvent(client, CONST.JOINLUDO, {});
-        const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),0)
+        const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),requestData.agoraUid)
         //GTI event
         sendEvent(client, CONST.GAME_TABLE_INFO, {
             ssi: tableInfo.playerInfo[seatIndex].seatIndex,
