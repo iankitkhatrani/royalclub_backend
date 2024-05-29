@@ -10,10 +10,12 @@ const gameStartActions = require("./gameStartLudo");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
-
+const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
 module.exports.joinTable = async (requestData, client) => {
     try {
+        logger.info("requestData Ludo",requestData);
+
         if (typeof client.uid == "undefined") {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
@@ -55,19 +57,19 @@ module.exports.joinTable = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable(BetInfo, client)
+        await this.findTable(BetInfo, client,requestData)
     } catch (error) {
         console.info("JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (BetInfo, client) => {
+module.exports.findTable = async (BetInfo, client,requestData) => {
     logger.info("findTable BetInfo : ", JSON.stringify(BetInfo));
 
     let tableInfo = await this.getBetTable(BetInfo);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
-    await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client);
+    await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client,requestData);
 }
 
 module.exports.getBetTable = async (BetInfo) => {
@@ -136,7 +138,7 @@ module.exports.makeObjects = (no) => {
     return arr;
 }
 
-module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
+module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestData) => {
     try {
         logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ");
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
@@ -236,7 +238,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
         }
 
         sendEvent(client, CONST.JOINLUDO, {});
-
+        const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),0)
         //GTI event
         sendEvent(client, CONST.GAME_TABLE_INFO, {
             ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -253,7 +255,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             playerRoutePos2:tableInfo.playerRoutePos2,
             playerRoutePos3:tableInfo.playerRoutePos3,
             playerRoutePos4:tableInfo.playerRoutePos4,
-            safeDice:tableInfo.safeDice
+            safeDice:tableInfo.safeDice,
+            tokenNo:tokenNO
         });
 
         if(userInfo.Iscom == undefined || userInfo.Iscom == 0)

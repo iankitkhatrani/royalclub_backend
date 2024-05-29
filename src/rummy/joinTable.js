@@ -11,6 +11,7 @@ const logger = require('../../logger');
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 const { userReconnect } = require('../common-function/reConnectFunction');
+const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
 module.exports.joinTable = async (requestData, socket) => {
   try {
@@ -73,7 +74,7 @@ module.exports.joinTable = async (requestData, socket) => {
       return false;
 
     } else {
-      return await this.findTable(betInfo, socket, userInfo);
+      return await this.findTable(betInfo, socket, userInfo,requestData);
     }
   } catch (error) {
     sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
@@ -85,7 +86,7 @@ module.exports.joinTable = async (requestData, socket) => {
   }
 };
 
-module.exports.findTable = async (betInfo, socket, userInfo) => {
+module.exports.findTable = async (betInfo, socket, userInfo,requestData) => {
   try {
     let tableInfo = await this.getBetTable(betInfo, userInfo);
 
@@ -107,7 +108,7 @@ module.exports.findTable = async (betInfo, socket, userInfo) => {
         // logger.info('time is greater than 4 sec');
       }
     }
-    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket);
+    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket,requestData);
   } catch (error) {
     logger.error('joinTable.js findTable error=> ', error, betInfo);
   }
@@ -174,7 +175,7 @@ module.exports.makeObjects = (length = 0) => {
   }
 };
 
-module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
+module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestData) => {
   try {
     // logger.info("\n findEmptySeatAndUserSeat socket  -->", socket.isBot)
     // logger.info("\n findEmptySeatAndUserSeat socket table -->", table)
@@ -286,7 +287,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
     }
 
     sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
-
+    const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),0)
     //GTI event
     sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -299,6 +300,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket) => {
       type: tableInfo.gamePlayType,
       openDecks: tableInfo.openDeck,
       tableAmount: tableInfo.tableAmount,
+      tokenNo:tokenNO
     });
 
     //JT event
