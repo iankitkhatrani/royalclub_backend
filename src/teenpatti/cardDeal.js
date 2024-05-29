@@ -40,7 +40,7 @@ module.exports.cardDealStart = async (tbid) => {
         hukum: tabInfo.hukum,
         cardDealIndexs: cardDealIndexs
     }
-    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
+    commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TEEN_PATTI_GAME_CARD_DISTRIBUTION, eventResponse);
 
     let tbId = tabInfo._id;
     let jobId = commandAcions.GetRandomString(10);

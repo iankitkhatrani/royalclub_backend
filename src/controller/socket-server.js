@@ -128,7 +128,7 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.JOIN_SIGN_UP: {
+                    case CONST.TEEN_PATTI_SIGN_UP: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
 
@@ -136,27 +136,27 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.SHOW: {
+                    case CONST.TEEn_PATTI_SHOW: {
                         await gamePlayActions.show(payload.data, socket);
                         break;
                     }
-
-                    case CONST.CHAL: {
+H
+                    case CONST.TEEN_PATTI_CHAL: {
                         await gamePlayActions.chal(payload.data, socket);
                         break;
                     }
 
-                    case CONST.PACK: {
+                    case CONST.TEEN_PATTI_PACK: {
                         await gamePlayActions.cardPack(payload.data, socket);
                         break;
                     }
 
-                    case CONST.SEE_CARD: {
+                    case CONST.TEEN_PATTI_SEE_CARD: {
                         await gamePlayActions.seeCard(payload.data, socket);
                         break;
                     }
 
-                    case CONST.LEAVE_TABLE: {
+                    case CONST.TEEN_PATTI_LEAVE_TABLE: {
                         await gamePlayActions.leaveTable(payload.data, socket);
                         break;
                     }

@@ -128,7 +128,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
             chalValue: tb.chalValue,
             isShow: isShow
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.TURN_START, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_USER_TURN_START, response);
 
         if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1){
             // Rboot Logic Start Playing 
