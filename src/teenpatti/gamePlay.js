@@ -325,7 +325,7 @@ module.exports.seeCard = async (requestData, client) => {
     try {
         logger.info("seeCard requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SEE_CARD, requestData, false, "1000", "User session not set, please restart game!", "Error!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CARD_SEEN, requestData, false, "1000", "User session not set, please restart game!", "Error!");
             return false;
         }
         const wh = {
@@ -367,7 +367,7 @@ module.exports.seeCard = async (requestData, client) => {
             seatIndex: client.seatIndex,
             isShow: isShow
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_SEE_CARD, response1);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_CARD_SEEN, response1);
 
         return true;
     } catch (e) {

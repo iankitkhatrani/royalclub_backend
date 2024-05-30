@@ -151,7 +151,7 @@ H
                         break;
                     }
 
-                    case CONST.TEEN_PATTI_SEE_CARD: {
+                    case CONST.TEEN_PATTI_CARD_SEEN: {
                         await gamePlayActions.seeCard(payload.data, socket);
                         break;
                     }
