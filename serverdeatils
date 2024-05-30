@@ -24,3 +24,68 @@ Redis
 
 89.116.32.173
 Royalclub368@ 
+
+
+ns2.dns-parking.com
+ns2.dns-parking.com
+
+
+
+
+
+royalsclub.in www.royalsclub.in;
+
+
+sudo certbot --nginx -d royalsclub.in -d www.royalsclub.in
+
+
+sudo mkdir -p /var/www/royalsclub.in/html
+
+
+sudo chown -R $USER:$USER /var/www/royalsclub.in/html
+
+
+sudo chmod -R 755 /var/www/royalsclub.in
+
+sudo nano /var/www/royalsclub.in/html/index.html
+
+
+sudo nano /etc/nginx/sites-available/royalsclub.in
+
+grep -r royalsclub.in /etc/nginx/sites-enabled
+
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/royalsclub.in/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name royalsclub.in www.royalsclub.in;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+
+
+sudo ln -s /etc/nginx/sites-available/royalsclub.in /etc/nginx/sites-enabled/
+
+
+sudo certbot certonly --standalone -d royalsclub.in
+
+
+
+Certificate is saved at: /etc/letsencrypt/live/royalsclub.in/fullchain.pem
+Key is saved at:         /etc/letsencrypt/live/royalsclub.in/privkey.pem
+
+
+
+sudo nano /etc/nginx/sites-available/royalsclub.in
+
+
+
+sudo nono /etc/nginx/conf.d/react.conf
+
+
+sudo nano /etc/nginx/nginx.conf
