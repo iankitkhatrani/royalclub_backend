@@ -102,7 +102,7 @@ module.exports.leaveTable = async (requestData, client) => {
       logger.info("check user Details =>",userDetails)
       
       let finaldata = await filterBeforeSendSPEvent(userDetails);
-      logger.info()
+
       logger.info("check user Details finaldata =>",finaldata)
   
       commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
