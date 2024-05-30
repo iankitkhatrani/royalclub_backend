@@ -56,7 +56,7 @@ module.exports.joinTable = async (requestData, client) => {
         }
         await this.findTable(BetInfo, client)
     } catch (error) {
-        console.info("JOIN_TABLE", error);
+        logger.info("JOIN_TABLE", error);
     }
 }
 
@@ -73,7 +73,7 @@ module.exports.getBetTable = async (BetInfo) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
         boot: Number(BetInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 6 /*BetInfo.maxSeat*/ }
+        activePlayer: { $gte: 0, $lt: 5 /*BetInfo.maxSeat*/ }
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -123,7 +123,7 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ", client);
+        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n'+" betInfo :=> ", betInfo );
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -241,13 +241,14 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             clearJob(jobId)
 
             await gameStartActions.gameTimerStart(tableInfo);
-        } else {
+        } 
+        // else {
 
-            setTimeout(() => {
-                botLogic.JoinRobot(tableInfo, betInfo)
-            }, 2000)
+        //     setTimeout(() => {
+        //         botLogic.JoinRobot(tableInfo, betInfo)
+        //     }, 2000)
 
-        }
+        // }
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);
     }

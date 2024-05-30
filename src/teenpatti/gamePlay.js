@@ -18,7 +18,7 @@ module.exports.chal = async (requestData, client) => {
     try {
         logger.info("chal requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.CHAL, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "User session not set, please restart game!");
             return false;
         }
         if (typeof client.chal != "undefined" && client.chal) return false;
@@ -42,13 +42,13 @@ module.exports.chal = async (requestData, client) => {
         if (tabInfo.turnDone) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.CHAL, requestData, false, "Turn is already taken!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Turn is already taken!");
             return false;
         }
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.CHAL, requestData, false, "It's not your turn!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "It's not your turn!");
             return false;
         }
 
@@ -85,7 +85,7 @@ module.exports.chal = async (requestData, client) => {
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("chal client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.CHAL, requestData, false, "Please add wallet!!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Please add wallet!!");
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
@@ -112,7 +112,7 @@ module.exports.chal = async (requestData, client) => {
             chalValue: chalvalue,
             potValue: tb.potValue
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.CHAL, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_CHAL, response);
         delete client.chal;
         if (Number(tb.potLimit) <= Number(tb.potValue)) {
             await checkWinnerActions.autoShow(tb);
@@ -135,7 +135,7 @@ module.exports.show = async (requestData, client) => {
     try {
         logger.info("show requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.SHOW, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "User session not set, please restart game!");
             return false;
         }
         if (typeof client.show != "undefined" && client.show) return false;
@@ -159,13 +159,13 @@ module.exports.show = async (requestData, client) => {
         if (tabInfo.turnDone) {
             logger.info("chal : client.su ::", client.seatIndex);
             delete client.chal;
-            commandAcions.sendDirectEvent(client.sck, CONST.CHAL, requestData, false, "Turn is already taken!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Turn is already taken!");
             return false;
         }
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("show : client.su ::", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.SHOW, requestData, false, "It's not your turn!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "It's not your turn!");
             return false;
         }
 
@@ -175,7 +175,7 @@ module.exports.show = async (requestData, client) => {
         if (playerInGame.length != 2) {
             logger.info("show : client.su ::", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.SHOW, requestData, false, "Not valid show!!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "Not valid show!!");
             return false;
         }
 
@@ -207,7 +207,7 @@ module.exports.show = async (requestData, client) => {
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("show client.su :: ", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.SHOW, requestData, false, "Please add wallet!!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "Please add wallet!!");
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2));
@@ -231,7 +231,7 @@ module.exports.show = async (requestData, client) => {
             seatIndex: tb.turnSeatIndex,
             chalValue: chalvalue
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.SHOW, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEn_PATTI_SHOW, response);
         delete client.show;
         await checkWinnerActions.winnercall(tb, true, tb.turnSeatIndex);
         return true;
@@ -244,7 +244,7 @@ module.exports.cardPack = async (requestData, client) => {
     try {
         logger.info("PACK requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.PACK, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_PACK, requestData, false, "User session not set, please restart game!");
             return false;
         }
         if (typeof client.pack != "undefined" && client.pack) return false;
@@ -268,7 +268,7 @@ module.exports.cardPack = async (requestData, client) => {
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("PACK : client.su ::", client.seatIndex);
             delete client.pack;
-            commandAcions.sendDirectEvent(client.sck, CONST.PACK, requestData, false, "It's not your turn!", "Error!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_PACK, requestData, false, "It's not your turn!", "Error!");
             return false;
         }
         let playerInfo = tabInfo.playerInfo[client.seatIndex];
@@ -306,7 +306,7 @@ module.exports.cardPack = async (requestData, client) => {
         let response = {
             seatIndex: tb.turnSeatIndex,
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.PACK, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_PACK, response);
 
         let activePlayerInRound = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
         logger.info("PACK activePlayerInRound :", activePlayerInRound, activePlayerInRound.length);
@@ -325,7 +325,7 @@ module.exports.seeCard = async (requestData, client) => {
     try {
         logger.info("seeCard requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.SEE_CARD, requestData, false, "1000", "User session not set, please restart game!", "Error!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SEE_CARD, requestData, false, "1000", "User session not set, please restart game!", "Error!");
             return false;
         }
         const wh = {
@@ -360,14 +360,14 @@ module.exports.seeCard = async (requestData, client) => {
         let response = {
             cards: playerInfo.cards
         }
-        commandAcions.sendEvent(client, CONST.SEE_CARD_INFO, response);
+        commandAcions.sendEvent(client, CONST.TEEN_PATTI_SEE_CARD_INFO, response);
         let isShow = await roundStartActions.checShowButton(tb.playerInfo,client.seatIndex);
 
         let response1 = {
             seatIndex: client.seatIndex,
             isShow: isShow
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.SEE_CARD, response1);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_SEE_CARD, response1);
 
         return true;
     } catch (e) {

@@ -128,7 +128,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         winnerViewResponse.gameId = tbInfo.gameId;
         winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
-        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.WINNER, winnerViewResponse);
+        commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.TEEN_PATTI_WINNER, winnerViewResponse);
 
         await roundEndActions.roundFinish(tbInfo);
 
