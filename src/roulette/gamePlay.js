@@ -10,6 +10,8 @@ const RouletteTables = mongoose.model('RouletteTables');
 
 const walletActions = require("./updateWallet");
 const RouletteUserHistory = mongoose.model('RouletteUserHistory');
+const adminwinloss = mongoose.model('adminwinloss');
+
 
 /*
     bet : 10,
@@ -20,6 +22,7 @@ const RouletteUserHistory = mongoose.model('RouletteUserHistory');
                 "number" : [ 1 ],
                 "type":"number",
                 "bet":0,
+                coin:[10]
 
             }
 
@@ -28,7 +31,7 @@ const RouletteUserHistory = mongoose.model('RouletteUserHistory');
     
 
 */
-module.exports.actionSpin = async (requestData, client) => {
+module.exports.actionSpin = async (requestData, client,callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined"
@@ -38,12 +41,25 @@ module.exports.actionSpin = async (requestData, client) => {
             || typeof requestData.betaction.number == "undefined"
         ) {
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONROULETTE, requestData, false, "User session not set, please restart game!");
+
+            if (typeof callback == "function") {
+                return callback("error")
+            }
+
             return false;
         }
-        if (typeof client.action != "undefined" && client.action) return false;
+        if (typeof client.action != "undefined" && client.action) {
+            if (typeof callback == "function") {
+                return callback("error")
+            }
+            return false
+        }
 
+        console.log("typeof requestData.betaction.number ",typeof requestData.betaction.number)
+        requestData.betaction.number = (typeof requestData.betaction.number == "string")? JSON.parse(requestData.betaction.number):requestData.betaction.number
+        requestData.betaction.coin = (typeof requestData.betaction.coin == "string")? JSON.parse(requestData.betaction.coin):requestData.betaction.coin
 
-        requestData.betaction.number = JSON.parse(requestData.betaction.number)
+       
 
         console.log("requestData.betaction. ", requestData.betaction)
 
@@ -62,6 +78,9 @@ module.exports.actionSpin = async (requestData, client) => {
         if (tabInfo == null) {
             logger.info("action user not turn ::", tabInfo);
             delete client.action;
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false
         }
 
@@ -82,17 +101,22 @@ module.exports.actionSpin = async (requestData, client) => {
 
             },
             $inc: {
-
+                
             }
         }
         let chalvalue = currentBet;
         updateData.$set["playerInfo.$.playStatus"] = "action"
 
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        let totalWallet = Number(UserInfo.chips)//+ Number(UserInfo.winningChips)
+        logger.info("totalWallet", totalWallet);
 
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("action client.su ::", client.seatIndex);
             delete client.action;
+           
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONROULETTE, requestData, false, "Please add wallet!!");
             return false;
         }
@@ -103,7 +127,7 @@ module.exports.actionSpin = async (requestData, client) => {
         //updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
         let indextoinc = -1
         for (let i = 0; i < betObjectData.length; i++) {
-            if (betObjectData[i].betIndex === requestData.betaction.betIndex) {
+            if (parseInt(betObjectData[i].betIndex) === parseInt(requestData.betaction.betIndex)) {
                 indextoinc = i;
                 break;
             }
@@ -112,13 +136,17 @@ module.exports.actionSpin = async (requestData, client) => {
         updateData.$inc["playerInfo.$.totalbet"] = chalvalue;
         if (indextoinc != -1) {
             updateData.$inc["playerInfo.$.betObject." + indextoinc + ".bet"] = chalvalue;
+            updateData.$set["playerInfo.$.betObject." + indextoinc + ".coin"] = betObjectData[indextoinc].coin.concat(requestData.betaction.coin);
+
         } else {
             updateData["$push"] = {}
             updateData["$push"]["playerInfo.$.betObject"] = requestData.betaction
         }
 
         updateData.$inc["totalbet"] = chalvalue;
+        updateData.$inc["playerInfo.$.coins"] = -chalvalue;
         updateData.$set["turnDone"] = true;
+
         commandAcions.clearJob(tabInfo.job_id);
 
         const upWh = {
@@ -130,9 +158,13 @@ module.exports.actionSpin = async (requestData, client) => {
         const tb = await RouletteTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("action tb : ", tb);
 
+        this.AdminWinLossData(chalvalue, "win")
+
+
         let response = {
             bet: chalvalue,
-            betaction: requestData.betaction
+            betaction: requestData.betaction,
+            isOutSideBet: requestData.isOutSideBet
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONROULETTE, response, false, "");
@@ -147,7 +179,9 @@ module.exports.actionSpin = async (requestData, client) => {
         // } else {
         //     await roundStartActions.nextUserTurnstart(tb);
         // }
-
+        if (typeof callback == "function") {
+            return callback("error")
+        }
         return true;
     } catch (e) {
         logger.info("Exception action : ", e);
@@ -168,9 +202,12 @@ module.exports.actionSpin = async (requestData, client) => {
             }
 
     }
-   
-    
-
+[2024-05-21T12:44:02.846] [INFO] development - REMOVEBETROULETTE requestData :  {
+  tableId: '664c4945b8df2259782d164c',
+  playerId: '663ca51fe1b43a5bd45c7b89',
+  bet: 2,
+  betaction: { number: '[16]', type: 'number', bet: 2, betIndex: '16' }
+}
 */
 module.exports.REMOVEBETROULETTE = async (requestData, client) => {
     try {
@@ -205,7 +242,7 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
 
         if (tabInfo == null) {
             logger.info("action user not turn ::", tabInfo);
-            delete client.action;
+            delete client.REMOVEBETROULETTE;
             return false
         }
 
@@ -229,14 +266,14 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
 
             }
         }
-        
+
 
         //updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
         let indextoinc = -1
         let leftBetObject = []
         let userbet = []
         for (let i = 0; i < betObjectData.length; i++) {
-            if (betObjectData[i].betIndex === requestData.betaction.betIndex) {
+            if (parseInt(betObjectData[i].betIndex) === parseInt(requestData.betaction.betIndex)) {
                 indextoinc = i;
                 userbet = betObjectData[i]
             } else {
@@ -254,6 +291,8 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
 
         if (indextoinc == -1) {
             logger.info("action remove bet UserInfo : ", indextoinc);
+            delete client.REMOVEBETROULETTE;
+            commandAcions.sendDirectEvent(client.sck, CONST.REMOVEBETROULETTE, requestData, false, "User session not set, please restart game!");
             return false
         }
 
@@ -269,6 +308,7 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
         }
 
         updateData.$inc["totalbet"] = -chalvalue;
+        updateData.$inc["playerInfo.$.coins"] = chalvalue;
         commandAcions.clearJob(tabInfo.job_id);
 
         const upWh = {
@@ -280,9 +320,11 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
         const tb = await RouletteTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("action tb : ", tb);
 
+        this.AdminWinLossData(chalvalue, "loss")
+
         let response = {
             betObjectData: tb.playerInfo[client.seatIndex].betObject,
-            requestData:requestData
+            requestData: requestData
         }
 
         commandAcions.sendEvent(client, CONST.REMOVEBETROULETTE, response, false, "");
@@ -362,14 +404,15 @@ module.exports.ClearBet = async (requestData, client) => {
                 ],
                 "playerInfo.$.betObject": [],
                 "playerInfo.$.totalbet": 0,
-
+                
             },
             $inc: {
-                "totalbet": -Number(playerInfo.totalbet)
+                "totalbet": -Number(playerInfo.totalbet),
+                "playerInfo.$.coins" : Number(playerInfo.totalbet)
             }
         }
 
-
+        
         await walletActions.addWalletAdmin(client.uid, Number(playerInfo.totalbet), 4, "roulette Clear Bet", "roulette");
 
 
@@ -381,6 +424,8 @@ module.exports.ClearBet = async (requestData, client) => {
 
         const tb = await RouletteTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("action tb : ", tb);
+
+        this.AdminWinLossData(playerInfo.totalbet, "loss")
 
         let response = {
             flags: true
@@ -440,7 +485,7 @@ module.exports.DoubleBet = async (requestData, client) => {
 
         console.log("chalvalue ", chalvalue)
 
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
 
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("DoubleBet client.su ::", client.seatIndex);
@@ -481,6 +526,7 @@ module.exports.DoubleBet = async (requestData, client) => {
 
 
         updateData.$inc["totalbet"] = chalvalue;
+        updateData.$inc["playerInfo.$.coins"] = -chalvalue;
         updateData.$set["turnDone"] = true;
         commandAcions.clearJob(tabInfo.job_id);
 
@@ -492,6 +538,8 @@ module.exports.DoubleBet = async (requestData, client) => {
 
         const tb = await RouletteTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("action tb : ", tb);
+
+        this.AdminWinLossData(chalvalue, "loss")
 
         let response = {
             selectObj: tb.playerInfo[client.seatIndex].selectObj,
@@ -612,6 +660,7 @@ module.exports.PASTBET = async (requestData, client) => {
             return false
         }
 
+        this.BETACTIONCALL(tabInfo.playerInfo[client.seatIndex].pastbetObject, client)
 
         let response = {
             pastbet: tabInfo.playerInfo[client.seatIndex].pastbetObject
@@ -625,11 +674,54 @@ module.exports.PASTBET = async (requestData, client) => {
     }
 }
 
+// payload :::::::::::::::: {
+//     eventName: 'ACTIONROULETTE',
+//     data: {
+//       tableId: '66507cc8d77e055964e42305',
+//       playerId: '664c7085201e9907f3d31a8b',
+//       bet: 1000,
+//       betaction: {
+//         number: '[1,2,3,4,5,6]',
+//         type: '6_number',
+//         bet: 1000,
+//         betIndex: '145'
+//       }
+//     }
+//   }
+
+module.exports.BETACTIONCALL = async (pastbetObject, client) => {
+
+    try {
+
+        if (pastbetObject.length == 0)
+            return false;
+
+        let userBet = pastbetObject.splice(0, 1)
+        console.log("userBet ",userBet)
+        console.log("pastbetObject ",pastbetObject)
+
+        this.actionSpin({
+            tableId: client.tbid,
+            playerId:client.uid,
+            bet: userBet[0].bet,
+            betaction: userBet[0]
+        }, client, (d) => {
+
+            this.BETACTIONCALL(pastbetObject, client)
+
+        })
+
+    } catch (e) {
+        logger.info("Exception HISTORY : ", e);
+    }
+}
+
+
 module.exports.HISTORY = async (requestData, client) => {
 
     try {
 
-        const tableHistory = await RouletteUserHistory.find({ userId: requestData.playerId }).sort({ createdAt: -1 });
+        const tableHistory = await RouletteUserHistory.find({ userId: requestData.playerId }).sort({ createdAt: -1 }).limit(20);
 
         commandAcions.sendEvent(client, CONST.HISTORY, { tableHistory: tableHistory }, false, "");
 
@@ -637,4 +729,56 @@ module.exports.HISTORY = async (requestData, client) => {
     } catch (e) {
         logger.info("Exception HISTORY : ", e);
     }
+}
+
+module.exports.AdminWinLossData = async (gold, type) => {
+    try {
+
+
+        var olddate = this.CreateDate(new Date());
+        if (type == "win") {
+            await adminwinloss.updateOne(
+                {
+
+                    date: olddate
+                }, {
+                $inc: { win: gold },
+                $set: { createdAt: new Date() }
+            }, { upsert: true })
+        } else {
+
+            await adminwinloss.updateOne(
+                {
+
+                    date: olddate
+                }, {
+                $inc: { loss: gold },
+                $set: { createdAt: new Date() }
+            }, { upsert: true }, () => {
+
+            })
+        }
+
+
+
+    } catch (e) {
+        logger.info("AdminWinLossData", e);
+    }
+}
+
+
+module.exports.CreateDate = (date) => {
+    date = new Date(date);
+    year = date.getFullYear();
+    month = date.getMonth() + 1;
+    dt = date.getDate();
+
+    if (dt < 10) {
+        dt = '0' + dt;
+    }
+    if (month < 10) {
+        month = '0' + month;
+    }
+
+    return dt + '-' + month + '-' + year;
 }

@@ -11,6 +11,10 @@ const walletActions = require("./updateWallet");
 const RouletteTables = mongoose.model('RouletteTables');
 const RouletteUserHistory = mongoose.model('RouletteUserHistory');
 
+const gamePlayActionsRoulette = require('./gamePlay');
+const adminwinloss = mongoose.model('adminwinloss');
+
+
 // const leaveTableActions = require("./leaveTable");
 const { v4: uuidv4 } = require('uuid');
 
@@ -91,7 +95,9 @@ module.exports.StartSpinnerGame = async (tbId) => {
 
 
         //Genrate Rendom Number 
-        logger.info("RouletteGameStartTimer GAMELOGICCONFIG.SPIN : ", GAMELOGICCONFIG.SPIN);
+        logger.info("RouletteGameStartTimer GAMELOGICCONFIG.SPIN : ", GAMELOGICCONFIG.ROULETTE);
+        logger.info("DAY DAY.DAY : ", GAMELOGICCONFIG.DAY);
+
         logger.info("RouletteGameStartTimer tb.totalbet : ", tb.TableObject);
 
         // // NORMAL 
@@ -110,24 +116,114 @@ module.exports.StartSpinnerGame = async (tbId) => {
 
         // NORMAL 
 
-        let betObjectData = tb.playerInfo[0].betObject;
+        let TotalPlayerBetInfo = []
+        let TotalAllPlayer = []
+
+        for (let i = 0; i < tb.playerInfo.length; i++) {
+            if (tb.playerInfo[i].betObject != undefined) {
+                for (let x = 0; x < tb.playerInfo[i].betObject.length; x++) {
+
+                    if (tb.playerInfo[i].betObject[x] != undefined && tb.playerInfo[i].betObject[x].type == "number") {
+                        TotalPlayerBetInfo.push(tb.playerInfo[i].betObject[x])
+                    }
+
+                    TotalAllPlayer.push(tb.playerInfo[i].betObject[x])
+                }
+            }
+        }
+        let MustPlay = ""
+        if (GAMELOGICCONFIG.ROULETTE == "User" && TotalAllPlayer.length <= 5) {
+            MustPlay = "Client"
+        }
+
+        logger.info("RouletteGameStartTimer MustPlay: ", MustPlay);
 
 
-        if (GAMELOGICCONFIG.FIXNUMBERWON != undefined && GAMELOGICCONFIG.FIXNUMBERWON != -1 && GAMELOGICCONFIG.FIXNUMBERWON >= 0 && GAMELOGICCONFIG.FIXNUMBERWON <= 36) {
-            itemObject = GAMELOGICCONFIG.FIXNUMBERWON
-        } else if (GAMELOGICCONFIG.ROULETTE == "Client") {
+        logger.info("RouletteGameStartTimer GAMELOGICCONFIG.SPIN : ", GAMELOGICCONFIG.ROULETTE);
+
+        logger.info("RouletteGameStartTimer MustPlay: ", MustPlay);
+
+        let betObjectData = TotalPlayerBetInfo //tb.playerInfo[0].betObject;
+        let itemObject = -1
+        let AdminWinlossData = []
+        if (GAMELOGICCONFIG.DAY != undefined && GAMELOGICCONFIG.DAY != 1) {
+            let datebeforecount = this.AddTimeLAST(-((GAMELOGICCONFIG.DAY-1)* 86400));
+
+            logger.info("datebeforecount ", datebeforecount)
+
+            //let currentdata = gamePlayActionsRoulette.CreateDate(new Date())
+
+
+            AdminWinlossData = await adminwinloss.find({ createdAt: { $gte: new Date(datebeforecount) } })
+        } else {
+            let currentdata = gamePlayActionsRoulette.CreateDate(new Date())
+            AdminWinlossData = await adminwinloss.find({ date: currentdata })
+        }
+
+        logger.info("AdminWinlossData ", AdminWinlossData)
+
+        let totalWin = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => {return total + Math.round(num.win);}, 0) : 0
+        let totalLoss = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => {return total + Math.round(num.loss);}, 0) : 0
+        let perwin = 100 - ((totalLoss * 100) / totalWin)
+
+        logger.info("totalWin", totalWin);
+        logger.info("totalLoss", totalLoss);
+        logger.info("((totalLoss * 100)/totalWin)", ((totalLoss * 100) / totalWin));
+        logger.info("perwin", perwin);
+        logger.info("GAMELOGICCONFIG.PERCENTAGE", GAMELOGICCONFIG.PERCENTAGE);
+
+
+        if (GAMELOGICCONFIG.PERCENTAGE != undefined && GAMELOGICCONFIG.PERCENTAGE != -1 && perwin < GAMELOGICCONFIG.PERCENTAGE) {
+            MustPlay = "Client"
+        }
+
+        if (tb.whichTable == "blueTable" && GAMELOGICCONFIG.BLUEFIXNUMBERWON != undefined && GAMELOGICCONFIG.BLUEFIXNUMBERWON != -1 && GAMELOGICCONFIG.BLUEFIXNUMBERWON >= 0 && GAMELOGICCONFIG.BLUEFIXNUMBERWON <= 36) {
+            itemObject = GAMELOGICCONFIG.BLUEFIXNUMBERWON
+        } else if (tb.whichTable == "greenTable" && GAMELOGICCONFIG.GREENFIXNUMBERWON != undefined && GAMELOGICCONFIG.GREENFIXNUMBERWON != -1 && GAMELOGICCONFIG.GREENFIXNUMBERWON >= 0 && GAMELOGICCONFIG.GREENFIXNUMBERWON <= 36) {
+            itemObject = GAMELOGICCONFIG.GREENFIXNUMBERWON
+        } else if (MustPlay == "Client" || GAMELOGICCONFIG.ROULETTE == "Client") {
             itemObject = this.getRandomInt(0, 36)
             totalnmber = []
             // Remove TotalNumber for Bet 
 
-            for (let i = 0; i < betObjectData.length; i++) {
-                if (betObjectData[i].bet != undefined) {
-                    totalnmber.push(betObjectData[i].number)
+            for (let i = 0; i < TotalAllPlayer.length; i++) {
+                if (TotalAllPlayer[i].bet != undefined) {
+                    totalnmber.push(TotalAllPlayer[i].number)
                 }
             }
             totalnmber = _.flatten(totalnmber)
+
+            logger.info("totalnmber ", totalnmber)
+
+
             let notselectnumber = _.difference([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36], totalnmber)
+
+            logger.info("notselectnumber ", notselectnumber)
+
+
             itemObject = notselectnumber.length > 0 ? notselectnumber[this.getRandomInt(0, notselectnumber.length - 1)] : itemObject
+        } else if (GAMELOGICCONFIG.ROULETTE == "User") {
+
+            betObjectData.sort((e, f) => {
+                return e.bet - f.bet;
+            })
+
+            // [2024-05-22T05:35:51.163] [INFO] development - betObjectData [
+            //     { number: [ 7 ], type: 'number', bet: 2, betIndex: '7' },
+            //     { number: [ 2 ], type: 'number', bet: 100, betIndex: 2 },
+            //     { number: [ 3 ], type: 'number', bet: 100, betIndex: 3 },
+            //     { number: [ 1 ], type: 'number', bet: 100, betIndex: 1 },
+            //     { number: [ 4 ], type: 'number', bet: 100, betIndex: 4 },
+            //     { number: [ 5 ], type: 'number', bet: 100, betIndex: 5 },
+            //     { number: [ 6 ], type: 'number', bet: 100, betIndex: 6 },
+            //     { number: [ 7 ], type: 'number', bet: 500, betIndex: '7' }
+            //   ]
+
+
+            logger.info("betObjectData", betObjectData)
+
+            itemObject = betObjectData.length > 0 && betObjectData[0].number != undefined ? _.flatten(betObjectData[0].number)[0] : this.getRandomInt(0, 36)
+
         } else {
             itemObject = this.getRandomInt(0, 36)
         }
@@ -144,7 +240,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
             $push: {
                 "history": {
                     $each: [itemObject],
-                    $slice: -7
+                    $slice: -14
                 }
             }
         }
@@ -164,8 +260,8 @@ module.exports.StartSpinnerGame = async (tbId) => {
             //     }
             // }, { new: true });
 
-            this.winnerSpinner(tabInfo, itemObject);
-        }, 12000);
+            this.winnerSpinner(tabInfo);
+        }, 10000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 
@@ -174,6 +270,27 @@ module.exports.StartSpinnerGame = async (tbId) => {
     }
 }
 
+module.exports.AddTimeLAST = (t) => {
+    try {
+        const ut = new Date();
+        ut.setUTCHours(23);
+        ut.setUTCMinutes(59);
+        ut.setUTCSeconds(0);
+        ut.setSeconds(ut.getSeconds() + Number(t));
+
+        ut.setUTCHours(0);
+        ut.setUTCMinutes(0);
+        ut.setUTCSeconds(0);
+        ut.setUTCMilliseconds(0);
+
+
+
+        return ut;
+    } catch (error) {
+        logger.error('socketFunction.js AddTime error :--> ' + error);
+    }
+};
+
 // Generate a random whole number between a specified range (min and max)
 module.exports.getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -181,10 +298,10 @@ module.exports.getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports.winnerSpinner = async (tabInfo, itemObject) => {
+module.exports.winnerSpinner = async (tabInfo) => {
 
     try {
-        logger.info("winnerSorat winner ::  -->", itemObject, tabInfo);
+        logger.info("winnerSorat winner ::  -->", tabInfo);
         let tbid = tabInfo._id.toString()
         logger.info("winnerSorat tbid ::", tbid);
 
@@ -192,8 +309,12 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
             _id: MongoID(tbid.toString()),
         }, {})
         console.log("winnerSpinner tb ", tb)
-        if (typeof itemObject == "undefined" || (typeof tb != "undefined" && tb.playerInfo.length == 0)) {
-            logger.info("winnerSpinner winner ::", itemObject);
+
+        console.log("winnerSpinner tb.itemObject ", tb.itemObject)
+
+
+        if (typeof tb.itemObject == "undefined" || (typeof tb != "undefined" && tb.playerInfo.length == 0)) {
+            logger.info("winnerSpinner winner ::", tb.itemObject);
             logger.info("winnerSpinner winner tb.playerInfo.length ::", tb.playerInfo.length);
 
             return false;
@@ -202,6 +323,7 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
         if (tabInfo.gameState != "StartSpinner") return false;
         if (tabInfo.isFinalWinner) return false;
 
+        let itemObject = tb.itemObject
         const upWh = {
             _id: tbid
         }
@@ -221,7 +343,7 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
         ]
 
         let itemIndex = itemObject;
-        
+
         logger.info("itemIndex", itemIndex);
 
 
@@ -231,10 +353,10 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
                 let betObjectData = tbInfo.playerInfo[x].betObject;
                 var TotalWinAmount = 0
 
-
+                console.log("pastbetObject Winner ",betObjectData)
                 const upWh = {
                     _id: MongoID(tbid),
-                    "playerInfo.seatIndex":tbInfo.playerInfo[x].seatIndex
+                    "playerInfo.seatIndex": tbInfo.playerInfo[x].seatIndex
                 }
                 const updateData = {
                     $set: {
@@ -257,13 +379,14 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
                     }
                 };
                 logger.info("winnerSorat upWh updateData :: ", upWh, updateData);
-        
+
                 await RouletteTables.findOneAndUpdate(upWh, updateData, { new: true });
 
                 for (let i = 0; i < betObjectData.length; i++) {
                     if (betObjectData[i].bet != undefined) {
 
-                        
+                        console.log("betObjectData[i] ",betObjectData[i])
+
                         if (betObjectData[i].type == "number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
@@ -278,20 +401,20 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
                         if (betObjectData[i].type == "2to35" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
 
@@ -299,40 +422,40 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
                         if (betObjectData[i].type == "1st12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
                         if (betObjectData[i].type == "2nd12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
                         if (betObjectData[i].type == "3rd12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: betObjectData[i].bet * 2,
+                                winAmount: betObjectData[i].bet * 3,
                             })
 
-                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
+                            TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
                         if (betObjectData[i].type == "1to18" && betObjectData[i].number.indexOf(itemIndex) != -1) {
@@ -440,21 +563,30 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 5.83;
                         }
 
-                        console.log("TotalWinAmount ", TotalWinAmount)
 
-                        TotalWinAmount != 0 && await walletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(TotalWinAmount), 4, "Roulette Win", "roulette");
-                        
-                        let insertobj = {
-                            userId: tbInfo.playerInfo[x]._id.toString(),
-                            ballposition: itemIndex,
-                            play: tbInfo.playerInfo[x].totalbet,
-                            won: TotalWinAmount,
-                            uuid: this.generateRandomNumber(10)
-                        };
-                        console.log("RouletteUserHistory ", insertobj)
-                        await RouletteUserHistory.create(insertobj);
                     }
+
+
                 }
+                console.log("TotalWinAmount ", TotalWinAmount)
+
+                TotalWinAmount != 0 && await walletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(TotalWinAmount), 4, "Roulette Win", "roulette");
+
+                gamePlayActionsRoulette.AdminWinLossData(Number(TotalWinAmount), "loss")
+
+                let insertobj = {
+                    userId: tbInfo.playerInfo[x]._id.toString(),
+                    ballposition: itemIndex,
+                    beforeplaypoint: tbInfo.playerInfo[x].coins +  tbInfo.playerInfo[x].totalbet,
+                    play: tbInfo.playerInfo[x].totalbet,
+                    won: TotalWinAmount,
+                    afterplaypoint: tbInfo.playerInfo[x].coins + TotalWinAmount,
+                    uuid: tbInfo.uuid,
+                    betObjectData:betObjectData
+
+                };
+                console.log("RouletteUserHistory ", insertobj)
+                await RouletteUserHistory.create(insertobj);
             }
         }
 
@@ -636,7 +768,7 @@ module.exports.winnerSpinner = async (tabInfo, itemObject) => {
         // }
 
 
-       
+
 
 
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.ROULETTEWINNER, {

@@ -10,7 +10,7 @@ const gameStartActions = require("./gameStart");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
-
+const leaveTableActions = require('./leaveTable');
 
 module.exports.ROULETTE_GAME_JOIN_TABLE = async (requestData, client) => {
     try {
@@ -28,44 +28,59 @@ module.exports.ROULETTE_GAME_JOIN_TABLE = async (requestData, client) => {
         let UserInfo = await GameUser.findOne(gwh, {}).lean();
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
-        if (Number(totalWallet) < 1) {
-            sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Please add Wallet!!");
-            delete client.JT
-            return false;
-        }
+        //let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        // if (Number(totalWallet) < 1) {
+        //     sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Please add Wallet!!");
+        //     delete client.JT
+        //     return false;
+        // }
 
         let gwh1 = {
             "playerInfo._id": MongoID(client.uid)
         }
-        let tableInfo = await RouletteTables.findOne(gwh1, {}).lean();
+        let tableInfo = await RouletteTables.findOne(gwh1, { "playerInfo.$": 1 }).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
-
+       
         if (tableInfo != null) {
-            sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Already In playing table!!");
-            delete client.JT
+            // sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Already In playing table!!");
+            // delete client.JT
+
+            await leaveTableActions.leaveTable(
+                {
+                    reason: 'autoLeave',
+                },
+                {
+                    uid: tableInfo.playerInfo[0]._id.toString(),
+                    tbid: tableInfo._id.toString(),
+                    seatIndex: tableInfo.playerInfo[0].seatIndex,
+                    sck: tableInfo.playerInfo[0].sck,
+                }
+            );
+            await this.findTable(client, requestData)
+
             return false;
+        } else {
+            await this.findTable(client, requestData)
         }
-        await this.findTable( client,requestData)
     } catch (error) {
         console.info("ROULETTE_GAME_JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (client,requestData) => {
-    logger.info("findTable  : ",requestData);
+module.exports.findTable = async (client, requestData) => {
+    logger.info("findTable  : ", requestData);
 
     let tableInfo = await this.getBetTable(requestData);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
-    console.log("tableInfo ",tableInfo)
-    await this.findEmptySeatAndUserSeat(tableInfo, client,requestData);
+    console.log("tableInfo ", tableInfo)
+    await this.findEmptySeatAndUserSeat(tableInfo, client, requestData);
 }
 
 module.exports.getBetTable = async (requestData) => {
-    logger.info("getBetTable  : ",requestData);
+    logger.info("getBetTable  : ", requestData);
     let wh = {
-        activePlayer: { $gte: 1 },
-        whichTable:requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
+        activePlayer: { $lte: 243 },
+        whichTable: requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await RouletteTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -82,30 +97,30 @@ module.exports.createTable = async (requestData) => {
         let insertobj = {
             gameId: "",
             activePlayer: 0,
-            playerInfo: [{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
-                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
-                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},
-                         {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}
+            playerInfo: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},
+            {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
             ],
             gameState: "",
-            history:_.shuffle([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36]),
-            betamount:[5,10,50,100,500,1000],
-            TableObject:[
-                "0","1","2","3","4",
-                "5","6","7","8","9",
-                "10","11","12","13","14",
-                "15","16","17","18","19",
-                "20","21","22","23","24",
-                "25","26","27","28","29",
-                "30","31","32","33","34",
-                "35","36",
-                "1st12","2nd12","3rd12",
-                "1to18","19to36","even","odd",
-                "red","black"
+            history: _.shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]),
+            betamount: [5, 10, 50, 100, 500, 1000],
+            TableObject: [
+                "0", "1", "2", "3", "4",
+                "5", "6", "7", "8", "9",
+                "10", "11", "12", "13", "14",
+                "15", "16", "17", "18", "19",
+                "20", "21", "22", "23", "24",
+                "25", "26", "27", "28", "29",
+                "30", "31", "32", "33", "34",
+                "35", "36",
+                "1st12", "2nd12", "3rd12",
+                "1to18", "19to36", "even", "odd",
+                "red", "black"
             ],
-            whichTable:requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
+            whichTable: requestData.whichTable != undefined ? requestData.whichTable : "blueTable"
         };
-        console.log("requestData ",requestData)
+        console.log("requestData ", requestData)
         logger.info("createTable insertobj : ", insertobj);
 
         let insertInfo = await RouletteTables.create(insertobj);
@@ -119,7 +134,7 @@ module.exports.createTable = async (requestData) => {
     }
 }
 
-module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
+module.exports.findEmptySeatAndUserSeat = async (table, client, requestData) => {
     try {
         logger.info("findEmptySeatAndUserSeat table :=> ", table + " client :=> ", client);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
@@ -133,7 +148,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
         let user_wh = {
             _id: client.uid
         }
-        console.log("user_wh ",user_wh)
+        console.log("user_wh ", user_wh)
         let userInfo = await GameUser.findOne(user_wh, {}).lean();
         logger.info("findEmptySeatAndUserSeat userInfo : ", userInfo)
 
@@ -142,7 +157,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
         // };
         // let tbInfo = await RouletteTables.findOne(wh,{}).lean();
         // logger.info("findEmptySeatAndUserSeat tbInfo : ", tbInfo)
-        let totalWallet = Number(userInfo.chips) + Number(userInfo.winningChips)
+        let totalWallet = Number(userInfo.chips) //+ Number(userInfo.winningChips)
         let playerDetails = {
             seatIndex: seatIndex,
             _id: userInfo._id,
@@ -153,27 +168,27 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
             status: "",
             playerStatus: "",
             selectObj: [
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,0,0,0,
-                0,0,
-                0,0,0,
-                0,0,0,0,
-                0,0
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0,
+                0, 0, 0,
+                0, 0, 0, 0,
+                0, 0
             ],
-            betObject:[],
-            pastbetObject:[],
-            totalbet:0,
+            betObject: [],
+            pastbetObject: [],
+            totalbet: 0,
             turnMissCounter: 0,
             turnCount: 0,
             sck: client.id,
             playerSocketId: client.id,
             playerLostChips: 0,
-            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0,
+            Iscom: userInfo.Iscom != undefined ? userInfo.Iscom : 0,
 
         }
 
@@ -194,7 +209,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);
 
         let whereCond = {
-            _id: MongoID(table._id.toString())
+            _id: MongoID(table._id.toString()),
+            "playerInfo._id": { $ne: MongoID(userInfo._id) }
         };
         whereCond['playerInfo.' + seatIndex + '.seatIndex'] = { $exists: false };
 
@@ -235,7 +251,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
             diff += CONST.gameStartTime;
         }
 
-        sendEvent(client, CONST.ROULETTE_JOIN_TABLE , {}); //JOIN_SIGN_UP
+        sendEvent(client, CONST.ROULETTE_JOIN_TABLE, {}); //JOIN_SIGN_UP
 
         //GTI event
         sendEvent(client, CONST.ROULETTE_GAME_TABLE_INFO, {
@@ -248,11 +264,11 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
             gamePlayType: tableInfo.gamePlayType,
             tableAmount: tableInfo.tableAmount,
             tableType: tableInfo.whichTable,
-            history:tableInfo.history
+            history: tableInfo.history
         });
-        console.log("tableType: tableInfo.whichTable ",tableInfo.whichTable)
-        if(userInfo.Iscom == undefined || userInfo.Iscom == 0)
-        client.join(tableInfo._id.toString());
+        console.log("tableType: tableInfo.whichTable ", tableInfo.whichTable)
+        if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
+            client.join(tableInfo._id.toString());
 
         sendDirectEvent(client.tbid.toString(), CONST.ROULETTE_JOIN_TABLE, {
             ap: tableInfo.activePlayer,
@@ -265,9 +281,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
 
             let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
             clearJob(jobId)
-            setTimeout(async ()=>{
+            setTimeout(async () => {
                 await gameStartActions.gameTimerStart(tableInfo);
-            },1000)
+            }, 1000)
         }
         // else{
 
@@ -277,7 +293,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
         //         },2000)
         //     }
         // }
-  
+
         //}
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);
