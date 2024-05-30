@@ -15,7 +15,9 @@ const logger = require("../../logger");
 module.exports.leaveTable = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
+        if(requestData.reason == undefined || requestData.reason != 'autoLeave')
         commandAcions.sendDirectEvent(client.sck, CONST.LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+
         return false;
     }
 
@@ -68,9 +70,14 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await RouletteTables.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
+    if(requestData.reason == undefined || requestData.reason != 'autoLeave')
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLEROULETTE, response);
     //commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLEROULETTE, response);
 
+    //if(tbInfo.activePlayer == 0)
+    //{
+        //await RouletteTables.deleteMany({})
+    //}
 
     await this.manageOnUserLeave(tbInfo);
 }
@@ -83,10 +90,11 @@ module.exports.manageOnUserLeave = async (tb, client) => {
 
     
     if (playerInGame.length == 0 && tb.activePlayer == 0) {
-        let wh = {
-            _id: MongoID(tb._id.toString())
-        }
-        await RouletteTables.deleteOne(wh);
+        
+        // let wh = {
+        //     _id: MongoID(tb._id.toString())
+        // }
+        // await RouletteTables.deleteOne(wh);
     } else if (tb.activePlayer == 0) {
         this.leaveSingleUser(tb._id)
     }

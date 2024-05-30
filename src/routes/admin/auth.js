@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const playingLudo = mongoose.model("playingLudo");
 const JantaTables = mongoose.model('JantaTables');
 const RoueletteTables = mongoose.model('RouletteTables');
+const RummyTables = mongoose.model('rummyPlayingTables');
 
 /**
  * @api {post} /admin/signup-admin
@@ -84,7 +85,19 @@ router.get('/DeletePlayingJanat', async (req, res) => {
 router.get('/RoulletDeletePlaying', async (req, res) => {
   try {
 
-    await RoueletteTables .deleteMany({})
+    await RoueletteTables.deleteMany({})
+
+    res.json({ status: "ok" });
+  } catch (error) {
+    logger.error('admin/dahboard.js post bet-list error => ', error);
+    res.status(config.INTERNAL_SERVER_ERROR).json(error);
+  }
+});
+
+router.get('/RummyDeletePlaying', async (req, res) => {
+  try {
+
+    await RummyTables.deleteMany({})
 
     res.json({ status: "ok" });
   } catch (error) {

@@ -21,7 +21,8 @@ const PlayingTablesSchema = new Schema({
     totalbet:{ type: Number, default: 0 },
     TableObject:[],
     uuid:{ type: String, default: "" },
-    whichTable:{ type: String, default: "" }
+    whichTable:{ type: String, default: "" },
+    itemObject:{ type: Number, default: -1 }
 
 }, { versionKey: false });
 

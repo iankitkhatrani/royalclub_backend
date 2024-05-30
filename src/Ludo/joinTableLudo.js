@@ -256,7 +256,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
             playerRoutePos3:tableInfo.playerRoutePos3,
             playerRoutePos4:tableInfo.playerRoutePos4,
             safeDice:tableInfo.safeDice,
-            tokenNo:tokenNO
+            tokenNo:tokenNO,
+            agoraUid:requestData.agoraUid
         });
 
         if(userInfo.Iscom == undefined || userInfo.Iscom == 0)

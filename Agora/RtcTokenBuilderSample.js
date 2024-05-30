@@ -29,7 +29,8 @@ function  getToken(appID, appCERTIFICATE, channelNAME,UID)
         process.exit(1);
     }
     
-    const tokenWithUid = RtcTokenBuilder.buildTokenWithUid(appID, appCERTIFICATE, channelNAME, UID, role, privilegeExpiredTs);
+    //const tokenWithUid = RtcTokenBuilder.buildTokenWithUid(appID, appCERTIFICATE, channelNAME, UID, role, privilegeExpiredTs);
+    const tokenWithUid = RtcTokenBuilder.buildTokenWithAccount(appID, appCERTIFICATE, channelNAME, UID, role, privilegeExpiredTs);
     //console.log("Token No: ", tokenWithUid);  
     return tokenWithUid;
 }
