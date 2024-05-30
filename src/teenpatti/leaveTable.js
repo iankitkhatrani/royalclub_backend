@@ -9,6 +9,7 @@ const commandAcions = require("../helper/socketFunctions");
 const roundStartActions = require("./roundStart")
 const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
+const { filterBeforeSendSPEvent } = require("../common-function/manageUserFunction");
 
 
 module.exports.leaveTable = async (requestData, client) => {
@@ -93,7 +94,18 @@ module.exports.leaveTable = async (requestData, client) => {
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
     commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
-
+    
+    let userDetails = await GameUser.findOne({
+        _id: MongoID(client.uid.toString()),
+      }).lean();
+  
+      logger.info("check user Details =>",userDetails)
+      
+      let finaldata = await filterBeforeSendSPEvent(userDetails);
+      logger.info()
+      logger.info("check user Details finaldata =>",finaldata)
+  
+      commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
 
     await this.manageOnUserLeave(tbInfo);
 }

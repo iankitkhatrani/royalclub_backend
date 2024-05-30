@@ -83,6 +83,7 @@ module.exports.getPlayingAndDropUserRound = async (p) => {
 };
 
 module.exports.filterBeforeSendSPEvent = async (userData) => {
+  logger.info("filterBeforeSendSPEvent =>",userData)
   let findCountPlayer = await PlayingTables.aggregate([
     {
       $project: {
@@ -101,7 +102,7 @@ module.exports.filterBeforeSendSPEvent = async (userData) => {
     uniqueId: userData.uniqueId,
     deviceId: userData.deviceId,
     // chips: userData.chips,
-    chips: (Number(userData.chips) + Number(userData.winningChips) + Number(userData.bonusChips) + Number(userData.lockbonusChips)).toFixed(2),
+    chips: (Number(userData.chips) + Number(userData.winningChips)).toFixed(2),
     email: userData.email,
     winningChips: userData.winningChips,
     activePlayerCounter: findCountPlayer.length > 0 ? findCountPlayer[0].numberOfPlayers : 0,
