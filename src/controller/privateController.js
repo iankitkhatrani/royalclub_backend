@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const MongoID = mongoose.Types.ObjectId;
 const CONST = require("../../constant");
+const { uuid } = require('uuidv4')
 
 const PrivateTable = mongoose.model("privateTable");
 const users_helper = require("../helper/usersHelper");
@@ -36,8 +37,7 @@ async function privateTableCreate(requestBody, socket) {
       };
     } else {
 
-        let genarateId = uuidv4();
-		let privateTableId =  genarateId.split('-')[0];
+        let privateTableId = uuid();
 
       const newData = {
         createTableplayerId: playerId,
