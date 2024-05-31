@@ -296,6 +296,10 @@ const CONST = {
   R_GAME_CARD_DISTRIBUTION: 'RGCD',
   R_FINISH_TIMER_SET: 'RFTS',
 
+  //Rummy Private Table
+  CREATE_RUMMY_PRIVATE_TABLE_ID: 'CRPTI',
+
+
   // Timer
   userTurnTimer: 30,
   gameStartTime: 10,

@@ -10,6 +10,7 @@ const signupActions = require('../helper/signups/index');
 const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
 const gamePlayActionsRummy = require('../rummy');
+const privateTableCtrl = require('./privateController');
 
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');
@@ -425,6 +426,12 @@ H
                     case CONST.R_RECONNECT: {
                         await rummyRe.userReconnect(payload.data, socket);
                         break;
+                    }
+
+                    // Rummy Private Table
+                    case CONST.CREATE_RUMMY_PRIVATE_TABLE_ID:{
+                         await privateTableCtrl.privateTableCreate(payload.data, socket)
+                         break;
                     }
 
                     default:
