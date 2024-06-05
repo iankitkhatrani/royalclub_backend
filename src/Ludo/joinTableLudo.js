@@ -307,7 +307,8 @@ module.exports.findEmptySeat = (playerInfo) => {
 
 /*
     Join Table Code 
-
+    playerId:""
+    code:""
 */
 module.exports.JTOFC = async (requestData, client) => {
     if (typeof requestData.code != 'undefined' && requestData.code != null && requestData.code != '') {
