@@ -16,6 +16,7 @@ module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("requestData Ludo",requestData);
 
+        requestData._ip = 1
         if (typeof client.uid == "undefined") {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
@@ -66,17 +67,18 @@ module.exports.joinTable = async (requestData, client) => {
 module.exports.findTable = async (BetInfo, client,requestData) => {
     logger.info("findTable BetInfo : ", JSON.stringify(BetInfo));
 
-    let tableInfo = await this.getBetTable(BetInfo);
+    let tableInfo = await this.getBetTable(BetInfo,requestData);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
     await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client,requestData);
 }
 
-module.exports.getBetTable = async (BetInfo) => {
+module.exports.getBetTable = async (BetInfo,requestData) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
         boot: Number(BetInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 2 /*BetInfo.maxSeat*/ }
+        activePlayer: { $gte: 0, $lt: 2 /*BetInfo.maxSeat*/ },
+        _ip:requestData._ip
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await playingLudo.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -84,7 +86,7 @@ module.exports.getBetTable = async (BetInfo) => {
     if (tableInfo.length > 0) {
         return tableInfo[0];
     }
-    let table = await this.createTable(BetInfo);
+    let table = await this.createTable(BetInfo,requestData);
     return table;
 }
 
@@ -115,7 +117,8 @@ module.exports.createTable = async (betInfo) => {
                 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
                 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 71, 72, 73, 74, 75,76
             ],
-            safeDice:[9, 22, 35, 48, 1, 14, 27, 40]
+            safeDice: [9, 22, 35, 48, 1, 14, 27, 40],
+            _ip:requestData._ip != undefined ? requestData._ip : 0
         };
         logger.info("createTable insertobj : ", insertobj);
 
