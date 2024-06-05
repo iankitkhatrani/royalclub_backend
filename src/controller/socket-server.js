@@ -269,6 +269,14 @@ myIo.init = function (server) {
                         await gamePlayActionsLudo.joinTable(payload.data, socket);
                         break;
                     }
+                        
+                    case CONST.JTOFC: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsLudo.JTOFC(payload.data, socket);
+                        break;
+                    }
 
                     case CONST.RollDice: {
                         await gamePlayActionsLudo.RollDice(payload.data, socket);

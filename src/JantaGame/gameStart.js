@@ -123,7 +123,7 @@ module.exports.StartJantaGame = async (tbId) => {
         const tabInfo = await JantaTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("StartJanta tabInfo :: ", tabInfo);
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:WinnerNumber,timelimit:10 });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:WinnerNumber,timelimit:30 });
 
         setTimeout(async ()=> {
             
