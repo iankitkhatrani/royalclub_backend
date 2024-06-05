@@ -15,8 +15,7 @@ const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("requestData Ludo", requestData);
-
-        requestData._ip = 1
+        
         if (typeof client.uid == "undefined") {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
@@ -90,7 +89,7 @@ module.exports.getBetTable = async (BetInfo, requestData) => {
     return table;
 }
 
-module.exports.createTable = async (betInfo) => {
+module.exports.createTable = async (betInfo,requestData) => {
     try {
         let insertobj = {
             gameId: "",
@@ -261,7 +260,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             playerRoutePos4: tableInfo.playerRoutePos4,
             safeDice: tableInfo.safeDice,
             tokenNo: tokenNO,
-            agoraUid: requestData.agoraUid
+            agoraUid: requestData.agoraUid,
+            tableCode:tableInfo.tableCode
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
