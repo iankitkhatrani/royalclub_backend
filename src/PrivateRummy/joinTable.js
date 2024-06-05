@@ -286,7 +286,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
       socket.join(tableInfo._id.toString());
     }
 
-    sendDirectEvent(socket.tbid.toString(), CONST.R_JOIN_PRIVATE_TABLE, {
+    sendDirectEvent(socket.tbid.toString(), CONST.R_JOIN_TABLE, {
       ap: tableInfo.activePlayer,
       playerDetail: tableInfo.playerInfo[seatIndex],
     });
