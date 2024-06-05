@@ -14,7 +14,7 @@ const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
 module.exports.joinTable = async (requestData, client) => {
     try {
-        logger.info("requestData Ludo",requestData);
+        logger.info("requestData Ludo", requestData);
 
         requestData._ip = 1
         if (typeof client.uid == "undefined") {
@@ -24,7 +24,7 @@ module.exports.joinTable = async (requestData, client) => {
         if (typeof client.JT != "undefined" && client.JT) return false;
 
         client.JT = true;
-        console.log("requestData ",requestData)
+        console.log("requestData ", requestData)
         let bwh = {
             _id: requestData.betId
         }
@@ -39,7 +39,7 @@ module.exports.joinTable = async (requestData, client) => {
 
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
 
-        console.log("BetInfo ",BetInfo)
+        console.log("BetInfo ", BetInfo)
 
         if (Number(totalWallet) < Number(BetInfo.entryFee)) {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please add Wallet!!");
@@ -58,27 +58,27 @@ module.exports.joinTable = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable(BetInfo, client,requestData)
+        await this.findTable(BetInfo, client, requestData)
     } catch (error) {
         console.info("JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (BetInfo, client,requestData) => {
+module.exports.findTable = async (BetInfo, client, requestData) => {
     logger.info("findTable BetInfo : ", JSON.stringify(BetInfo));
 
-    let tableInfo = await this.getBetTable(BetInfo,requestData);
+    let tableInfo = await this.getBetTable(BetInfo, requestData);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
-    await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client,requestData);
+    await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client, requestData);
 }
 
-module.exports.getBetTable = async (BetInfo,requestData) => {
+module.exports.getBetTable = async (BetInfo, requestData) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
         boot: Number(BetInfo.entryFee),
         activePlayer: { $gte: 0, $lt: 2 /*BetInfo.maxSeat*/ },
-        _ip:requestData._ip
+        _ip: requestData._ip
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await playingLudo.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -86,7 +86,7 @@ module.exports.getBetTable = async (BetInfo,requestData) => {
     if (tableInfo.length > 0) {
         return tableInfo[0];
     }
-    let table = await this.createTable(BetInfo,requestData);
+    let table = await this.createTable(BetInfo, requestData);
     return table;
 }
 
@@ -100,25 +100,26 @@ module.exports.createTable = async (betInfo) => {
             boot: betInfo.entryFee,
             playerInfo: this.makeObjects(4),
             gameState: "",
-            playerRoutePos1:[
+            playerRoutePos1: [
                 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56, 57,58
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56, 57, 58
             ],
-            playerRoutePos2:[14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+            playerRoutePos2: [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
                 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                 41, 42, 43, 44, 45, 46, 47, 48, 49,
-                50, 51, 52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 59, 60, 61, 62, 63,64
+                50, 51, 52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 59, 60, 61, 62, 63, 64
             ],
-            playerRoutePos3:[27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-                52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 65, 66, 67, 68, 69,70
+            playerRoutePos3: [27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+                52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 65, 66, 67, 68, 69, 70
             ],
-            playerRoutePos4:[
+            playerRoutePos4: [
                 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
                 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
-                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 71, 72, 73, 74, 75,76
+                27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 71, 72, 73, 74, 75, 76
             ],
             safeDice: [9, 22, 35, 48, 1, 14, 27, 40],
-            _ip:requestData._ip != undefined ? requestData._ip : 0
+            _ip: requestData._ip != undefined ? requestData._ip : 0,
+            tableCode: requestData._ip != undefined && requestData._ip == 1 ? Math.floor(1000000 + Math.random() * 9000000) : ""
         };
         logger.info("createTable insertobj : ", insertobj);
 
@@ -141,7 +142,7 @@ module.exports.makeObjects = (no) => {
     return arr;
 }
 
-module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestData) => {
+module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, requestData) => {
     try {
         logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ");
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
@@ -174,18 +175,18 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
             coins: totalWallet,
             status: "",
             playerStatus: "",
-            color:seatIndex == 0 ? "blue":"green",
-            kukaris:{
-                k1:-1,
-                k2:-1,
-                k3:-1,
-                k4:-1
+            color: seatIndex == 0 ? "blue" : "green",
+            kukaris: {
+                k1: -1,
+                k2: -1,
+                k3: -1,
+                k4: -1
             },
-            kukarisindex:{
-                k1:-1,
-                k2:-1,
-                k3:-1,
-                k4:-1
+            kukarisindex: {
+                k1: -1,
+                k2: -1,
+                k3: -1,
+                k4: -1
             },
             turnMissCounter: 0,
             turnCount: 0,
@@ -193,7 +194,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
             playerSocketId: client.id,
             playerLostChips: 0,
             isSee: false,
-            Iscom:userInfo.Iscom != undefined ? userInfo.Iscom:0
+            Iscom: userInfo.Iscom != undefined ? userInfo.Iscom : 0
         }
 
         logger.info("findEmptySeatAndUserSeat playerDetails : ", playerDetails);
@@ -241,7 +242,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
         }
 
         sendEvent(client, CONST.JOINLUDO, {});
-        const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),requestData.agoraUid)
+        const tokenNO = getToken(requestData.agoraAppId, requestData.agoraCertificate, tableInfo._id.toString(), requestData.agoraUid)
         //GTI event
         sendEvent(client, CONST.GAME_TABLE_INFO, {
             ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -254,17 +255,17 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
             type: tableInfo.gamePlayType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
-            playerRoutePos1:tableInfo.playerRoutePos1,
-            playerRoutePos2:tableInfo.playerRoutePos2,
-            playerRoutePos3:tableInfo.playerRoutePos3,
-            playerRoutePos4:tableInfo.playerRoutePos4,
-            safeDice:tableInfo.safeDice,
-            tokenNo:tokenNO,
-            agoraUid:requestData.agoraUid
+            playerRoutePos1: tableInfo.playerRoutePos1,
+            playerRoutePos2: tableInfo.playerRoutePos2,
+            playerRoutePos3: tableInfo.playerRoutePos3,
+            playerRoutePos4: tableInfo.playerRoutePos4,
+            safeDice: tableInfo.safeDice,
+            tokenNo: tokenNO,
+            agoraUid: requestData.agoraUid
         });
 
-        if(userInfo.Iscom == undefined || userInfo.Iscom == 0)
-        client.join(tableInfo._id.toString());
+        if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
+            client.join(tableInfo._id.toString());
 
         sendDirectEvent(client.tbid.toString(), CONST.JOIN_TABLE, {
             ap: tableInfo.activePlayer,
@@ -285,7 +286,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
         //     setTimeout(()=>{
         //         botLogic.JoinRobot(tableInfo,betInfo)
         //     },2000)
-  
+
         // }
     } catch (error) {
         console.info("findEmptySeatAndUserSeat", error);
@@ -294,12 +295,45 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client,requestD
 
 module.exports.findEmptySeat = (playerInfo) => {
     for (x in playerInfo) {
-       
 
-        if (typeof playerInfo[x] == 'object' && playerInfo[x] != null && (x == 0 || x==2) &&  typeof playerInfo[x].seatIndex == 'undefined') {
+
+        if (typeof playerInfo[x] == 'object' && playerInfo[x] != null && (x == 0 || x == 2) && typeof playerInfo[x].seatIndex == 'undefined') {
             return parseInt(x);
             break;
         }
     }
     return '-1';
+}
+
+/*
+    Join Table Code 
+
+*/
+module.exports.JTOFC = async (requestData, client) => {
+    if (typeof requestData.code != 'undefined' && requestData.code != null && requestData.code != '') {
+
+        let userInfo = await GameUser.find({ _id: MongoID(client.uid) }, {})
+        let wh = {
+            tableCode: parseInt(requestData.code),
+            activePlayer: { $gte: 0, $lt: 2 },
+            "pi.ui.uid": { $ne: MongoID(client.uid.toString()) },
+        }
+        logger.info("JTOFC getBetTable wh : ", JSON.stringify(wh));
+        let tbdata = await playingLudo.findOne(wh, {}).lean();
+
+        if (userInfo.gold >= tbdata[0].boot * 2) {
+
+            if (tbdata[0].activePlayer < tbdata[0].maxSeat) {
+
+                this.findEmptySeatAndUserSeat(tbdata, {}, client, {});
+
+            } else {
+                sendEvent(client, CONST.JTOFC, requestData, false, "Please restart game!!");
+            }
+        } else {
+            sendEvent(client, CONST.JTOFC, requestData, false, "Please add Wallet!!");
+        }
+    } else {
+        sendEvent(client, CONST.JTOFC, requestData, false, "Please restart game!!");
+    }
 }
