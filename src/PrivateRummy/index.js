@@ -1,4 +1,4 @@
-const { joinTable } = require('./joinTable');
+const { joinTable, gameStart } = require('./joinTable');
 const { rummyGetBetList } = require('./betList');
 const { privateTableCreate } = require('./createtable');
 const { reconnect } = require('../common-function/reconnect');
@@ -32,4 +32,5 @@ module.exports = {
   disconnectTableHandle: disconnectTableHandle,
   rummyGetBetList: rummyGetBetList,
   privateTableCreate: privateTableCreate,
+  gameStart: gameStart
 };

@@ -483,7 +483,8 @@ myIo.init = function (server) {
                         if (payload.data.gamePlayType == "privateTable") {
                             try {
                                 logger.info("private Table Game Start----->>>>", payload.data);
-                                // privateTableCtrl.gameStart(privateTable, payload.data, { io, socket })
+                                await await privateActionsRummy.gameStart(payload.data, socket);
+
                             } catch (error) {
                                 console.log('private Table Pic card error => ', error);
                             }
