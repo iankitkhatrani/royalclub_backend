@@ -269,7 +269,7 @@ myIo.init = function (server) {
                         await gamePlayActionsLudo.joinTable(payload.data, socket);
                         break;
                     }
-                        
+
                     case CONST.JTOFC: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
@@ -457,7 +457,7 @@ myIo.init = function (server) {
                     // Rummy Private Table
                     case CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID: {
                         try {
-                            await privateTableCtrl.privateTableCreate(payload.data, socket)
+                            await privateActionsRummy.privateTableCreate(payload.data, socket)
                         } catch (error) {
                             logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
                         }
@@ -470,8 +470,7 @@ myIo.init = function (server) {
                             socket.uid = payload.data.playerId;
                             socket.sck = socket.id;
                             logger.info('Join Privaet table payload.data => ', payload.data);
-                            let newPrivateRooms = privateActionsRummy.joinTable(payload.data, socket);
-                            logger.info("New Private Rooms Found-->", JSON.stringify(newPrivateRooms))
+                            await privateActionsRummy.joinTable(payload.data, socket);
 
                         } catch (error) {
                             socket.emit("req", { eventName: CONST.ERROR, error });

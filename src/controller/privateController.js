@@ -4,6 +4,7 @@ const CONST = require("../../constant");
 const { v4: uuidv4 } = require('uuid');
 
 const PrivateTable = mongoose.model("rummyPrivateTable");
+const PlayingTables = mongoose.model("rummyPrivatePlayingTable");
 const users_helper = require("../helper/usersHelper");
 const common_helper = require("../helper/commonHelper");
 const logger = require("../../logger");
@@ -54,6 +55,31 @@ async function privateTableCreate(requestBody, socket) {
         sendEvent(socket, CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");
         return
       }
+
+      try {
+        let insertobj = {
+          maxSeat: 5,
+          entryFee: betInfo.entryFee,
+          commission: 10,
+          privateTableId: privateTableId,
+          activePlayer: 0,
+          gamePlayType: "RummyPrivateTable",
+          playerInfo: this.makeObjects(Number(5)),
+          // gameState: CONST.WAITING,
+          discardCard: '',
+          totalRewardCoins: 0,
+          playersScoreBoard: [],
+        };
+
+        let insertInfo = await PlayingTables.create(insertobj);
+        logger.info("create Private Table : ", insertInfo);
+
+
+        return insertInfo;
+      } catch (error) {
+        logger.error('joinTable.js createTable error=> ', error, betInfo);
+      }
+
       // return response;
     }
   } catch (error) {
@@ -131,6 +157,16 @@ async function privateTableDelete(requestBody) {
     logger.error("something went wrong when private table delete ", error);
   }
 }
+
+module.exports.makeObjects = (length = 0) => {
+  try {
+    return Array.from({ length }, () => {
+      return {};
+    });
+  } catch (error) {
+    logger.error('joinTable.js makeObjects error=> ', error);
+  }
+};
 
 module.exports = {
   privateTableCreate,

@@ -5,7 +5,8 @@ const collectionName = "rummyPrivatePlayingTable";
 const PrivateTableSchema = new Schema({
     entryFee: { type: String, required: true },
     tableId: { type: String },
-    gamePlayType: { type: String, default: 'privateTable' },
+    privateTableId: { type: String, default: "" },
+    gamePlayType: { type: String, default: 'RummyPrivateTable' },
     maxSeat: { type: Number, default: 6 },
     winingDeclareCount: { type: Number, default: 3 },
     activePlayer: { type: Number, default: 0 },

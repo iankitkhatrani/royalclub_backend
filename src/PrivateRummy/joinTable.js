@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
-const BetLists = mongoose.model('rummyBetList');
+const BetLists = mongoose.model('rummyPrivateTable');
 const Users = mongoose.model('users');
 const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 
@@ -19,7 +19,7 @@ module.exports.joinTable = async (requestData, socket) => {
     // logger.info("requestData joinTable socket ", socket.JT)
 
     const entryFee = requestData.entryFee.toString()
-    // logger.info("requestData joinTable entryFee", typeof entryFee, entryFee)
+    logger.info("requestData joinTable entryFee", typeof entryFee, entryFee)
 
     if (typeof socket.uid === 'undefined') {
       sendEvent(socket, CONST.R_JOIN_PRIVATE_TABLE, requestData, {
@@ -43,10 +43,10 @@ module.exports.joinTable = async (requestData, socket) => {
       tableId: requestData.privateTableId,
     }
     logger.info("Private join Table bwh : ", JSON.stringify(bwh));
-    const BetInfo = await PrivateBetInfo.findOne(bwh, {}).lean();
-    console.info('BetInfo => ', BetInfo);
+    const betInfo = await BetLists.findOne(bwh, {}).lean();
+    logger.info('BetInfo => ', betInfo);
 
-    const betInfo = await BetLists.findOne(query).lean();
+    // const betInfo = await BetLists.findOne(query).lean();
     // logger.info("betInfo =>", betInfo);
 
     let condition = { _id: MongoID(socket.uid) };
@@ -95,6 +95,7 @@ module.exports.joinTable = async (requestData, socket) => {
 module.exports.findTable = async (betInfo, socket, userInfo, requestData) => {
   try {
     let tableInfo = await this.getBetTable(betInfo, userInfo);
+    logger.info('tableInfo => ', tableInfo);
 
     if (tableInfo.gameTimer !== null && tableInfo.gameTimer !== undefined) {
       let currentDateTime = new Date();
@@ -131,7 +132,7 @@ module.exports.getBetTable = async (betInfo, userInfo) => {
       // entryFee: betInfo.entryFee,
       activePlayer: { $gte: 0, $lt: 5 },
       gamePlayType: betInfo.gamePlayType,
-      maxSeat: parseInt(betInfo.maxSeat)
+      // maxSeat: parseInt(betInfo.maxSeat)
     };
 
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -178,12 +179,6 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
     if (userInfo.chips > gameDepositChips) {
       playerGameChips = gameDepositChips;
       totalWallet -= gameDepositChips;
-    } else if (userInfo.chips > playerGameChips * 2) {
-      playerGameChips = playerGameChips * 2;
-      totalWallet -= playerGameChips;
-    } else if (userInfo.chips > playerGameChips) {
-      playerGameChips;
-      totalWallet -= playerGameChips;
     }
 
     let playerDetail = {
@@ -238,6 +233,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
     }
     let playerInfo = tableInfo.playerInfo[seatIndex];
 
+    let result = false;
+    if (betInfo.createTableplayerId == playerInfo._id) {
+      result = true;
+      logger.info("result 1-->", result);
+    }
+
     if (!(playerInfo._id.toString() === userInfo._id.toString())) {
       logger.info('\n Assign User Info :--> ', playerInfo._id + '\n Assign User Info :--> ', userInfo._id);
       await this.findTable(betInfo, socket);
@@ -261,7 +262,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
     }
 
     sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
-    const tokenNO = getToken(requestData.agoraAppId, requestData.agoraCertificate, tableInfo._id.toString(), requestData.agoraUid)
+    // const tokenNO = getToken(requestData.agoraAppId, requestData.agoraCertificate, tableInfo._id.toString(), requestData.agoraUid)
+
     //GTI event
     sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -274,8 +276,9 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
       type: tableInfo.gamePlayType,
       openDecks: tableInfo.openDeck,
       tableAmount: tableInfo.tableAmount,
-      tokenNo: tokenNO,
-      agoraUid: requestData.agoraUid
+      createTableplayerId: result,
+      // tokenNo: tokenNO,
+      // agoraUid: requestData.agoraUid
     });
 
     //JT event
@@ -290,22 +293,22 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
 
     delete socket.JT;
 
-    await Users.updateOne(
-      { _id: MongoID(userInfo._id) },
-      {
-        $push: {
-          "lastTableId": {
-            $each: [MongoID(tableInfo._id.toString())],
-            $slice: -3
-          }
-        }
-      })
+    // await Users.updateOne(
+    //   { _id: MongoID(userInfo._id) },
+    //   {
+    //     $push: {
+    //       "lastTableId": {
+    //         $each: [MongoID(tableInfo._id.toString())],
+    //         $slice: -3
+    //       }
+    //     }
+    //   })
 
-    if (tableInfo.activePlayer === 2 && tableInfo.gameState === '') {
-      let jobId = 'LEAVE_SINGLE_USER:' + tableInfo._id;
-      clearJob(jobId);
-      gameStartActions.gameTimerStart(tableInfo);
-    }
+    // if (tableInfo.activePlayer === 2 && tableInfo.gameState === '') {
+    //   let jobId = 'LEAVE_SINGLE_USER:' + tableInfo._id;
+    //   clearJob(jobId);
+    //   gameStartActions.gameTimerStart(tableInfo);
+    // }
 
 
     /*
