@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 
 const roundStartActions = require('./roundStart');
 const gameFinishActions = require('./gameFinish');

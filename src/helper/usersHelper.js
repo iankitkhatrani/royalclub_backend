@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('users');
 const Admin = mongoose.model('admin');
 const BetLists = mongoose.model('betList');
-const PrivateTable = mongoose.model('privateTable');
+const PrivateTable = mongoose.model('rummyPrivateTable');
 const bcrypt = require('bcrypt');
 const logger = require('../../logger');
 
@@ -92,11 +92,11 @@ const usersHelper = {
     var data = await newUser.save();
 
     if (data) {
-        return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }
+      return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }
     } else {
-        return { status: 0, message: "record not added", data: null }
+      return { status: 0, message: "record not added", data: null }
     }
-},
+  },
 
 };
 

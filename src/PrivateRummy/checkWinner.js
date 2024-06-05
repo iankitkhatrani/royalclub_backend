@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 const MongoID = mongoose.Types.ObjectId;
 
 const CONST = require('../../constant');

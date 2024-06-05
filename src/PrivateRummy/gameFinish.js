@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 const Commission = mongoose.model('commissions');
 const Users = mongoose.model('users');
 const TableHistory = mongoose.model('tableHistory');

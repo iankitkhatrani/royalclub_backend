@@ -3,7 +3,7 @@ const MongoID = mongoose.Types.ObjectId;
 const CONST = require("../../constant");
 const { v4: uuidv4 } = require('uuid');
 
-const PrivateTable = mongoose.model("privateTable");
+const PrivateTable = mongoose.model("rummyPrivateTable");
 const users_helper = require("../helper/usersHelper");
 const common_helper = require("../helper/commonHelper");
 const logger = require("../../logger");
@@ -49,9 +49,9 @@ async function privateTableCreate(requestBody, socket) {
       logger.info("privateTableCreate response => ", response);
 
       if (response.status) {
-        sendEvent(socket, CONST.CREATE_RUMMY_PRIVATE_TABLE_ID, { privateTableId: privateTableId }, "Create Private Table Id");
+        sendEvent(socket, CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID, { privateTableId: privateTableId }, "Create Private Table Id");
       } else {
-        sendEvent(socket, CONST.CREATE_RUMMY_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");
+        sendEvent(socket, CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");
         return
       }
       // return response;

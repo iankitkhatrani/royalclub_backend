@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const collectionName = "privateTable";
+const collectionName = "rummyPrivatePlayingTable";
 
 const PrivateTableSchema = new Schema({
-    createTableplayerId: { type: String, required: true },
     entryFee: { type: String, required: true },
     tableId: { type: String },
-    gamePlayType: { type: String, default:'private' },
+    gamePlayType: { type: String, default: 'privateTable' },
     maxSeat: { type: Number, default: 6 },
     winingDeclareCount: { type: Number, default: 3 },
     activePlayer: { type: Number, default: 0 },

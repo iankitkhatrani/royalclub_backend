@@ -10,6 +10,7 @@ const signupActions = require('../helper/signups/index');
 const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
 const gamePlayActionsRummy = require('../rummy');
+const privateActionsRummy = require('../PrivateRummy');
 const privateTableCtrl = require('./privateController');
 
 const gamePlayActionsLudo = require('../Ludo');
@@ -446,11 +447,42 @@ myIo.init = function (server) {
                         break;
                     }
                     // Rummy Private Table
-                    case CONST.CREATE_RUMMY_PRIVATE_TABLE_ID: {
-                        await privateTableCtrl.privateTableCreate(payload.data, socket)
+                    case CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID: {
+                        try {
+                            await privateTableCtrl.privateTableCreate(payload.data, socket)
+                        } catch (error) {
+                            logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
+                        }
                         break;
                     }
 
+                    case CONST.R_JOIN_PRIVATE_TABLE: {
+                        try {
+                            // console.log("SP called");
+                            socket.uid = payload.data.playerId;
+                            socket.sck = socket.id;
+                            logger.info('Join Privaet table payload.data => ', payload.data);
+                            let newPrivateRooms = privateActionsRummy.joinTable(payload.data, socket);
+                            logger.info("New Private Rooms Found-->", JSON.stringify(newPrivateRooms))
+
+                        } catch (error) {
+                            socket.emit("req", { eventName: CONST.ERROR, error });
+                        }
+
+                        break;
+                    }
+
+                    case CONST.R_PRIVATE_TABLE_START: {
+                        if (payload.data.gamePlayType == "privateTable") {
+                            try {
+                                logger.info("private Table Game Start----->>>>", payload.data);
+                                // privateTableCtrl.gameStart(privateTable, payload.data, { io, socket })
+                            } catch (error) {
+                                console.log('private Table Pic card error => ', error);
+                            }
+                        }
+                        break;
+                    }
                     default:
                         sendEvent(socket, CONST.INVALID_EVENT, {
                             msg: 'This Event Is Nothing',

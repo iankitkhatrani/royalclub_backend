@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const BetLists = mongoose.model('rummyBetList');
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 
 const gameStartActions = require('./gameStart');
 const botLogic = require('../helper/botFunction');
@@ -15,7 +15,7 @@ const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
 module.exports.joinTable = async (requestData, socket) => {
   try {
-    // logger.info("requestData joinTable", requestData)
+    logger.info("rummy private requestData joinTable", requestData)
     // logger.info("requestData joinTable socket ", socket.JT)
 
     const entryFee = requestData.entryFee.toString()
@@ -35,10 +35,16 @@ module.exports.joinTable = async (requestData, socket) => {
 
     socket.JT = true;
 
-    let query = {
-      entryFee: entryFee,
-      maxSeat: parseInt(requestData.maxSeat)
-    };
+    // let query = {
+    //   entryFee: entryFee,
+    //   maxSeat: parseInt(requestData.maxSeat)
+    // };
+    let bwh = {
+      tableId: requestData.privateTableId,
+    }
+    logger.info("Private join Table bwh : ", JSON.stringify(bwh));
+    const BetInfo = await PrivateBetInfo.findOne(bwh, {}).lean();
+    console.info('BetInfo => ', BetInfo);
 
     const betInfo = await BetLists.findOne(query).lean();
     // logger.info("betInfo =>", betInfo);
@@ -74,7 +80,7 @@ module.exports.joinTable = async (requestData, socket) => {
       return false;
 
     } else {
-      return await this.findTable(betInfo, socket, userInfo,requestData);
+      return await this.findTable(betInfo, socket, userInfo, requestData);
     }
   } catch (error) {
     sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
@@ -86,7 +92,7 @@ module.exports.joinTable = async (requestData, socket) => {
   }
 };
 
-module.exports.findTable = async (betInfo, socket, userInfo,requestData) => {
+module.exports.findTable = async (betInfo, socket, userInfo, requestData) => {
   try {
     let tableInfo = await this.getBetTable(betInfo, userInfo);
 
@@ -108,7 +114,7 @@ module.exports.findTable = async (betInfo, socket, userInfo,requestData) => {
         // logger.info('time is greater than 4 sec');
       }
     }
-    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket,requestData);
+    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket, requestData);
   } catch (error) {
     logger.error('joinTable.js findTable error=> ', error, betInfo);
   }
@@ -121,9 +127,9 @@ module.exports.getBetTable = async (betInfo, userInfo) => {
 
     let wh = {
       // _id: { $nin: userInfo.lastTableId },
-      _id: { $nin: userInfo && userInfo.lastTableId ? userInfo.lastTableId : [] },
-      entryFee: betInfo.entryFee,
-      activePlayer: { $gte: 0, $lt: betInfo.maxSeat },
+      // _id: { $nin: userInfo && userInfo.lastTableId ? userInfo.lastTableId : [] },
+      // entryFee: betInfo.entryFee,
+      activePlayer: { $gte: 0, $lt: 5 },
       gamePlayType: betInfo.gamePlayType,
       maxSeat: parseInt(betInfo.maxSeat)
     };
@@ -132,50 +138,18 @@ module.exports.getBetTable = async (betInfo, userInfo) => {
 
     if (tableInfo.length > 0) {
       return tableInfo[0];
+    } else {
+      return false;
     }
-    let table = await this.createTable(betInfo);
-    return table;
+    // let table = await this.createTable(betInfo);
+    // return table;
   } catch (error) {
     logger.error('joinTable.js getBetTable error=> ', error, betInfo);
   }
 };
 
-module.exports.createTable = async (betInfo) => {
-  try {
-    let winingDeclareCount = getRandomNumber(4, 8)
-    let insertobj = {
-      maxSeat: betInfo.maxSeat,
-      entryFee: betInfo.entryFee,
-      commission: betInfo.commission,
-      activePlayer: 0,
-      gamePlayType: betInfo.gamePlayType,
-      playerInfo: this.makeObjects(Number(betInfo.maxSeat)),
-      // gameState: CONST.WAITING,
-      discardCard: '',
-      totalRewardCoins: 0,
-      playersScoreBoard: [],
-      winingDeclareCount: winingDeclareCount
-    };
 
-    let insertInfo = await PlayingTables.create(insertobj);
-
-    return insertInfo;
-  } catch (error) {
-    logger.error('joinTable.js createTable error=> ', error, betInfo);
-  }
-};
-
-module.exports.makeObjects = (length = 0) => {
-  try {
-    return Array.from({ length }, () => {
-      return {};
-    });
-  } catch (error) {
-    logger.error('joinTable.js makeObjects error=> ', error);
-  }
-};
-
-module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestData) => {
+module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, requestData) => {
   try {
     // logger.info("\n findEmptySeatAndUserSeat socket  -->", socket.isBot)
     // logger.info("\n findEmptySeatAndUserSeat socket table -->", table)
@@ -287,7 +261,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
     }
 
     sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
-    const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),requestData.agoraUid)
+    const tokenNO = getToken(requestData.agoraAppId, requestData.agoraCertificate, tableInfo._id.toString(), requestData.agoraUid)
     //GTI event
     sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -300,8 +274,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
       type: tableInfo.gamePlayType,
       openDecks: tableInfo.openDeck,
       tableAmount: tableInfo.tableAmount,
-      tokenNo:tokenNO,
-      agoraUid:requestData.agoraUid
+      tokenNo: tokenNO,
+      agoraUid: requestData.agoraUid
     });
 
     //JT event
@@ -382,4 +356,40 @@ module.exports.findEmptySeat = (playerInfo) => {
 
 const getRandomNumber = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+module.exports.gameStart = async (requestData, client) => {
+  logger.info("game start  request: ", JSON.stringify(requestData));
+  try {
+
+    // let wh = {
+    //     _id: MongoID(requestData.tableId.toString()),
+    //     activePlayer: { $gte: 0, $lt: 4 }
+    // }
+    // logger.info("game start wh : ", wh);
+
+    // let tbInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
+    // logger.info("game start tableInfo : ", JSON.stringify(tbInfo));
+
+    const wh = {
+      _id: MongoID(client.tbid.toString())
+    }
+    const project = {
+
+    }
+    const tbInfo = await PlayingTables.findOne(wh, project).lean();
+    logger.info("pickCard tbInfo : ", tbInfo);
+
+    if (tbInfo.activePlayer >= 2 && tbInfo.gameState == "") {
+      logger.info("Game Timer Start is check");
+      let jobId = "LEAVE_SINGLE_USER:" + tbInfo._id;
+      logger.info("Game Timer Start", jobId);
+      commandAcions.clearJob(jobId)
+
+      await gameStartActions.gameTimerStart(tbInfo);
+    }
+  } catch (error) {
+    logger.info("game start error : ", error);
+  }
 }

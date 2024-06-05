@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 //const { omit } = require('lodash');
 
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 const BetLists = mongoose.model('rummyBetList');
 const Users = mongoose.model('users');
 const MongoID = mongoose.Types.ObjectId;

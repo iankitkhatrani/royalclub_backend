@@ -8,7 +8,7 @@ const { sendDirectEvent, getPlayingUserInRound } = require('../helper/socketFunc
 const { filterBeforeSendSPEvent } = require('../helper/signups/appStart');
 
 const Users = mongoose.model('users');
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 const MongoID = mongoose.Types.ObjectId;
 
 module.exports.reconnect = async (requestData, client) => {

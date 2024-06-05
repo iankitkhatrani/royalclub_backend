@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require("underscore");
-const PlayingTables = mongoose.model('rummyPlayingTables');
+const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
 const MongoID = mongoose.Types.ObjectId;
 
 const commandAcions = require('../helper/socketFunctions');
