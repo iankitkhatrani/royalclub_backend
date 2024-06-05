@@ -7,13 +7,7 @@ const PrivateTable = mongoose.model("privateTable");
 const users_helper = require("../helper/usersHelper");
 const common_helper = require("../helper/commonHelper");
 const logger = require("../../logger");
-const {
-  sendEvent,
-  sendDirectEvent,
-  AddTime,
-  setDelay,
-  clearJob,
-} = require("../helper/socketFunctions");
+const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob, } = require("../helper/socketFunctions");
 
 // const PrivateTable = require("../models/privateTable");
 
@@ -23,7 +17,7 @@ const {
  * @returns {Object}
  */
 async function privateTableCreate(requestBody, socket) {
-  const { playerId, entryFee, gamePlayType } = requestBody.data;
+  const { playerId, entryFee, gamePlayType, tableId } = requestBody;
   logger.info("req.body => ", requestBody);
   //logger.info(req.files);
   try {
@@ -37,7 +31,7 @@ async function privateTableCreate(requestBody, socket) {
       };
     } else {
 
-        let privateTableId = uuid();
+      let privateTableId = uuid();
 
       const newData = {
         createTableplayerId: playerId,
@@ -52,9 +46,9 @@ async function privateTableCreate(requestBody, socket) {
       logger.info("privateTableCreate response => ", response);
 
       if (response.status) {
-        sendEvent(socket,CONST.CREATE_RUMMY_PRIVATE_TABLE_ID,{ privateTableId: privateTableId },"Create Private Table Id");
+        sendEvent(socket, CONST.CREATE_RUMMY_PRIVATE_TABLE_ID, { privateTableId: privateTableId }, "Create Private Table Id");
       } else {
-        sendEvent(socket,CONST.CREATE_RUMMY_PRIVATE_TABLE_ID,{  },false,"Private table Invalid Credential");
+        sendEvent(socket, CONST.CREATE_RUMMY_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");
         return
       }
       // return response;

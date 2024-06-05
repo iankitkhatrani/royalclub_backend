@@ -141,7 +141,7 @@ myIo.init = function (server) {
                         await gamePlayActions.show(payload.data, socket);
                         break;
                     }
-H
+                        H
                     case CONST.TEEN_PATTI_CHAL: {
                         await gamePlayActions.chal(payload.data, socket);
                         break;
@@ -428,10 +428,27 @@ H
                         break;
                     }
 
+                    case CONST.OPEN_CHAT_PANEL: {
+                        try {
+                            await gamePlayActionsRummy.openChatPanel(payload.data, socket);
+                        } catch (error) {
+                            logger.error('socketServer.js SEND_MESSAGE_TO_TABLE => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.SEND_MESSAGE_TO_TABLE: {
+                        try {
+                            await gamePlayActionsRummy.chatPanel(payload.data, socket);
+                        } catch (error) {
+                            logger.error('socketServer.js SEND_MESSAGE_TO_TABLE => ', error);
+                        }
+                        break;
+                    }
                     // Rummy Private Table
-                    case CONST.CREATE_RUMMY_PRIVATE_TABLE_ID:{
-                         await privateTableCtrl.privateTableCreate(payload.data, socket)
-                         break;
+                    case CONST.CREATE_RUMMY_PRIVATE_TABLE_ID: {
+                        await privateTableCtrl.privateTableCreate(payload.data, socket)
+                        break;
                     }
 
                     default:
