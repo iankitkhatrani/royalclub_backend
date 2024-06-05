@@ -22,7 +22,7 @@ module.exports.joinTable = async (requestData, socket) => {
     // logger.info("requestData joinTable entryFee", typeof entryFee, entryFee)
 
     if (typeof socket.uid === 'undefined') {
-      sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
+      sendEvent(socket, CONST.R_JOIN_PRIVATE_TABLE, requestData, {
         flag: false,
         msg: 'Please restart game!!',
       });
@@ -83,7 +83,7 @@ module.exports.joinTable = async (requestData, socket) => {
       return await this.findTable(betInfo, socket, userInfo, requestData);
     }
   } catch (error) {
-    sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
+    sendEvent(socket, CONST.R_JOIN_PRIVATE_TABLE, requestData, {
       flag: false,
       msg: 'Something Went Wrong!!',
     });
@@ -283,7 +283,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, request
       socket.join(tableInfo._id.toString());
     }
 
-    sendDirectEvent(socket.tbid.toString(), CONST.R_JOIN_TABLE, {
+    sendDirectEvent(socket.tbid.toString(), CONST.R_JOIN_PRIVATE_TABLE, {
       ap: tableInfo.activePlayer,
       playerDetail: tableInfo.playerInfo[seatIndex],
     });
