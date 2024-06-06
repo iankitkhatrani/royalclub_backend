@@ -8,7 +8,7 @@ fortuna.init();
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const commandAcions = require('../helper/socketFunctions');
-const roundStartActions = require('../rummy/roundStart');
+const roundStartActions = require('../PrivateRummy/roundStart');
 const { createDealer } = require('../helper/helperFunction');
 const { checkWinCard } = require('../helper/botFunction');
 

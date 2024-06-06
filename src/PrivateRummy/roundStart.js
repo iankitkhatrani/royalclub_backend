@@ -15,6 +15,7 @@ const { clearJob, GetRandomString, AddTime, setDelay, sendEventInTable, sendDire
 
 module.exports.roundStarted = async (tbid) => {
   try {
+    logger.info('private roundStarted tbid :', tbid);
     const wh = {
       _id: MongoID(tbid),
     };
@@ -27,14 +28,15 @@ module.exports.roundStarted = async (tbid) => {
     };
 
     let tabInfo = await PlayingTables.findOne(wh, project).lean();
+    logger.info('private roundStarted table Info : ', tabInfo);
 
     if (tabInfo === null) {
-      logger.info('roundStarted table in 1:', tabInfo);
+      logger.info('private roundStarted table in 1:', tabInfo);
       return false;
     }
 
     if (tabInfo.gameState !== 'CardDealing' || tabInfo.activePlayer < 2) {
-      logger.info('round Started table in 2 player:', tabInfo.gameState, tabInfo.activePlayer);
+      logger.info('private round Started table in 2 player:', tabInfo.gameState, tabInfo.activePlayer);
       return false;
     }
 
@@ -45,7 +47,7 @@ module.exports.roundStarted = async (tbid) => {
     };
 
     const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
-    //logger.info('Round start table =>', tb);
+    logger.info('Private Round start table =>', tb);
 
     await this.nextUserTurnstart(tb);
   } catch (e) {
