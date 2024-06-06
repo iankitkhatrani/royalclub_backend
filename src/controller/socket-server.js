@@ -361,7 +361,7 @@ myIo.init = function (server) {
                                     break;
 
                                 //PRIVATE RUMMY 
-                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
                                     await privateActionsRummy.cardGroup(payload.data, socket);
                                     break;
                             }
@@ -378,6 +378,10 @@ myIo.init = function (server) {
                                     await gamePlayActionsRummy.declare(payload.data, socket);
                                     break;
 
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.declare(payload.data, socket);
+                                    break;
+
 
                             }
                         } catch (error) {
@@ -391,6 +395,10 @@ myIo.init = function (server) {
                             switch (payload.data.gamePlayType) {
                                 case CONST.GAME_TYPE.POINT_RUMMY:
                                     await gamePlayActionsRummy.playerDrop(payload.data, socket);
+                                    break;
+
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.playerDrop(payload.data, socket);
                                     break;
 
 
@@ -409,6 +417,10 @@ myIo.init = function (server) {
                                     await gamePlayActionsRummy.playerFinishDeclare(payload.data, socket);
                                     break;
 
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.playerFinishDeclare(payload.data, socket);
+                                    break;
+
                             }
                         } catch (error) {
                             logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
@@ -421,6 +433,10 @@ myIo.init = function (server) {
                             switch (payload.data.gamePlayType) {
                                 case CONST.GAME_TYPE.POINT_RUMMY:
                                     await gamePlayActionsRummy.playerFinish(payload.data, socket);
+                                    break;
+
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.playerFinish(payload.data, socket);
                                     break;
 
                             }
@@ -437,6 +453,10 @@ myIo.init = function (server) {
                                     await gamePlayActionsRummy.leaveTable(payload.data, socket);
                                     break;
 
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.leaveTable(payload.data, socket);
+                                    break;
+
 
                             }
                         } catch (error) {
@@ -450,23 +470,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.OPEN_CHAT_PANEL: {
-                        try {
-                            await gamePlayActionsRummy.openChatPanel(payload.data, socket);
-                        } catch (error) {
-                            logger.error('socketServer.js SEND_MESSAGE_TO_TABLE => ', error);
-                        }
-                        break;
-                    }
-
-                    case CONST.SEND_MESSAGE_TO_TABLE: {
-                        try {
-                            await gamePlayActionsRummy.chatPanel(payload.data, socket);
-                        } catch (error) {
-                            logger.error('socketServer.js SEND_MESSAGE_TO_TABLE => ', error);
-                        }
-                        break;
-                    }
                     // Rummy Private Table
                     case CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID: {
                         try {
