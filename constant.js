@@ -393,6 +393,7 @@ const CONST = {
     POINT_RUMMY: 'pointrummy',
     POOL_RUMMY: 'poolrummy',
     DEAL_RUMMY: 'dealrummy',
+    PRIVATE_RUMMY: 'rummyPrivateTable',
   },
 
   COUNTRY_CODE: process.env.COUNTRY_CODE || '+91',

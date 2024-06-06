@@ -388,7 +388,7 @@ module.exports.gameStart = async (requestData, client) => {
       logger.info("Game Timer Start is check");
       let jobId = "LEAVE_SINGLE_USER:" + tbInfo._id;
       logger.info("Game Timer Start", jobId);
-      commandAcions.clearJob(jobId)
+      clearJob(jobId)
 
       await gameStartActions.gameTimerStart(tbInfo);
     }

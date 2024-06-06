@@ -322,6 +322,10 @@ myIo.init = function (server) {
                                 case CONST.GAME_TYPE.POINT_RUMMY:
                                     await gamePlayActionsRummy.pickCard(payload.data, socket);
                                     break;
+                                //PRIVATE RUMMY
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.pickCard(payload.data, socket);
+                                    break;
 
                             }
                         } catch (error) {
@@ -335,6 +339,11 @@ myIo.init = function (server) {
                             switch (payload.data.gamePlayType) {
                                 case CONST.GAME_TYPE.POINT_RUMMY:
                                     await gamePlayActionsRummy.disCard(payload.data, socket);
+                                    break;
+
+                                //PRIVATE RUMMY
+                                case CONST.GAME_TYPE.PRIVATE_RUMMY:
+                                    await privateActionsRummy.disCard(payload.data, socket);
                                     break;
 
                             }
@@ -351,6 +360,10 @@ myIo.init = function (server) {
                                     await gamePlayActionsRummy.cardGroup(payload.data, socket);
                                     break;
 
+                                //PRIVATE RUMMY 
+                                case CONST.GAME_TYPE.POINT_RUMMY:
+                                    await privateActionsRummy.cardGroup(payload.data, socket);
+                                    break;
                             }
                         } catch (error) {
                             logger.error('socketServer.js Group Card error => ', error);
@@ -480,7 +493,7 @@ myIo.init = function (server) {
                     }
 
                     case CONST.R_PRIVATE_TABLE_START: {
-                        if (payload.data.gamePlayType == "privateTable") {
+                        if (payload.data.gamePlayType == "RummyPrivateTable") {
                             try {
                                 logger.info("private Table Game Start----->>>>", payload.data);
                                 await privateActionsRummy.gameStart(payload.data, socket);
