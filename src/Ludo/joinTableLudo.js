@@ -320,7 +320,13 @@ module.exports.JTOFC = async (requestData, client) => {
             "pi.ui.uid": { $ne: MongoID(client.uid.toString()) },
         }
         logger.info("JTOFC getBetTable wh : ", JSON.stringify(wh));
+        
         let tbdata = await playingLudo.findOne(wh, {}).lean();
+
+        if (tbdata == null) {
+            sendEvent(client, CONST.JTOFC, requestData, false, "Please Enter valid Table Code..!!");
+            return false
+        }
 
         if (userInfo.gold >= tbdata[0].boot * 2) {
 
