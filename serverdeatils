@@ -89,3 +89,15 @@ sudo nono /etc/nginx/conf.d/react.conf
 
 
 sudo nano /etc/nginx/nginx.conf
+
+
+
+db.createUser({user: "Admin",pwd: "Royalclub368@",roles: [ { role: "userAdminAnyDatabase", db: "royalclub" }, "readWriteAnyDatabase" ]})
+
+db.createUser({user: "royalclubuser",pwd: "Royalclub368@",roles: [ { role: "readWrite", db: "royalclub" } ]})
+
+
+ip : 89.116.32.173
+user : royalclubuser
+pwd : Royalclub368@
+db : royalclub
