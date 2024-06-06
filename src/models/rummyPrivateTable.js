@@ -6,7 +6,7 @@ const PrivateTableSchema = new Schema({
     createTableplayerId: { type: String, required: true },
     entryFee: { type: String, required: true },
     tableId: { type: String },
-    gamePlayType: { type: String, required: true },
+    gamePlayType: { type: String, required: true, default: 'RummyPrivateTable' },
     createdAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now }
 }, { versionKey: false });

@@ -11,7 +11,7 @@ const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
 const gamePlayActionsRummy = require('../rummy');
 const privateActionsRummy = require('../PrivateRummy');
-const privateTableCtrl = require('./privateController');
+const teenPrivateActionsRummy = require('../teenpattiprivate');
 
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');
@@ -168,7 +168,43 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    // Rummy Private Table
+                    case CONST.CREATE_TEEN_PRIVATE_TABLE_ID: {
+                        try {
+                            await teenPrivateActionsRummy.privateTableCreate(payload.data, socket)
+                        } catch (error) {
+                            logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
+                        }
+                        break;
+                    }
 
+                    case CONST.T_JOIN_PRIVATE_TABLE: {
+                        try {
+                            // console.log("SP called");
+                            socket.uid = payload.data.playerId;
+                            socket.sck = socket.id;
+                            logger.info('Join Privaet table payload.data => ', payload.data);
+                            await teenPrivateActionsRummy.joinTable(payload.data, socket);
+
+                        } catch (error) {
+                            socket.emit("req", { eventName: CONST.ERROR, error });
+                        }
+
+                        break;
+                    }
+
+                    case CONST.T_PRIVATE_TABLE_START: {
+                        if (payload.data.gamePlayType == "RummyPrivateTable") {
+                            try {
+                                logger.info("private Table Game Start----->>>>", payload.data);
+                                await teenPrivateActionsRummy.gameStart(payload.data, socket);
+
+                            } catch (error) {
+                                console.log('private Table Pic card error => ', error);
+                            }
+                        }
+                        break;
+                    }
 
                     // JANTA GAME Event 
                     case CONST.JANTA_GAME_PLAYGAME: {
