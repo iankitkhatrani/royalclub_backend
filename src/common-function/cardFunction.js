@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model('playingTables');
 const RummyPlayingTables = mongoose.model('rummyPlayingTables');
+const RummyPrivatePlayingTables = mongoose.model('rummyPrivatePlayingTable');
 
 const logger = require('../../logger');
 const _ = require("underscore");
@@ -559,6 +560,83 @@ const rummyCountPlayerScore = async (table) => {
     return false;
   }
 };
+const rummyPrivateCountPlayerScore = async (table) => {
+  try {
+    // Validate the table object
+    if (!table) {
+      logger.error('rummy countPlayerScore error => table is null or undefined');
+      return false;
+    }
+
+    logger.info('rummy countPlayerScore Table =>', table);
+
+    // Ensure table.playerInfo and table.playersScoreBoard are defined
+    if (!table.playerInfo || !Array.isArray(table.playerInfo)) {
+      logger.error('rummy countPlayerScore error => table.playerInfo is not defined or not an array');
+      return false;
+    }
+
+    if (!table.playersScoreBoard) {
+      table.playersScoreBoard = [];
+    }
+
+    let finalplayersScoreBoard = [];
+    logger.info('\n rummy countPlayerScore table.playerInfo =>', table.playerInfo);
+
+    const playerInGame = await getPlayingUserInRound(table.playerInfo);
+
+    let alreadyCalculatedScorePlayersIds = table.playersScoreBoard.map(({ playerId }) => playerId);
+
+    playerInGame.forEach((player) => {
+      logger.info('rummy countPlayerScore Player =>', player);
+      if (alreadyCalculatedScorePlayersIds.indexOf(player.playerId) < 0) {
+        finalplayersScoreBoard.push({
+          playerId: player._id,
+          playerName: player.name,
+          result: player.playerStatus,
+          cards: player.cards,
+          chips: player.point,
+          point: player.point,
+          lostChips: player.playerLostChips,
+          gameChips: player.gameChips,
+          gCards: player.gCard,
+          avatar: player.avatar,
+        });
+      }
+    });
+
+    logger.info('rummy finalplayersScoreBoard', finalplayersScoreBoard);
+
+    // Concatenate new scores to the existing playersScoreBoard
+    table.playersScoreBoard = table.playersScoreBoard.concat(finalplayersScoreBoard);
+
+    let wh = {
+      _id: MongoID(table._id),
+    };
+
+    let updateData = {
+      $set: {
+        playersScoreBoard: table.playersScoreBoard,
+      },
+    };
+
+    let tbInfo = await RummyPrivatePlayingTables.findOneAndUpdate(wh, updateData, {
+      new: true,
+    });
+
+    logger.info('Rummy Table Info =>', tbInfo);
+
+    if (!tbInfo) {
+      logger.error('rummy countPlayerScore error => Failed to update the table');
+      return false;
+    }
+
+    return tbInfo.playersScoreBoard;
+  } catch (error) {
+    logger.error('cardFunction.js countPlayerScore error => ', error);
+    return false;
+  }
+};
 
 const pushPlayerScoreToPlayerScoreBoard = async (table, player) => {
   try {
@@ -629,6 +707,40 @@ const rummyPushPlayerScoreToPlayerScoreBoard = async (table, player) => {
     logger.error('cardFunction.jsr pushPlayerScoreToPlayerScoreBoard error=> ', error);
   }
 };
+const rummyPrivatePushPlayerScoreToPlayerScoreBoard = async (table, player) => {
+  try {
+    table.playersScoreBoard.push({
+      playerId: player.playerId,
+      playerName: player.name,
+      result: player.playerStatus,
+      cards: player.cards,
+      point: player.point,
+      gCards: player.gCard,
+      gameChips: player.gameChips,
+      debitChips: player.debitChips,
+      lostChips: player.lostChips,
+      avatar: player.avatar,
+    });
+
+    let wh = {
+      _id: MongoID(table._id.toString()),
+    };
+
+    let updateData = {
+      $set: {
+        playersScoreBoard: table.playersScoreBoard,
+      },
+    };
+
+    let tbInfo = await RummyPrivatePlayingTables.findOneAndUpdate(wh, updateData, {
+      new: true,
+    });
+
+    return tbInfo.playersScoreBoard;
+  } catch (error) {
+    logger.error('cardFunction.jsr pushPlayerScoreToPlayerScoreBoard error=> ', error);
+  }
+};
 
 
 
@@ -645,5 +757,7 @@ module.exports = {
   pushPlayerScoreToPlayerScoreBoard,
   getScoreCard,
   rummyPushPlayerScoreToPlayerScoreBoard,
-  rummyCountPlayerScore
+  rummyCountPlayerScore,
+  rummyPrivateCountPlayerScore,
+  rummyPrivatePushPlayerScoreToPlayerScoreBoard
 };

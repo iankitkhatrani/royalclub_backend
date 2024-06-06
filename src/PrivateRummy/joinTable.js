@@ -123,7 +123,7 @@ module.exports.findTable = async (betInfo, socket, userInfo, requestData) => {
 
 module.exports.getBetTable = async (betInfo, userInfo) => {
   try {
-    // logger.info("getBetTable betinfo =>", betInfo);
+    logger.info("getBetTable betinfo =>", betInfo);
     // logger.info("getBetTable userInfo =>", userInfo);
 
     let wh = {

@@ -14,7 +14,7 @@ const roundEndActions = require('./roundEnd');
 const commonHelper = require('../helper/commonHelper');
 const gameTrackActions = require('../common-function/gameTrack');
 const { getPlayingUserInRound, winnerViewResponseFilter } = require('../common-function/manageUserFunction');
-const { rummyCountPlayerScore, getScore } = require('../common-function/cardFunction');
+const { rummyPrivateCountPlayerScore, getScore } = require('../common-function/cardFunction');
 const walletActions = require('../common-function/walletTrackTransaction');
 
 module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
@@ -85,7 +85,7 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
       }
     }
 
-    const playersScoreBoard = await rummyCountPlayerScore(tableInfo);
+    const playersScoreBoard = await rummyPrivateCountPlayerScore(tableInfo);
     const winnerViewResponse = winnerViewResponseFilter(playersScoreBoard);
 
     const response = {
@@ -219,7 +219,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
       }
     }
 
-    const playersScoreBoard = await rummyCountPlayerScore(tableInfo);
+    const playersScoreBoard = await rummyPrivateCountPlayerScore(tableInfo);
     let winnerViewResponse = winnerViewResponseFilter(playersScoreBoard);
     logger.info('playersScoreBoard ==>', playersScoreBoard);
     logger.info('winnerViewResponse ==>', winnerViewResponse);
