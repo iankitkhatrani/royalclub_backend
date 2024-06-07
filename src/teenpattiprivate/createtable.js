@@ -59,17 +59,22 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
 
             try {
                 let insertobj = {
+                    gameId: "",
                     maxSeat: 5,
                     entryFee: entryFee,
+                    boot: entryFee,
                     commission: 10,
                     privateTableId: privateTableId,
                     activePlayer: 0,
+                    potLimit: response.data.potLimit,
                     gamePlayType: "TeenPrivateTable",
                     playerInfo: this.makeObjects(Number(5)),
                     // gameState: CONST.WAITING,
                     discardCard: '',
                     totalRewardCoins: 0,
                     playersScoreBoard: [],
+                    gameState: "",
+                    discardCard: '',
                 };
 
                 let insertInfo = await PlayingTables.create(insertobj);

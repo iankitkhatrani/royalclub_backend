@@ -194,7 +194,7 @@ myIo.init = function (server) {
                     }
 
                     case CONST.T_PRIVATE_TABLE_START: {
-                        if (payload.data.gamePlayType == "RummyPrivateTable") {
+                        if (payload.data.gamePlayType == "TeenPrivateTable") {
                             try {
                                 logger.info("private Table Game Start----->>>>", payload.data);
                                 await teenPrivateActionsRummy.gameStart(payload.data, socket);
@@ -534,7 +534,7 @@ myIo.init = function (server) {
                     case CONST.R_PRIVATE_TABLE_START: {
                         if (payload.data.gamePlayType == "RummyPrivateTable") {
                             try {
-                                logger.info("private Table Game Start----->>>>", payload.data);
+                                logger.info("private teen Table Game Start----->>>>", payload.data);
                                 await privateActionsRummy.gameStart(payload.data, socket);
 
                             } catch (error) {

@@ -6,7 +6,7 @@ const checkUserCardActions = require("./checkUserCard");
 const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
 
-const PlayingTables = require("../models/playingTables");
+const PlayingTables = require("../models/TeenPrivatePlayingTables");
 
 module.exports.autoShow = async (tb) => {
 

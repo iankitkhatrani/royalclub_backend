@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
-const PlayingTables = mongoose.model("playingTables");
-const BetLists = mongoose.model("betList")
+const PlayingTables = mongoose.model("TeenPrivatePlayingTables");
+const BetLists = mongoose.model("teenPrivatebetList")
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
@@ -25,7 +25,7 @@ module.exports.joinTable = async (requestData, client) => {
         client.JT = true;
 
         let bwh = {
-            _id: requestData.betId
+            tableId: requestData.privateTableId
         }
         const BetInfo = await BetLists.findOne(bwh, {}).lean();
         logger.info("Join Table data : ", JSON.stringify(BetInfo));
@@ -80,9 +80,11 @@ module.exports.getBetTable = async (BetInfo) => {
 
     if (tableInfo.length > 0) {
         return tableInfo[0];
+    }else{
+        return false
     }
-    let table = await this.createTable(BetInfo);
-    return table;
+    // let table = await this.createTable(BetInfo);
+    // return table;
 }
 
 module.exports.createTable = async (betInfo) => {
@@ -189,6 +191,11 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
         let playerInfo = tableInfo.playerInfo[seatIndex];
 
+        let result = false;
+        if (betInfo.createTableplayerId == playerInfo._id) {
+            result = true;
+            logger.info("teen private result 1-->", result);
+             }
         if (!(playerInfo._id.toString() == userInfo._id.toString())) {
             await this.findTable(betInfo, client);
             return false;
@@ -223,6 +230,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             type: tableInfo.gamePlayType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
+            createTableplayerId: result,
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
@@ -235,13 +243,13 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
         delete client.JT;
 
-        if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
+        // if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
 
-            let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
-            clearJob(jobId)
+        //     let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
+        //     clearJob(jobId)
 
-            await gameStartActions.gameTimerStart(tableInfo);
-        } 
+        //     await gameStartActions.gameTimerStart(tableInfo);
+        // } 
         // else {
 
         //     setTimeout(() => {
@@ -263,3 +271,36 @@ module.exports.findEmptySeat = (playerInfo) => {
     }
     return '-1';
 }
+
+module.exports.gameStart = async (requestData, client) => {
+    logger.info("teen private game start  request: ", JSON.stringify(requestData));
+    try {
+  
+      // let wh = {
+      //     _id: MongoID(requestData.tableId.toString()),
+      //     activePlayer: { $gte: 0, $lt: 4 }
+      // }
+      // logger.info("game start wh : ", wh);
+  
+      // let tbInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
+      // logger.info("game start tableInfo : ", JSON.stringify(tbInfo));
+  
+      const wh = {
+        _id: MongoID(client.tbid.toString())
+      }
+      const project = {      }
+      const tbInfo = await PlayingTables.findOne(wh, project).lean();
+      logger.info("pickCard tbInfo : ", tbInfo);
+  
+      if (tbInfo.activePlayer >= 2 && tbInfo.gameState == "") {
+        logger.info("Game Timer Start is check");
+        let jobId = "LEAVE_SINGLE_USER:" + tbInfo._id;
+        logger.info("Game Timer Start", jobId);
+        clearJob(jobId)
+  
+        await gameStartActions.gameTimerStart(tbInfo);
+      }
+    } catch (error) {
+      logger.info("game start error : ", error);
+    }
+  }

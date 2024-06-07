@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("TeenPrivatePlayingTables");
 
 const commandAcions = require("../helper/socketFunctions");
 const gameStartActions = require("./gameStart");

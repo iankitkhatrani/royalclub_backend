@@ -7,7 +7,7 @@ const CONST = require('../../constant');
 const logger = require("../../logger");
 const commandAcions = require("../helper/socketFunctions");
 const roundStartActions = require("./roundStart");
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("TeenPrivatePlayingTables");
 const _ = require("underscore")
 const cardLogic = require("./cardLogic");
 

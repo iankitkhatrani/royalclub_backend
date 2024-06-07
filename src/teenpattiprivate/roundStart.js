@@ -7,7 +7,7 @@ const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 
-const PlayingTables = mongoose.model("playingTables");
+const PlayingTables = mongoose.model("TeenPrivatePlayingTables");
 
 
 module.exports.roundStarted = async (tbid) => {
