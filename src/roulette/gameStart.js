@@ -57,10 +57,10 @@ module.exports.gameTimerStart = async (tb) => {
 
         let roundTime = CONST.BLUETABLETIMER;
 
-        if (tabInfo.whichTable == "blueTable")
-            roundTime = CONST.BLUETABLETIMER;
-        else
-            roundTime = CONST.GREENTABLETIMER;
+        // if (tabInfo.whichTable == "blueTable")
+        //     roundTime = CONST.BLUETABLETIMER;
+        // else
+        //     roundTime = CONST.GREENTABLETIMER;
 
 
         commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.ROULETTE_GAME_START_TIMER, { timer: roundTime, history: tabInfo.history });
@@ -177,11 +177,13 @@ module.exports.StartSpinnerGame = async (tbId) => {
             MustPlay = "Client"
         }
 
-        if (tb.whichTable == "blueTable" && GAMELOGICCONFIG.BLUEFIXNUMBERWON != undefined && GAMELOGICCONFIG.BLUEFIXNUMBERWON != -1 && GAMELOGICCONFIG.BLUEFIXNUMBERWON >= 0 && GAMELOGICCONFIG.BLUEFIXNUMBERWON <= 36) {
+        if (GAMELOGICCONFIG.BLUEFIXNUMBERWON != undefined && GAMELOGICCONFIG.BLUEFIXNUMBERWON != -1 && GAMELOGICCONFIG.BLUEFIXNUMBERWON >= 0 && GAMELOGICCONFIG.BLUEFIXNUMBERWON <= 36) {
             itemObject = GAMELOGICCONFIG.BLUEFIXNUMBERWON
-        } else if (tb.whichTable == "greenTable" && GAMELOGICCONFIG.GREENFIXNUMBERWON != undefined && GAMELOGICCONFIG.GREENFIXNUMBERWON != -1 && GAMELOGICCONFIG.GREENFIXNUMBERWON >= 0 && GAMELOGICCONFIG.GREENFIXNUMBERWON <= 36) {
-            itemObject = GAMELOGICCONFIG.GREENFIXNUMBERWON
-        } else if (MustPlay == "Client" || GAMELOGICCONFIG.ROULETTE == "Client") {
+        } 
+        // else if (tb.whichTable == "greenTable" && GAMELOGICCONFIG.GREENFIXNUMBERWON != undefined && GAMELOGICCONFIG.GREENFIXNUMBERWON != -1 && GAMELOGICCONFIG.GREENFIXNUMBERWON >= 0 && GAMELOGICCONFIG.GREENFIXNUMBERWON <= 36) {
+        //     itemObject = GAMELOGICCONFIG.GREENFIXNUMBERWON
+        // } 
+        else if (MustPlay == "Client" || GAMELOGICCONFIG.ROULETTE == "Client") {
             itemObject = this.getRandomInt(0, 36)
             totalnmber = []
             // Remove TotalNumber for Bet 
@@ -261,7 +263,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
             // }, { new: true });
 
             this.winnerSpinner(tabInfo);
-        }, 10000);
+        }, 12000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 
