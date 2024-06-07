@@ -9,6 +9,7 @@ const BetListSchema = new Schema(
         gameType: { type: String, required: true, default: 'TeenPrivateTable' },
         entryFee: { type: Number },//boot Amount
         chalLimit: { type: Number, default: 0 },
+        tableId: { type: String },
         potLimit: { type: Number, default: 500 },//Max Pot
         createdAt: { type: Date, default: Date.now },
         modifiedAt: { type: Date, default: Date.now },

@@ -23,9 +23,10 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
     //logger.info(req.files);
     try {
         const user = await PrivateTable.countDocuments({ tableId });
-        //logger.info("avatar =>", avatar.data[0]);
+        logger.info("get user details =>", user);
 
         if (user > 0) {
+            logger.info("checkkkkkkkkk");
             return {
                 message: "User already exists",
                 status: 0,
