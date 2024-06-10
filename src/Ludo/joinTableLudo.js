@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
 const playingLudo = mongoose.model("playingLudo");
-const BetLists = mongoose.model("betList")
+const BetListsLudo = mongoose.model("betListLudo")
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
@@ -28,7 +28,7 @@ module.exports.joinTable = async (requestData, client) => {
         let bwh = {
             _id: requestData.betId
         }
-        const BetInfo = await BetLists.findOne(bwh, {}).lean();
+        const BetInfo = await BetListsLudo.findOne(bwh, {}).lean();
         logger.info("Join Table data : ", JSON.stringify(BetInfo));
 
         let gwh = {
