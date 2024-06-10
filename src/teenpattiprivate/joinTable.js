@@ -80,7 +80,7 @@ module.exports.getBetTable = async (BetInfo) => {
 
     if (tableInfo.length > 0) {
         return tableInfo[0];
-    }else{
+    } else {
         return false
     }
     // let table = await this.createTable(BetInfo);
@@ -91,6 +91,8 @@ module.exports.createTable = async (betInfo) => {
     try {
         let insertobj = {
             gameId: "",
+            gamePlayType: betInfo.gameType,
+            tableId: betInfo.tableId,
             maxSeat: betInfo.maxPlayer,
             activePlayer: 0,
             betId: betInfo._id,
@@ -125,7 +127,7 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n'+" betInfo :=> ", betInfo );
+        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n' + " betInfo :=> ", betInfo);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -195,7 +197,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
         if (betInfo.createTableplayerId == playerInfo._id) {
             result = true;
             logger.info("teen private result 1-->", result);
-             }
+        }
         if (!(playerInfo._id.toString() == userInfo._id.toString())) {
             await this.findTable(betInfo, client);
             return false;
@@ -226,8 +228,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             utt: CONST.userTurnTimer,
             fns: CONST.finishTimer,
             tableid: tableInfo._id,
-            gamePlayType: tableInfo.gamePlayType,
-            type: tableInfo.gamePlayType,
+            gamePlayType: tableInfo.gameType,
+            type: tableInfo.gameType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
             createTableplayerId: result,
@@ -275,32 +277,32 @@ module.exports.findEmptySeat = (playerInfo) => {
 module.exports.gameStart = async (requestData, client) => {
     logger.info("teen private game start  request: ", JSON.stringify(requestData));
     try {
-  
-      // let wh = {
-      //     _id: MongoID(requestData.tableId.toString()),
-      //     activePlayer: { $gte: 0, $lt: 4 }
-      // }
-      // logger.info("game start wh : ", wh);
-  
-      // let tbInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
-      // logger.info("game start tableInfo : ", JSON.stringify(tbInfo));
-  
-      const wh = {
-        _id: MongoID(client.tbid.toString())
-      }
-      const project = {      }
-      const tbInfo = await PlayingTables.findOne(wh, project).lean();
-      logger.info("pickCard tbInfo : ", tbInfo);
-  
-      if (tbInfo.activePlayer >= 2 && tbInfo.gameState == "") {
-        logger.info("Game Timer Start is check");
-        let jobId = "LEAVE_SINGLE_USER:" + tbInfo._id;
-        logger.info("Game Timer Start", jobId);
-        clearJob(jobId)
-  
-        await gameStartActions.gameTimerStart(tbInfo);
-      }
+
+        // let wh = {
+        //     _id: MongoID(requestData.tableId.toString()),
+        //     activePlayer: { $gte: 0, $lt: 4 }
+        // }
+        // logger.info("game start wh : ", wh);
+
+        // let tbInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
+        // logger.info("game start tableInfo : ", JSON.stringify(tbInfo));
+
+        const wh = {
+            _id: MongoID(client.tbid.toString())
+        }
+        const project = {}
+        const tbInfo = await PlayingTables.findOne(wh, project).lean();
+        logger.info("pickCard tbInfo : ", tbInfo);
+
+        if (tbInfo.activePlayer >= 2 && tbInfo.gameState == "") {
+            logger.info("Game Timer Start is check");
+            let jobId = "LEAVE_SINGLE_USER:" + tbInfo._id;
+            logger.info("Game Timer Start", jobId);
+            clearJob(jobId)
+
+            await gameStartActions.gameTimerStart(tbInfo);
+        }
     } catch (error) {
-      logger.info("game start error : ", error);
+        logger.info("game start error : ", error);
     }
-  }
+}
