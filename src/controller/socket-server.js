@@ -298,6 +298,15 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.GET_LUDO_ROOM_LIST: {
+                        try {
+                            await gamePlayActionsLudo.getBetList(payload.data, socket);
+                        } catch (error) {
+                            logger.error('socketServer.js GET_TEEN_PATTI_ROOM_LIST error => ', error);
+                        }
+                        break;
+                    }
+
                     case CONST.JOINLUDO: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
@@ -306,6 +315,35 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    //Create Ludo Private Table 
+                    case CONST.CLPT: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsLudo.CLPT(payload.data, socket);
+                        break;
+                    }
+
+                    //Start Private Ludo Table 
+                    case CONST.SPLT: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsLudo.SPLT(payload.data, socket);
+                        break;
+                    }
+
+                    //Join Private Table Ludo
+                    case CONST.JPTL: {
+                        socket.uid = payload.data.playerId;
+                        socket.sck = socket.id;
+
+                        await gamePlayActionsLudo.JPTL(payload.data, socket);
+                        break;
+                    }
+
+
+                    //Join To Code Ludo Table 
                     case CONST.JTOFC: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
