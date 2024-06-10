@@ -11,7 +11,7 @@ const commonHelper = require('../helper/commonHelper');
 const gamePlayActions = require('../teenpatti/');
 const gamePlayActionsRummy = require('../rummy');
 const privateActionsRummy = require('../PrivateRummy');
-const teenPrivateActionsRummy = require('../teenpattiprivate');
+const teenPrivateActions = require('../teenpattiprivate');
 
 const gamePlayActionsLudo = require('../Ludo');
 const gamePlayActionsJanta = require('../JantaGame');
@@ -138,30 +138,121 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    // case CONST.TEEn_PATTI_SHOW: {
+                    //     await gamePlayActions.show(payload.data, socket);
+                    //     break;
+                    // }
+
                     case CONST.TEEn_PATTI_SHOW: {
-                        await gamePlayActions.show(payload.data, socket);
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
+                                    await gamePlayActions.show(payload.data, socket);
+                                    break;
+
+                                case CONST.TEEN_GAME_TYPE.PRIVATE_TEEN:
+                                    await teenPrivateActions.show(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
                         break;
                     }
-                        H
+
+                    // case CONST.TEEN_PATTI_CHAL: {
+                    //     await gamePlayActions.chal(payload.data, socket);
+                    //     break;
+                    // }
+
                     case CONST.TEEN_PATTI_CHAL: {
-                        await gamePlayActions.chal(payload.data, socket);
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
+                                    await gamePlayActions.chal(payload.data, socket);
+                                    break;
+
+                                case CONST.TEEN_GAME_TYPE.PRIVATE_TEEN:
+                                    await teenPrivateActions.chal(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
                         break;
                     }
+
+                    // case CONST.TEEN_PATTI_PACK: {
+                    //     await gamePlayActions.cardPack(payload.data, socket);
+                    //     break;
+                    // }
 
                     case CONST.TEEN_PATTI_PACK: {
-                        await gamePlayActions.cardPack(payload.data, socket);
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
+                                    await gamePlayActions.cardPack(payload.data, socket);
+                                    break;
+
+                                case CONST.TEEN_GAME_TYPE.PRIVATE_TEEN:
+                                    await teenPrivateActions.cardPack(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
                         break;
                     }
+
+                    // case CONST.TEEN_PATTI_CARD_SEEN: {
+                    //     await gamePlayActions.seeCard(payload.data, socket);
+                    //     break;
+                    // }
 
                     case CONST.TEEN_PATTI_CARD_SEEN: {
-                        await gamePlayActions.seeCard(payload.data, socket);
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
+                                    await gamePlayActions.seeCard(payload.data, socket);
+                                    break;
+
+                                case CONST.TEEN_GAME_TYPE.PRIVATE_TEEN:
+                                    await teenPrivateActions.seeCard(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
                         break;
                     }
 
+                    // case CONST.TEEN_PATTI_LEAVE_TABLE: {
+                    //     await gamePlayActions.leaveTable(payload.data, socket);
+                    //     break;
+                    // }
+
                     case CONST.TEEN_PATTI_LEAVE_TABLE: {
-                        await gamePlayActions.leaveTable(payload.data, socket);
+                        try {
+                            switch (payload.data.gamePlayType) {
+                                case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
+                                    await gamePlayActions.leaveTable(payload.data, socket);
+                                    break;
+
+                                case CONST.TEEN_GAME_TYPE.PRIVATE_TEEN:
+                                    await teenPrivateActions.leaveTable(payload.data, socket);
+                                    break;
+
+                            }
+                        } catch (error) {
+                            logger.error('CONST.PLAYER_FINISH_DECLARE_TIMER:', error);
+                        }
                         break;
                     }
+
 
                     case CONST.RECONNECT: {
                         await userReconnect(payload.data, socket);
@@ -171,7 +262,7 @@ myIo.init = function (server) {
                     // Rummy Private Table
                     case CONST.CREATE_TEEN_PRIVATE_TABLE_ID: {
                         try {
-                            await teenPrivateActionsRummy.privateTableCreate(payload.data, socket)
+                            await teenPrivateActions.privateTableCreate(payload.data, socket)
                         } catch (error) {
                             logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
                         }
@@ -184,7 +275,7 @@ myIo.init = function (server) {
                             socket.uid = payload.data.playerId;
                             socket.sck = socket.id;
                             logger.info('Join Privaet table payload.data => ', payload.data);
-                            await teenPrivateActionsRummy.joinTable(payload.data, socket);
+                            await teenPrivateActions.joinTable(payload.data, socket);
 
                         } catch (error) {
                             socket.emit("req", { eventName: CONST.ERROR, error });
@@ -197,7 +288,7 @@ myIo.init = function (server) {
                         if (payload.data.gamePlayType == "TeenPrivateTable") {
                             try {
                                 logger.info("private Table Game Start----->>>>", payload.data);
-                                await teenPrivateActionsRummy.gameStart(payload.data, socket);
+                                await teenPrivateActions.gameStart(payload.data, socket);
 
                             } catch (error) {
                                 console.log('private Table Pic card error => ', error);

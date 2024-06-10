@@ -401,6 +401,11 @@ const CONST = {
     PRIVATE_RUMMY: 'RummyPrivateTable',
   },
 
+  TEEN_GAME_TYPE: {
+    SIMPLE_TEEN: 'Simple',
+    PRIVATE_TEEN: 'TeenPrivateTable',
+  },
+
   COUNTRY_CODE: process.env.COUNTRY_CODE || '+91',
 
   MONTHS: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

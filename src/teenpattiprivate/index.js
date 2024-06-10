@@ -1,7 +1,7 @@
 
 const { getBetList } = require('./betList');
-const { joinTable ,gameStart} = require("./joinTable");
-const { leaveTable } = require("./leaveTable"); 
+const { joinTable, gameStart } = require("./joinTable");
+const { leaveTable } = require("./leaveTable");
 const { privateTableCreate } = require("./createtable");
 const { disconnectTableHandle, findDisconnectTable } = require("./disconnectHandle");
 const { cardPack, seeCard, chal, show } = require("./gamePlay");
@@ -14,7 +14,7 @@ module.exports = {
   chal: chal,
   show: show,
   leaveTable: leaveTable,
-  gameStart:gameStart,
+  gameStart: gameStart,
   findDisconnectTable: findDisconnectTable,
   disconnectTableHandle: disconnectTableHandle,
   privateTableCreate: privateTableCreate
