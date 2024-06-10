@@ -90,6 +90,7 @@ module.exports.createTable = async (betInfo) => {
         let insertobj = {
             gameId: "",
             maxSeat: betInfo.maxPlayer,
+            gamePlayType: betInfo.gameType,
             activePlayer: 0,
             betId: betInfo._id,
             boot: betInfo.entryFee,
@@ -123,7 +124,7 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n'+" betInfo :=> ", betInfo );
+        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n' + " betInfo :=> ", betInfo);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -219,8 +220,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             utt: CONST.userTurnTimer,
             fns: CONST.finishTimer,
             tableid: tableInfo._id,
-            gamePlayType: tableInfo.gamePlayType,
-            type: tableInfo.gamePlayType,
+            gamePlayType: tableInfo.gameType,
+            type: tableInfo.gameType,
             openDecks: tableInfo.openDeck,
             tableAmount: tableInfo.tableAmount,
         });
@@ -241,7 +242,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             clearJob(jobId)
 
             await gameStartActions.gameTimerStart(tableInfo);
-        } 
+        }
         // else {
 
         //     setTimeout(() => {
