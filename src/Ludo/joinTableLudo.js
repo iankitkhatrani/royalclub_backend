@@ -11,11 +11,12 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { getToken } = require('../../Agora/RtcTokenBuilderSample');
+const { ObjectID } = require("mongodb");
 
 module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("requestData Ludo", requestData);
-        
+
         if (typeof client.uid == "undefined") {
             sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
@@ -89,13 +90,13 @@ module.exports.getBetTable = async (BetInfo, requestData) => {
     return table;
 }
 
-module.exports.createTable = async (betInfo,requestData) => {
+module.exports.createTable = async (betInfo, requestData) => {
     try {
         let insertobj = {
             gameId: "",
             maxSeat: 2,
             activePlayer: 0,
-            betId: betInfo._id,
+            betId: betInfo._id != undefined ? betInfo._id : "",
             boot: betInfo.entryFee,
             playerInfo: this.makeObjects(4),
             gameState: "",
@@ -148,7 +149,11 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
         if (seatIndex == "-1") {
-            await this.findTable(betInfo, client)
+            if (table._ip == 1) {
+                sendEvent(client, CONST.CLPT, {}, false, "Not seat availabe !!");
+            } else {
+                await this.findTable(betInfo, client)
+            }
             return false;
         }
 
@@ -221,7 +226,12 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
         let playerInfo = tableInfo.playerInfo[seatIndex];
 
         if (!(playerInfo._id.toString() == userInfo._id.toString())) {
-            await this.findTable(betInfo, client);
+            if (tableInfo._ip == 1) {
+                sendEvent(client, CONST.CLPT, {}, false, "Please Join Table....!!");
+            } else {
+
+                await this.findTable(betInfo, client);
+            }
             return false;
         }
         client.seatIndex = seatIndex;
@@ -261,7 +271,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             safeDice: tableInfo.safeDice,
             tokenNo: tokenNO,
             agoraUid: requestData.agoraUid,
-            tableCode:tableInfo.tableCode
+            tableCode: tableInfo.tableCode,
+            gameState:tableInfo.gameState,
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
@@ -274,7 +285,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
 
         delete client.JT;
 
-        if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
+        if (tableInfo._ip == 0 && tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
 
             let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
             clearJob(jobId)
@@ -306,6 +317,99 @@ module.exports.findEmptySeat = (playerInfo) => {
 }
 
 /*
+    Create Private  Table 
+    entryFee:110
+
+*/
+module.exports.CLPT = async (requestData, client) => {
+    try {
+        logger.info("CLPT Ludo", requestData);
+
+        if (typeof client.uid == "undefined") {
+            sendEvent(client, CONST.CLPT, requestData, false, "Please restart game!!");
+            return false;
+        }
+        if (typeof client.CLPT != "undefined" && client.CLPT) return false;
+
+        client.CLPT = true;
+
+        let gwh = {
+            _id: MongoID(client.uid)
+        }
+        let UserInfo = await GameUser.findOne(gwh, {}).lean();
+        logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
+
+        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+
+        console.log("requestData ", requestData)
+
+        if (Number(totalWallet) < Number(requestData.entryFee)) {
+            sendEvent(client, CONST.CLPT, requestData, false, "Please add Wallet!!");
+            delete client.CLPT
+            return false;
+        }
+
+        let gwh1 = {
+            "playerInfo._id": MongoID(client.uid)
+        }
+        let tableInfo = await playingLudo.findOne(gwh1, {}).lean();
+        logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
+
+        if (tableInfo != null) {
+            sendEvent(client, CONST.CLPT, requestData, false, "Already In playing table!!");
+            delete client.CLPT
+            return false;
+        }
+
+        let table = await this.createTable(requestData, { _ip: 1 });
+
+        sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
+
+    } catch (error) {
+        console.info("CLPT", error);
+    }
+}
+
+/*
+    _id:""
+*/
+module.exports.JPTL = async (requestData, client) => {
+    logger.info("JPTL requestData : ", requestData);
+
+    let tableInfo = await playingLudo.find({ _id: ObjectID(requestData._id) }, {});
+    logger.info("JPTL tableInfo : ", JSON.stringify(tableInfo));
+
+    await this.findEmptySeatAndUserSeat(tableInfo, {}, client, requestData);
+}
+
+
+
+
+/*
+if (tableInfo._ip == 0 && tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
+
+    let jobId = "LEAVE_SINGLE_USER:" + tableInfo._id;
+    clearJob(jobId)
+
+    await gameStartActions.gameTimerStart(tableInfo);
+}
+
+    _id:""
+*/
+module.exports.SPLT = async (requestData, client) => {
+    logger.info("JPTL requestData : ", requestData);
+
+    let tableInfo = await playingLudo.find({ _id: ObjectID(requestData._id) }, {});
+    logger.info("JPTL tableInfo : ", JSON.stringify(tableInfo));
+
+    if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
+        await gameStartActions.gameTimerStart(tableInfo);
+    } else {
+        sendEvent(client, CONST.SPLT, requestData, false, "Must be 2 Player require for player....!!");
+    }
+}
+
+/*
     Join Table Code 
     playerId:""
     code:""
@@ -320,7 +424,7 @@ module.exports.JTOFC = async (requestData, client) => {
             "pi.ui.uid": { $ne: MongoID(client.uid.toString()) },
         }
         logger.info("JTOFC getBetTable wh : ", JSON.stringify(wh));
-        
+
         let tbdata = await playingLudo.findOne(wh, {}).lean();
 
         if (tbdata == null) {

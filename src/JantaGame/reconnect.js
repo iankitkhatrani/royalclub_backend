@@ -222,7 +222,7 @@ module.exports.
                     const responseRS = {
                         ...response,
                         currentTurnUserSeatIndex: tabInfo.turnSeatIndex,
-                        currentTurnTimer: (12 - (diff/1000)),
+                        currentTurnTimer: (30 - (diff/1000)),
                     };
                     sendDirectEvent(client.id.toString(), CONST.RECONNECTJANTA, responseRS);
                 } else if (tabInfo.gameState === "JantaGameStartTimer") { //RouletteGameStartTimer

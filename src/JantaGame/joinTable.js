@@ -9,7 +9,7 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { getToken } = require('../../Agora/RtcTokenBuilderSample');
-
+const leaveTableActions = require('./leaveTable');
 
 module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
     try {
@@ -40,14 +40,37 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
         let tableInfo = await JantaTables.findOne(gwh1, {}).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
+        // if (tableInfo != null) {
+        //     sendEvent(client, CONST.JANTA_JOIN_TABLE, requestData, false, "Already In playing table!!");
+        //     delete client.JT
+        //     return false;
+        // }
+        
+        
+        // await this.findTable(client,requestData)
+
+
         if (tableInfo != null) {
-            sendEvent(client, CONST.JANTA_JOIN_TABLE, requestData, false, "Already In playing table!!");
-            delete client.JT
+            // sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Already In playing table!!");
+            // delete client.JT
+
+            await leaveTableActions.leaveTable(
+                {
+                    reason: 'autoLeave',
+                },
+                {
+                    uid: tableInfo.playerInfo[0]._id.toString(),
+                    tbid: tableInfo._id.toString(),
+                    seatIndex: tableInfo.playerInfo[0].seatIndex,
+                    sck: tableInfo.playerInfo[0].sck,
+                }
+            );
+            await this.findTable(client, requestData)
+
             return false;
+        } else {
+            await this.findTable(client, requestData)
         }
-        
-        
-        await this.findTable(client,requestData)
     } catch (error) {
         console.info("JANTA_JOIN_TABLE", error);
     }
