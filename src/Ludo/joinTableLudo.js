@@ -271,7 +271,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             safeDice: tableInfo.safeDice,
             tokenNo: tokenNO,
             agoraUid: requestData.agoraUid,
-            tableCode: tableInfo.tableCode
+            tableCode: tableInfo.tableCode,
+            gameState:tableInfo.gameState,
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
@@ -362,7 +363,7 @@ module.exports.CLPT = async (requestData, client) => {
 
         let table = await this.createTable(requestData, { _ip: 1 });
 
-        sendEvent(client, CONST.CLPT, { table: table }, false, "");
+        sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
 
     } catch (error) {
         console.info("CLPT", error);
