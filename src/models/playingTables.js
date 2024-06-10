@@ -7,6 +7,7 @@ const BetLists = mongoose.model('betList');
 const PlayingTablesSchema = new Schema({
     gameId: { type: String, default: "" },
     gameType: { type: String, default: "Simple" },
+    gamePlayType: { type: String, default: "Simple" },
     maxSeat: { type: Number, default: 6 },
     activePlayer: { type: Number, default: 0 },
     betId: { type: mongoose.Schema.Types.ObjectId, ref: BetLists },
