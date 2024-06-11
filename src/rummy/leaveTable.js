@@ -196,7 +196,13 @@ module.exports.manageOnUserLeave = async (tb, client) => {
 
     if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex === client.seatIndex) {
       if (realPlayerInGame.length == 0) {
-        await this.leaveallrobot(tb._id)
+        // await this.leaveallrobot(tb._id)
+        if (tb.activePlayer === 0) {
+          let wh = {
+            _id: MongoID(tb._id.toString()),
+          };
+          await PlayingTables.deleteOne(wh);
+        }
       } else if (playerInGame.length >= 2) {
         await roundStartActions.nextUserTurnstart(tb, false);
       } else if (playerInGame.length === 1) {
@@ -242,8 +248,15 @@ module.exports.manageOnUserLeave = async (tb, client) => {
       }
     } else if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex !== client.seatIndex) {
       if (realPlayerInGame.length == 0) {
-        console.log("realPlayerInGame leaveallrobot")
-        this.leaveallrobot(tb._id)
+
+        if (tb.activePlayer === 0) {
+          let wh = {
+            _id: MongoID(tb._id.toString()),
+          };
+          await PlayingTables.deleteOne(wh);
+        }
+        // console.log("realPlayerInGame leaveallrobot")
+        // await this.leaveallrobot(tb._id)
       } else if (playerInGame.length === 1) {
         if (playerInGame[0].isBot) {
           let wh = {

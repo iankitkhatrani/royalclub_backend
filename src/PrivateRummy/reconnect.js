@@ -4,8 +4,8 @@ const { omit } = require('lodash');
 const CONST = require('../../constant');
 const logger = require('../../logger');
 const commonHelper = require('../helper/commonHelper');
-const { sendDirectEvent, getPlayingUserInRound } = require('../helper/socketFunctions');
-const { filterBeforeSendSPEvent } = require('../helper/signups/appStart');
+const { sendDirectEvent } = require('../helper/socketFunctions');
+const { getPlayingUserInRoundWaiting, winnerViewResponseFilter } = require('../common-function/manageUserFunction');
 
 const Users = mongoose.model('users');
 const PlayingTables = mongoose.model('rummyPrivatePlayingTable');
@@ -28,20 +28,6 @@ module.exports.reconnect = async (requestData, client) => {
                 ...newData,
             };
             logger.info('Reconnect Final Data => ', finaldata);
-            let responseResult = await filterBeforeSendSPEvent(result);
-
-            if (requestData.tableId == '') {
-                const response = {
-                    login: true,
-                    ...responseResult,
-                    sceneName: CONST.DASHBOARD,
-
-                };
-
-                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, response);
-                return false;
-            }
-
 
             //when player in table
             const wh = {
@@ -62,7 +48,7 @@ module.exports.reconnect = async (requestData, client) => {
                 return false;
             }
 
-            const playerInGame = await getPlayingUserInRound(tabInfo.playerInfo);
+            const playerInGame = await getPlayingUserInRoundWaiting(tabInfo.playerInfo);
 
             const response = {
                 pi: tabInfo.playerInfo,
@@ -72,19 +58,29 @@ module.exports.reconnect = async (requestData, client) => {
                 tableid: tabInfo._id,
                 gamePlayType: tabInfo.gamePlayType,
                 sceneName: CONST.GAMEPLAY,
+                wildCard: tabInfo.wildCard,
+                gameType: tabInfo.gameType
             };
 
             if (tabInfo.gameState === CONST.ROUND_STARTED) {
                 let currentDateTime = new Date();
-                let time = currentDateTime.getSeconds();
+                let currentTime = currentDateTime.getTime(); // Get current time in milliseconds
 
                 let turnTime = new Date(tabInfo.gameTimer.ttimer);
-                let Gtime = turnTime.getSeconds();
-                let diff = Gtime - time;
+                let turnTimeMillis = turnTime.getTime(); // Get turn time in milliseconds
+
+                let diffMillis = turnTimeMillis - currentTime; // Calculate time difference in milliseconds
+                let diff = Math.floor(diffMillis / 1000); // Convert milliseconds to seconds
+
+                logger.info("RE Time difference in seconds:", diff);
 
                 const responseRS = {
                     ...response,
-                    currentTurnUserSeatIndex: tabInfo.turnSeatIndex,
+                    closeDeck: tabInfo.closeDeck,
+                    openDecks: tabInfo.openDeck,
+                    tableAmount: tabInfo.tableAmount,
+                    wildCard: tabInfo.wildCard,
+                    currentTurnUserSeatIndex: tabInfo.currentPlayerTurnIndex,
                     currentTurnTimer: diff,
                 };
                 sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRS);
@@ -102,19 +98,20 @@ module.exports.reconnect = async (requestData, client) => {
 
                 sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRST);
             } else if (tabInfo.gameState === CONST.ROUND_END) {
-                // const scoreBoard = tabInfo.playersScoreBoard;
-                // let winnerViewResponse = winnerViewResponseFilter(scoreBoard);
+                const scoreBoard = tabInfo.playersScoreBoard;
+                let winnerViewResponse = winnerViewResponseFilter(scoreBoard);
 
-                // const responseRSB = {
-                //     playersScoreBoard: winnerViewResponse.userInfo,
-                //     totalLostChips: tabInfo.tableAmount,
-                //     winPlayerId: tabInfo.playerInfo[tabInfo.currentPlayerTurnIndex]._id,
-                //     gamePlayType: tabInfo.gamePlayType,
-                // };
+                const responseRSB = {
+                    playersScoreBoard: winnerViewResponse.userInfo,
+                    totalLostChips: tabInfo.tableAmount,
+                    winPlayerId: tabInfo.playerInfo[tabInfo.currentPlayerTurnIndex]._id,
+                    wildCard: tabInfo.wildCard,
+                    gamePlayType: tabInfo.gamePlayType,
+                };
 
                 const responseRE = {
                     ...response,
-                    // GSB: responseRSB,
+                    GSB: responseRSB,
                 };
 
                 sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRE);
