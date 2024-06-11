@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model("rummyPlayingTables");
-
-
-
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const leaveTableActions = require('./leaveTable');

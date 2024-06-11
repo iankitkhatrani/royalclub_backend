@@ -26,7 +26,9 @@ const mainCtrl = require('./mainController');
 const { sendEvent, sendDirectEvent } = require('../helper/socketFunctions');
 const { userReconnect } = require('../teenpatti/reConnectFunction');
 const rummyRe = require('../rummy/reConnectFunction');
+const rummyPrRe = require('../PrivateRummy/reConnectFunction');
 const teenRe = require('../teenpatti/reConnectFunction');
+const teenPrRe = require('../teenpattiprivate/reConnectFunction');
 const { getBannerList } = require('./adminController');
 
 
@@ -635,9 +637,17 @@ myIo.init = function (server) {
                         await rummyRe.userReconnect(payload.data, socket);
                         break;
                     }
+                    case CONST.R_PRIVATE_RECONNECT: {
+                        await rummyPrRe.userReconnect(payload.data, socket);
+                        break;
+                    }
 
                     case CONST.TEEN_RECONNECT: {
                         await teenRe.userReconnect(payload.data, socket);
+                        break;
+                    }
+                    case CONST.T_PRIVATE_RECONNECT: {
+                        await teenPrRe.userReconnect(payload.data, socket);
                         break;
                     }
 

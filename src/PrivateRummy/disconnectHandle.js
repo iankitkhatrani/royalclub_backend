@@ -25,7 +25,7 @@ module.exports.disconnectTableHandle = async (client) => {
 
       if (tabInfo === null) return false;
 
-      if (tabInfo.gamePlayType === CONST.GAME_TYPE.POINT_RUMMY) {
+      if (tabInfo.gamePlayType === CONST.GAME_TYPE.PRIVATE_RUMMY) {
 
         let wh = {
           _id: MongoID(client.tbid.toString()),
