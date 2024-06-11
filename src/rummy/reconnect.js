@@ -14,7 +14,7 @@ const Users = mongoose.model('users');
 const PlayingTables = mongoose.model('rummyPlayingTables');
 const MongoID = mongoose.Types.ObjectId;
 
-module.exports.R_RECONNECT = async (requestData, client) => {
+module.exports.reconnect = async (requestData, client) => {
     try {
         if (requestData.playerId !== '' && requestData.playerId !== null && requestData.playerId !== undefined) {
             let gwh = {
