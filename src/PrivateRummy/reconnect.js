@@ -38,7 +38,7 @@ module.exports.reconnect = async (requestData, client) => {
 
                 };
 
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, response);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, response);
                 return false;
             }
 
@@ -58,7 +58,7 @@ module.exports.reconnect = async (requestData, client) => {
                     sceneName: CONST.DASHBOARD,
                 };
 
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, response);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, response);
                 return false;
             }
 
@@ -87,7 +87,7 @@ module.exports.reconnect = async (requestData, client) => {
                     currentTurnUserSeatIndex: tabInfo.turnSeatIndex,
                     currentTurnTimer: diff,
                 };
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, responseRS);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRS);
             } else if (tabInfo.gameState === CONST.ROUND_START_TIMER) {
                 let currentDateTime = new Date();
                 let time = currentDateTime.getSeconds();
@@ -100,7 +100,7 @@ module.exports.reconnect = async (requestData, client) => {
                     timer: diff,
                 };
 
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, responseRST);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRST);
             } else if (tabInfo.gameState === CONST.ROUND_END) {
                 // const scoreBoard = tabInfo.playersScoreBoard;
                 // let winnerViewResponse = winnerViewResponseFilter(scoreBoard);
@@ -117,11 +117,11 @@ module.exports.reconnect = async (requestData, client) => {
                     // GSB: responseRSB,
                 };
 
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, responseRE);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, responseRE);
             } else if (tabInfo.gameState === CONST.CARD_DEALING) {
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, response);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, response);
             } else {
-                sendDirectEvent(client.id.toString(), CONST.R_RECONNECT, response);
+                sendDirectEvent(client.id.toString(), CONST.R_PRIVATE_RECONNECT, response);
             }
             return;
         } else {
@@ -129,7 +129,7 @@ module.exports.reconnect = async (requestData, client) => {
                 login: false,
                 sceneName: CONST.DASHBOARD,
             };
-            sendDirectEvent(client.id, CONST.R_RECONNECT, response, {
+            sendDirectEvent(client.id, CONST.R_PRIVATE_RECONNECT, response, {
                 flag: false,
                 msg: 'Player Id not found!',
             });

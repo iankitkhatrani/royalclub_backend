@@ -38,7 +38,7 @@ const fileUpload = require('express-fileupload');
   rClient.on('error', (err) => console.log('Redis Client Error', err));
 
   rClient.on('connect', () => {
-    console.log('Redis Client connected')
+    console.log('Redis Client connected : ', RDS_HOST)
   });
 })();
 

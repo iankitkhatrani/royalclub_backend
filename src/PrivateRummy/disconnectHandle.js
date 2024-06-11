@@ -2,8 +2,6 @@ const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
 const PlayingTables = mongoose.model("rummyPrivatePlayingTable");
 
-
-
 const logger = require('../../logger');
 const CONST = require('../../constant');
 const leaveTableActions = require('./leaveTable');
@@ -12,8 +10,8 @@ const leaveTableActions = require('./leaveTable');
 
 module.exports.disconnectTableHandle = async (client) => {
   try {
-    logger.info('disconnectTableHandle client.uid =>: ', client.uid);
-    logger.info('disconnectTableHandle client.tbid =>: ', client.tbid);
+    logger.info('rummyPrivatePlayingTable disconnectTableHandle client.uid =>: ', client.uid);
+    logger.info('rummyPrivatePlayingTable disconnectTableHandle client.tbid =>: ', client.tbid);
 
     if (typeof client.uid !== 'undefined') {
       const whe = {
@@ -84,7 +82,7 @@ module.exports.findDisconnectTable = async (userId, Table) => {
         'playerInfo.$': 1,
       };
 
-      const tbInfo = await Table.findOne(wh, project);
+      const tbInfo = await PlayingTables.findOne(wh, project);
 
       return tbInfo;
     } else {

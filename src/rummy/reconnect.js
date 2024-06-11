@@ -28,7 +28,7 @@ module.exports.reconnect = async (requestData, client) => {
                 ...newData,
             };
             logger.info('Reconnect Final Data => ', finaldata);
-            let responseResult = await filterBeforeSendSPEvent(result);
+            // let responseResult = await filterBeforeSendSPEvent(result);
 
             if (requestData.tableId == '') {
                 const response = {

@@ -84,7 +84,7 @@ module.exports.findDisconnectTable = async (userId, Table) => {
         'playerInfo.$': 1,
       };
 
-      const tbInfo = await Table.findOne(wh, project);
+      const tbInfo = await PlayingTables.findOne(wh, project);
 
       return tbInfo;
     } else {
