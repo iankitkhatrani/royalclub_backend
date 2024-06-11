@@ -96,7 +96,7 @@ module.exports.createTable = async (betInfo, requestData) => {
             gameId: "",
             maxSeat: 2,
             activePlayer: 0,
-            betId: betInfo._id != undefined ? betInfo._id : "",
+            betId: betInfo._id != undefined ? betInfo._id.toString() : "",
             boot: betInfo.entryFee,
             playerInfo: this.makeObjects(4),
             gameState: "",
@@ -360,9 +360,9 @@ module.exports.CLPT = async (requestData, client) => {
             delete client.CLPT
             return false;
         }
-
+        requestData._ip = 1;
         let table = await this.createTable(requestData, { _ip: 1 });
-
+        console.log("table ",table)
         sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
 
     } catch (error) {

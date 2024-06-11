@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const collectionName = 'playingLudo';
-const BetLists = mongoose.model('betList');
+
 
 const PlayingTablesSchema = new Schema({
     gameId: { type: String, default: "" },
     gameType: { type: String, default: "Simple" },
     maxSeat: { type: Number, default: 2 },
     activePlayer: { type: Number, default: 0 },
-    betId: { type: mongoose.Schema.Types.ObjectId, ref: BetLists },
+    betId: { type: String,default: "" },
     boot: { type: Number, default: 0 },
     playerInfo: [{},{}],
     gameState: { type: String, default: "" },
