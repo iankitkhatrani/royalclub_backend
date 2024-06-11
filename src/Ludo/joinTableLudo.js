@@ -118,7 +118,8 @@ module.exports.createTable = async (betInfo, requestData) => {
             ],
             safeDice: [9, 22, 35, 48, 1, 14, 27, 40],
             _ip: requestData._ip != undefined ? requestData._ip : 0,
-            tableCode: requestData._ip != undefined && requestData._ip == 1 ? Math.floor(1000000 + Math.random() * 9000000) : ""
+            tableCode: requestData._ip != undefined && requestData._ip == 1 ? Math.floor(1000000 + Math.random() * 9000000) : "",
+            adminId: requestData.adminId != undefined ? requestData.adminId : "",
         };
         logger.info("createTable insertobj : ", insertobj);
 
@@ -357,13 +358,14 @@ module.exports.CLPT = async (requestData, client) => {
         let tableInfo = await playingLudo.findOne(gwh1, {}).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
+
         if (tableInfo != null) {
             sendEvent(client, CONST.CLPT, requestData, false, "Already In playing table!!");
             delete client.CLPT
             return false;
         }
         requestData._ip = 1;
-        let table = await this.createTable(requestData, { _ip: 1 });
+        let table = await this.createTable(requestData, { _ip: 1 , adminId:client.uid.toString()  });
         console.log("table ",table)
         sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
 
@@ -419,9 +421,9 @@ module.exports.SPLT = async (requestData, client) => {
 module.exports.JTOFC = async (requestData, client) => {
     if (typeof requestData.code != 'undefined' && requestData.code != null && requestData.code != '') {
 
-        let userInfo = await GameUser.find({ _id: MongoID(client.uid) }, {})
+        let userInfo = await GameUser.findOne({ _id: MongoID(client.uid) }, {})
         let wh = {
-            tableCode: parseInt(requestData.code),
+            tableCode: requestData.code.toString(),
             activePlayer: { $gte: 0, $lt: 2 },
             "pi.ui.uid": { $ne: MongoID(client.uid.toString()) },
         }
@@ -434,17 +436,17 @@ module.exports.JTOFC = async (requestData, client) => {
             return false
         }
 
-        if (userInfo.gold >= tbdata[0].boot * 2) {
+        if (userInfo.chips >= tbdata.boot * 2) {
 
-            if (tbdata[0].activePlayer < tbdata[0].maxSeat) {
+            if (tbdata.activePlayer < tbdata.maxSeat) {
 
-                this.findEmptySeatAndUserSeat(tbdata, {}, client, {});
+                this.findEmptySeatAndUserSeat(tbdata, {}, client, requestData);
 
             } else {
                 sendEvent(client, CONST.JTOFC, requestData, false, "Please restart game!!");
             }
         } else {
-            sendEvent(client, CONST.JTOFC, requestData, false, "Please add Wallet!!");
+            sendEvent(client, CONST.JTOFC, requestData, false, "Please add Chip in Wallet!!");
         }
     } else {
         sendEvent(client, CONST.JTOFC, requestData, false, "Please restart game!!");

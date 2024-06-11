@@ -1,6 +1,6 @@
 
 const { getBetList } = require('./betList');
-const { joinTable,CLPT,JPTL,SPLT } = require("./joinTableLudo");
+const { joinTable,CLPT,JPTL,SPLT,JTOFC } = require("./joinTableLudo");
 const { leaveTable } = require("./leaveTable");
 const { disconnectTableHandle, findDisconnectTable } = require("./disconnectHandle");
 const { RollDice, MOVEKUKARI } = require("./gamePlayLudo");
@@ -16,4 +16,5 @@ module.exports = {
   CLPT: CLPT,
   JPTL: JPTL,
   SPLT: SPLT,
+  JTOFC:JTOFC
 };

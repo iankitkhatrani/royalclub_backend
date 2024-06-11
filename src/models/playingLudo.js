@@ -29,7 +29,8 @@ const PlayingTablesSchema = new Schema({
     playerRoutePos4:[],
     safeDice:[],
     _ip:{ type: Number},
-    tableCode:{ type: String, default: "" }
+    tableCode:{ type: String, default: "" },
+    adminId: { type: String,default: "" },
 }, { versionKey: false });
 
 module.exports = mongoose.model(collectionName, PlayingTablesSchema, collectionName);
