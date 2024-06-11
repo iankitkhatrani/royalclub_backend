@@ -11,7 +11,6 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { getToken } = require('../../Agora/RtcTokenBuilderSample');
-const { ObjectID } = require("mongodb");
 
 module.exports.joinTable = async (requestData, client) => {
     try {
@@ -144,7 +143,10 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, requestData) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + " betInfo :=> ", betInfo + " client :=> ");
+        logger.info("findEmptySeatAndUserSeat table :=> ", table);
+        logger.info("findEmptySeatAndUserSeat table :=> ", table.playerInfo);
+        logger.info("findEmptySeatAndUserSeat table :=> ", table._ip);
+
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
         logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
@@ -376,7 +378,7 @@ module.exports.CLPT = async (requestData, client) => {
 module.exports.JPTL = async (requestData, client) => {
     logger.info("JPTL requestData : ", requestData);
 
-    let tableInfo = await playingLudo.find({ _id: ObjectID(requestData._id) }, {});
+    let tableInfo = await playingLudo.findOne({ _id: MongoID(requestData._id) }, {});
     logger.info("JPTL tableInfo : ", JSON.stringify(tableInfo));
 
     await this.findEmptySeatAndUserSeat(tableInfo, {}, client, requestData);
@@ -399,7 +401,7 @@ if (tableInfo._ip == 0 && tableInfo.activePlayer == 2 && tableInfo.gameState == 
 module.exports.SPLT = async (requestData, client) => {
     logger.info("JPTL requestData : ", requestData);
 
-    let tableInfo = await playingLudo.find({ _id: ObjectID(requestData._id) }, {});
+    let tableInfo = await playingLudo.find({ _id: MongoID(requestData._id) }, {});
     logger.info("JPTL tableInfo : ", JSON.stringify(tableInfo));
 
     if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {
