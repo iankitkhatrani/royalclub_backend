@@ -69,7 +69,7 @@ module.exports.joinTable = async (requestData, client) => {
                     sck: tableInfo.playerInfo[0].sck,
                 }
             );
-            await this.findTable(client, requestData)
+            await this.findTable(BetInfo ,client, requestData)
 
             return false;
         } else {
@@ -172,7 +172,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             if (table._ip == 1) {
                 sendEvent(client, CONST.CLPT, {}, false, "Not seat availabe !!");
             } else {
-                await this.findTable(betInfo, client)
+                await this.findTable(betInfo, client,requestData)
             }
             return false;
         }
@@ -250,7 +250,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
                 sendEvent(client, CONST.CLPT, {}, false, "Please Join Table....!!");
             } else {
 
-                await this.findTable(betInfo, client);
+                await this.findTable(betInfo, client,requestData);
             }
             return false;
         }

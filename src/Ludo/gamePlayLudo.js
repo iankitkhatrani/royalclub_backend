@@ -113,22 +113,26 @@ module.exports.RollDice = async (requestData, client) => {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
 
-            if ((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex] != undefined &&
+            if (
+                tb.playerInfo[tb.turnSeatIndex] != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined &&
-                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 &&
-                tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 &&
-                tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 &&
-                tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1
-            ) ||
-                ((tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 ||
-                    tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber > playerRoutePos.length) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber > playerRoutePos.length) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber > playerRoutePos.length) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1 ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k4"] + DiceNumber > playerRoutePos.length)
+
+                (DiceNumber != 6 &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1])
+                ) ||
+                (
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1] ) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k4"] + DiceNumber >= playerRoutePos.length)
 
                 )
 
@@ -237,7 +241,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
 
         // Move no thai home ma java mate na move number nathi so
-        if (playerInfo.kukarisindex[requestData.movekukari] + requestData.movenumber > playerRoutePos.length) {
+        if (playerInfo.kukarisindex[requestData.movekukari] + requestData.movenumber >= playerRoutePos.length) {
             logger.info("MOVEKUKARI : client.su ::", client.seatIndex);
             delete client.MOVEKUKARI;
             commandAcions.sendDirectEvent(client.sck, CONST.MOVEKUKARI, requestData, false, "It's not your turn!");
