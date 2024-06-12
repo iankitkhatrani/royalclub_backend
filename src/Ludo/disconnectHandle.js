@@ -40,7 +40,7 @@ module.exports.disconnectTableHandle = async (client) => {
         logger.info('check user rejoin status', tbInfo);
 
         if (tbInfo !== null && tabInfo.playerInfo[0].rejoin !== true) {
-          await leaveTableActions.leaveTable(
+          await leaveTableActions.leaveTableLudo(
             {
               reason: 'userDisconnect',
             },

@@ -275,7 +275,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             tokenNo: tokenNO,
             agoraUid: requestData.agoraUid,
             tableCode: tableInfo.tableCode,
-            gameState:tableInfo.gameState,
+            gameState: tableInfo.gameState,
+            adminId:tableInfo.adminId
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
@@ -403,7 +404,7 @@ if (tableInfo._ip == 0 && tableInfo.activePlayer == 2 && tableInfo.gameState == 
 module.exports.SPLT = async (requestData, client) => {
     logger.info("JPTL requestData : ", requestData);
 
-    let tableInfo = await playingLudo.find({ _id: MongoID(requestData._id) }, {});
+    let tableInfo = await playingLudo.findOne({ _id: MongoID(requestData._id) }, {});
     logger.info("JPTL tableInfo : ", JSON.stringify(tableInfo));
 
     if (tableInfo.activePlayer == 2 && tableInfo.gameState == "") {

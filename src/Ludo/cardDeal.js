@@ -42,10 +42,10 @@ module.exports.cardDealStart = async (tbid) => {
     // }
     // commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TABLE_CARD_DEAL, eventResponse);
 
-    let tbId = tb._id;
-    let jobId = commandAcions.GetRandomString(10);
-    let delay = commandAcions.AddTime(5);
-    const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+     let tbId = tb._id;
+    // let jobId = commandAcions.GetRandomString(10);
+    // let delay = commandAcions.AddTime(0);
+    // const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
     await roundStartActions.roundStarted(tbId)
 }

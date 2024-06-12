@@ -57,6 +57,7 @@ const CONST = {
   SPLT: "SPLT",
   JTOFC: "JTOFC",
   GET_LUDO_ROOM_LIST: "GLRL",
+  LEAVETAVLELUDO:"LEAVETAVLELUDO",
   //================
 
 

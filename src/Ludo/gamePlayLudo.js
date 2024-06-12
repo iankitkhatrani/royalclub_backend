@@ -13,6 +13,7 @@ const checkWinnerActions = require("./checkWinner");
 const checkUserCardActions = require("./checkUserCard");
 
 const walletActions = require("./updateWallet");
+const { unescape } = require("underscore");
 
 
 module.exports.RollDice = async (requestData, client) => {
@@ -108,6 +109,28 @@ module.exports.RollDice = async (requestData, client) => {
         if (activePlayerInRound.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         } else {
+
+            if(DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex] != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris != undefined && 
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined && 
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 && 
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 && 
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 && 
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1
+             ){
+
+                
+            let jobId = commandAcions.GetRandomString(10);
+            let delay = commandAcions.AddTime(3);
+            const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+             
+                await roundStartActions.nextUserTurnstart(tb,-1);
+
+                return false;
+                
+             }
+
+
             if (UserInfo.Iscom == 1) {
                 // Take turn for kukari 
 
