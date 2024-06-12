@@ -12,6 +12,7 @@ const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { getToken } = require('../../Agora/RtcTokenBuilderSample');
 
+const leaveTableActions = require('./leaveTable');
 module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("requestData Ludo", requestData);
@@ -57,7 +58,7 @@ module.exports.joinTable = async (requestData, client) => {
             // delete client.JT
 
 
-            await leaveTableActions.leaveTable(
+            await leaveTableActions.leaveTableLudo(
                 {
                     reason: 'autoLeave',
                 },
@@ -380,7 +381,7 @@ module.exports.CLPT = async (requestData, client) => {
             // sendEvent(client, CONST.CLPT, requestData, false, "Already In playing table!!");
             // delete client.CLPT
 
-            await leaveTableActions.leaveTable(
+            await leaveTableActions.leaveTableLudo(
                 {
                     reason: 'autoLeave',
                 },
