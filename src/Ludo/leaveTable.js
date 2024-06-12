@@ -13,8 +13,9 @@ const logger = require("../../logger");
 
 module.exports.leaveTableLudo = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
+    console.log("leaveTableLudo ",client)
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        commandAcions.sendDirectEvent(client.sck, CONST.LEAVETAVLELUDO, requestData, false, "User session not set, please restart game!");
+        commandAcions.sendDirectEvent(client.sck, CONST.LEAVETABLELUDO, requestData, false, "User session not set, please restart game!");
         return false;
     }
 
@@ -75,8 +76,8 @@ module.exports.leaveTableLudo = async (requestData, client) => {
     let tbInfo = await playingLudo.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETAVLELUDO, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETAVLELUDO, response);
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLELUDO, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLELUDO, response);
 
 
     await this.manageOnUserLeave(tbInfo);
