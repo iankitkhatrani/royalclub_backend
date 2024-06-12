@@ -420,6 +420,14 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    //:"RPT",
+                    //REMOVE Private Table 
+                    case CONST.RPT: {
+
+                        await gamePlayActionsLudo.RPT(payload.data, socket);
+                        break;
+                    }
+
                     //Start Private Ludo Table 
                     case CONST.SPLT: {
                         socket.uid = payload.data.playerId;
@@ -459,7 +467,7 @@ myIo.init = function (server) {
                     }
                         
                         
-                    case CONST.LEAVETAVLELUDO: {
+                    case CONST.LEAVETABLELUDO: {
                         await gamePlayActionsLudo.leaveTable(payload.data, socket);
                         break;
                     }

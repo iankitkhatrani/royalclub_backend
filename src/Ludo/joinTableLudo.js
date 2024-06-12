@@ -368,10 +368,32 @@ module.exports.CLPT = async (requestData, client) => {
         requestData._ip = 1;
         let table = await this.createTable(requestData, { _ip: 1 , adminId:client.uid.toString()  });
         console.log("table ",table)
+        delete client.CLPT
         sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
 
     } catch (error) {
         console.info("CLPT", error);
+    }
+}
+
+
+/*
+    Remove Private Table 
+    tbid:""
+*/
+module.exports.RPT = async (requestData, client) => {
+    try {
+        logger.info("RPT", requestData);
+
+        if (typeof requestData.tbid == "undefined") {
+            sendEvent(client, CONST.RPT, requestData, false, "Please restart game!!");
+            return false;
+        }
+  
+        let tableInfo = await playingLudo.deleteOne({_id:MongoID(requestData.tbid)})
+
+    } catch (error) {
+        console.info("RPT", RPT);
     }
 }
 

@@ -69,6 +69,7 @@ const userReconnectRoulette = async (payload, socket) => {
         // });
         // await rdClient.hdel(jobId.toString(), ['tableId', 'playerId', 'plseat']);
         // return;
+        socket.join(payload.tableId.toString());
       } catch (err) {
         logger.info('disconnTable Error ', err);
       }
@@ -80,7 +81,7 @@ const userReconnectRoulette = async (payload, socket) => {
     socket.sck = socket.id;
     socket.tbid = payload.tableId;
     
-    socket.join(payload.tableId.toString());
+    
     await updateScoketId({ playerId: socket.uid, sck: socket.id }, disconnTable);
     await reconnect(payload, socket);
 

@@ -39,7 +39,7 @@ module.exports.
 
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, response);
                     return false;
                 }
 
@@ -59,7 +59,7 @@ module.exports.
                         sceneName: CONST.DASHBOARD,
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, response);
                     return false;
                 }
 
@@ -88,7 +88,7 @@ module.exports.
                         currentTurnUserSeatIndex: tabInfo.turnSeatIndex,
                         currentTurnTimer: diff,
                     };
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRS);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, responseRS);
                 } else if (tabInfo.gameState === CONST.ROUND_START_TIMER) {
                     let currentDateTime = new Date();
                     let time = currentDateTime.getSeconds();
@@ -101,7 +101,7 @@ module.exports.
                         timer: diff,
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRST);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, responseRST);
                 } else if (tabInfo.gameState === CONST.ROUND_END) {
                     // const scoreBoard = tabInfo.playersScoreBoard;
                     // let winnerViewResponse = winnerViewResponseFilter(scoreBoard);
