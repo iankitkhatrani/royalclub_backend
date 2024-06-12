@@ -14,6 +14,8 @@ const privateActionsRummy = require('../PrivateRummy');
 const teenPrivateActions = require('../teenpattiprivate');
 
 const gamePlayActionsLudo = require('../Ludo');
+const ludoRe = require('../Ludo/reConnectFunction');
+
 const gamePlayActionsJanta = require('../JantaGame');
 const gamePlayActionsRoulette = require('../roulette');
 const { userReconnectRoulette } = require('../roulette/reConnectFunction');
@@ -462,6 +464,11 @@ myIo.init = function (server) {
                         break;
                     }
                         
+
+                    case CONST.L_RECONNECT: {
+                        await ludoRe.userReconnect(payload.data, socket);
+                        break;
+                    }
                         
                         
 
