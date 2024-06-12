@@ -49,15 +49,31 @@ module.exports.joinTable = async (requestData, client) => {
         let gwh1 = {
             "playerInfo._id": MongoID(client.uid)
         }
-        let tableInfo = await playingLudo.findOne(gwh1, {}).lean();
+        let tableInfo = await playingLudo.findOne(gwh1, {'playerInfo.$': 1}).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
         if (tableInfo != null) {
-            sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Already In playing table!!");
-            delete client.JT
+            // sendEvent(client, CONST.JOIN_TABLE, requestData, false, "Already In playing table!!");
+            // delete client.JT
+
+
+            await leaveTableActions.leaveTable(
+                {
+                    reason: 'autoLeave',
+                },
+                {
+                    uid: tableInfo.playerInfo[0]._id.toString(),
+                    tbid: tableInfo._id.toString(),
+                    seatIndex: tableInfo.playerInfo[0].seatIndex,
+                    sck: tableInfo.playerInfo[0].sck,
+                }
+            );
+            await this.findTable(client, requestData)
+
             return false;
+        } else {
+            await this.findTable(BetInfo, client, requestData)
         }
-        await this.findTable(BetInfo, client, requestData)
     } catch (error) {
         console.info("JOIN_TABLE", error);
     }
@@ -361,16 +377,36 @@ module.exports.CLPT = async (requestData, client) => {
 
 
         if (tableInfo != null) {
-            sendEvent(client, CONST.CLPT, requestData, false, "Already In playing table!!");
-            delete client.CLPT
-            return false;
-        }
-        requestData._ip = 1;
-        let table = await this.createTable(requestData, { _ip: 1 , adminId:client.uid.toString()  });
-        console.log("table ",table)
-        delete client.CLPT
-        sendEvent(client, CONST.CLPT, { tableCode:table.tableCode , _id:table._id}, false, "");
+            // sendEvent(client, CONST.CLPT, requestData, false, "Already In playing table!!");
+            // delete client.CLPT
 
+            await leaveTableActions.leaveTable(
+                {
+                    reason: 'autoLeave',
+                },
+                {
+                    uid: tableInfo.playerInfo[0]._id.toString(),
+                    tbid: tableInfo._id.toString(),
+                    seatIndex: tableInfo.playerInfo[0].seatIndex,
+                    sck: tableInfo.playerInfo[0].sck,
+                }
+            );
+            
+            requestData._ip = 1;
+            let table = await this.createTable(requestData, { _ip: 1, adminId: client.uid.toString() });
+            console.log("table ", table)
+            delete client.CLPT
+            sendEvent(client, CONST.CLPT, { tableCode: table.tableCode, _id: table._id }, false, "");
+            
+
+            return false;
+        } else {
+            requestData._ip = 1;
+            let table = await this.createTable(requestData, { _ip: 1, adminId: client.uid.toString() });
+            console.log("table ", table)
+            delete client.CLPT
+            sendEvent(client, CONST.CLPT, { tableCode: table.tableCode, _id: table._id }, false, "");
+        }
     } catch (error) {
         console.info("CLPT", error);
     }
