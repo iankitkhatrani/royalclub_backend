@@ -11,10 +11,10 @@ const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
 
 
-module.exports.leaveTable = async (requestData, client) => {
+module.exports.leaveTableLudo = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        commandAcions.sendDirectEvent(client.sck, CONST.LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+        commandAcions.sendDirectEvent(client.sck, CONST.LEAVETAVLELUDO, requestData, false, "User session not set, please restart game!");
         return false;
     }
 
@@ -48,7 +48,7 @@ module.exports.leaveTable = async (requestData, client) => {
             activePlayer: -1
         }
     }
-    if (tb.activePlayer == 2 && tb.gameState == "GameStartTimer") {
+    if (tb.activePlayer == 1 && tb.gameState == "GameStartTimer") {
         let jobId = CONST.GAME_START_TIMER + ":" + tb._id.toString();
         commandAcions.clearJob(jobId)
         updateData["$set"]["gameState"] = "";
@@ -61,22 +61,6 @@ module.exports.leaveTable = async (requestData, client) => {
     if (tb.gameState == "RoundStated") {
         if (client.seatIndex == tb.turnSeatIndex) {
             commandAcions.clearJob(tb.jobId)
-        }
-        if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playStatus) != -1) {
-
-                let userTrack = {
-                    _id: playerInfo._id,
-                    username: playerInfo.username,
-                    cards: playerInfo.cards,
-                    seatIndex: playerInfo.seatIndex,
-                    totalBet: playerInfo.totalBet,
-                    playStatus: "leaveTable"
-                }
-                updateData["$push"] = {
-                    "gameTracks": userTrack
-                }
-            }
         }
     }
 
@@ -91,8 +75,8 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await playingLudo.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVE_TABLE, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVE_TABLE, response);
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETAVLELUDO, response);
+    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETAVLELUDO, response);
 
 
     await this.manageOnUserLeave(tbInfo);
@@ -140,7 +124,7 @@ module.exports.leaveSingleUser = async (tbid) => {
         let playerInfos = tabInfo.playerInfo
         for (let i = 0; i < playerInfos.length; i++) {
             if (typeof playerInfos[i].seatIndex != "undefined") {
-                await this.leaveTable({
+                await this.leaveTableLudo({
                     reason: "singleUserLeave"
                 }, {
                     uid: playerInfos[i]._id.toString(),

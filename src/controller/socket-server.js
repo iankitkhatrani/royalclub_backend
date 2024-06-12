@@ -455,6 +455,15 @@ myIo.init = function (server) {
                         await gamePlayActionsLudo.MOVEKUKARI(payload.data, socket);
                         break;
                     }
+                        
+                        
+                    case CONST.LEAVETAVLELUDO: {
+                        await gamePlayActionsLudo.leaveTable(payload.data, socket);
+                        break;
+                    }
+                        
+                        
+                        
 
                     //Rummy ------------------------------
                     case CONST.R_GET_BET_LIST: {

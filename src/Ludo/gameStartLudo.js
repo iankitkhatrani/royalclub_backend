@@ -194,7 +194,7 @@ module.exports.checkUserInRound = async (playerInfo, tb) => {
         for (let i = 0; i < userInfos.length; i++)
             if (typeof userInfos[i]._id != "undefined") {
                 if (Number(userInfo[userInfos[i]._id.toString()].coins) < (Number(tb.boot))) {
-                    await leaveTableActions.leaveTable({
+                    await leaveTableActions.leaveTableLudo({
                         reason: "wallet_low"
                     }, {
                         _id: userInfos[i]._id.toString(),
