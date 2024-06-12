@@ -39,7 +39,7 @@ module.exports.autoShow = async (tb) => {
     let winners = await this.getWinner(tbInfo);
     logger.info("autoShow winners : ", winners);
 
-    await gameFinishActions.winnerDeclareCall(winners, tbInfo);
+    await gameFinishActions.winnerDeclareCallLudo(winners, tbInfo);
 
 }
 
@@ -74,7 +74,7 @@ module.exports.winnercall = async (tb, isShow, showUserSeatIndex) => {
     let winners = await this.getWinner(tbInfo, isShow, showUserSeatIndex);
     logger.info("winners ==> : ", winners);
 
-    await gameFinishActions.winnerDeclareCall(winners, tbInfo);
+    await gameFinishActions.winnerDeclareCallLudo(winners, tbInfo);
 
 }
 

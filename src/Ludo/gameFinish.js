@@ -54,19 +54,19 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
     const tbInfo = await playingLudo.findOneAndUpdate(dcUWh, up, { new: true });
     logger.info("lastUserWinnerDeclareCall tbInfo : ", tbInfo);
 
-    await this.winnerDeclareCall([winner], tabInfo);
+    await this.winnerDeclareCallLudo([winner], tabInfo);
     return true;
 
 }
 
 module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
     try {
-        logger.info("winnerDeclareCall winner ::  -->", winner, tabInfo);
+        logger.info("winnerDeclareCallLudo winner ::  -->", winner, tabInfo);
         let tbid = tabInfo._id.toString()
-        logger.info("winnerDeclareCall tbid ::", tbid);
+        logger.info("winnerDeclareCallLudo tbid ::", tbid);
 
         if (typeof winner == "undefined" || (typeof winner != "undefined" && winner.length == 0)) {
-            logger.info("winnerDeclareCall winner ::", winner);
+            logger.info("winnerDeclareCallLudo winner ::", winner);
             return false;
         }
 
@@ -82,10 +82,10 @@ module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
                 gameState: "RoundEndState",
             }
         };
-        logger.info("winnerDeclareCall upWh updateData :: ", upWh, updateData);
+        logger.info("winnerDeclareCallLudo upWh updateData :: ", upWh, updateData);
 
         const tbInfo = await playingLudo.findOneAndUpdate(upWh, updateData, { new: true });
-        logger.info("winnerDeclareCall tbInfo : ", tbInfo);
+        logger.info("winnerDeclareCallLudo tbInfo : ", tbInfo);
 
         let winnerIndexs = [];
         let winnerIds = [];
@@ -110,10 +110,10 @@ module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
             )
         }
 
-        logger.info("winnerDeclareCall tbInfo.gameTracks :: ", tbInfo.gameTracks, winnerIds);
+        logger.info("winnerDeclareCallLudo tbInfo.gameTracks :: ", tbInfo.gameTracks, winnerIds);
 
         const winnerTrack = await gameTrackActions.gamePlayTracks(winnerIndexs, tbInfo.gameTracks, tbInfo);
-        logger.info("winnerDeclareCall winnerTrack:: ", winnerTrack);
+        logger.info("winnerDeclareCallLudo winnerTrack:: ", winnerTrack);
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playStatus == "win") {
