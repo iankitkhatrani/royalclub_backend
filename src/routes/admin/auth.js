@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
 router.get('/DeletePlayingLudo', async (req, res) => {
   try {
 
-    await playingLudo.deleteMany({})
+    //await playingLudo.deleteMany({})
 
     res.json({ status: "ok" });
   } catch (error) {
