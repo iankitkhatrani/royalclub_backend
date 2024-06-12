@@ -39,7 +39,7 @@ const userReconnect = async (payload, socket) => {
         let jobsId = CONST.DISCONNECT + plInfo._id;
 
         //await clearJob(jobsId);
-        logger.info('RECONNECT USER JOB CANCELLED once user RECONNECT successfully typeof : ', jobsId, typeof jobsId);
+        logger.info('L_RECONNECT USER JOB CANCELLED once user L_RECONNECT successfully typeof : ', jobsId, typeof jobsId);
 
         const cancelJobStatus = schedule.cancelJob(jobsId);
         logger.info('schedule USER Cancel JOB :--> ', cancelJobStatus, jobsId);
