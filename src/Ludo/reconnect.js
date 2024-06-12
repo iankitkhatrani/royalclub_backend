@@ -118,11 +118,11 @@ module.exports.
                         // GSB: responseRSB,
                     };
 
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, responseRE);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, responseRE);
                 } else if (tabInfo.gameState === CONST.CARD_DEALING) {
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, response);
                 } else {
-                    sendDirectEvent(client.id.toString(), CONST.RECONNECT, response);
+                    sendDirectEvent(client.id.toString(), CONST.L_RECONNECT, response);
                 }
                 return;
             } else {
@@ -130,7 +130,7 @@ module.exports.
                     login: false,
                     sceneName: CONST.DASHBOARD,
                 };
-                sendDirectEvent(client.id, CONST.RECONNECT, response, {
+                sendDirectEvent(client.id, CONST.L_RECONNECT, response, {
                     flag: false,
                     msg: 'Player Id not found!',
                 });
