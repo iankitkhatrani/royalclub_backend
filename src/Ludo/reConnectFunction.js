@@ -13,7 +13,7 @@ const userReconnect = async (payload, socket) => {
   try {
     //logger.info('User Reconnect Payload ', payload, '\n<==== New Connected Socket id ===>', socket.id, '\n Table Id =>', socket.tbid, '\n Socket Id', socket);
 
-    const rdClient = createClient();
+    //const rdClient = createClient();
     const disconnTable = await findDisconnectTable(payload.playerId, playingLudo);
     logger.info('\n finded disconnected  -->', disconnTable);
 
@@ -27,14 +27,14 @@ const userReconnect = async (payload, socket) => {
         logger.info('\n plInfo  -->', plInfo, '\n disconnTable._id  -->', disconnTable._id + '\n plInfo._id  -->', plInfo._id);
 
         const jobId = GetRandomString(6);
-        await rdClient.hmset(jobId.toString(), 'tableId', disconnTable._id.toString(), 'playerId', plInfo._id.toString(), 'plseat', plInfo.seatIndex);
+        //await rdClient.hmset(jobId.toString(), 'tableId', disconnTable._id.toString(), 'playerId', plInfo._id.toString(), 'plseat', plInfo.seatIndex);
 
-        socketUserRedis({
-          userId: plInfo._id,
-          sckId: socket.id,
-        });
+        // socketUserRedis({
+        //   userId: plInfo._id,
+        //   sckId: socket.id,
+        // });
 
-        await rdClient.hmset(`socket-${plInfo._id.toString()}`, 'socketId', socket.id.toString(), 'userId', plInfo._id.toString());
+        //await rdClient.hmset(`socket-${plInfo._id.toString()}`, 'socketId', socket.id.toString(), 'userId', plInfo._id.toString());
 
         let jobsId = CONST.DISCONNECT + plInfo._id;
 
@@ -44,24 +44,24 @@ const userReconnect = async (payload, socket) => {
         const cancelJobStatus = schedule.cancelJob(jobsId);
         logger.info('schedule USER Cancel JOB :--> ', cancelJobStatus, jobsId);
 
-        await rdClient.hmget(jobId.toString(), ['tableId', 'playerId', 'plseat'], async (err, res) => {
-          if (err) {
-            logger.error('hmget err  -->', err);
-          }
-          logger.info('res[1]  -->', res[1], ' \n res[0]  -->', res[0], '\n | socket Id ==>', socket.id);
-          if (payload.playerId === res[1]) {
+        //await rdClient.hmget(jobId.toString(), ['tableId', 'playerId', 'plseat'], async (err, res) => {
+          //if (err) {
+            //logger.error('hmget err  -->', err);
+          //}
+          //logger.info('res[1]  -->', res[1], ' \n res[0]  -->', res[0], '\n | socket Id ==>', socket.id);
+          if (payload.playerId === plInfo._id.toString()) {
             socket.uid = `${payload.playerId}`;
             socket.sck = socket.id;
-            socket.tbid = res[0];
-            socket.seatIndex = parseInt(res[2]);
+            socket.tbid = disconnTable._id;
+            socket.seatIndex = parseInt(plInfo.seatIndex);
             socket.join(socket.tbid.toString());
             await updateScoketId({ playerId: socket.uid, sck: socket.id }, disconnTable);
             await reconnect(payload, socket);
-          } else {
-            logger.info('player id not matched');
+         } else {
+           logger.info('player id not matched');
           }
-        });
-        await rdClient.hdel(jobId.toString(), ['tableId', 'playerId', 'plseat']);
+       // });
+        //await rdClient.hdel(jobId.toString(), ['tableId', 'playerId', 'plseat']);
         return;
       } catch (err) {
         logger.info('disconnTable Error ', err);

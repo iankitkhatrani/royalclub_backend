@@ -29,7 +29,7 @@ module.exports.
                     ...newData,
                 };
                 logger.info('Reconnect Final Data => ', finaldata);
-                let responseResult = await filterBeforeSendSPEvent(result);
+                let responseResult = await filterBeforeSendSPEvent(userInfo);
 
                 if (requestData.tableId == '') {
                     const response = {
