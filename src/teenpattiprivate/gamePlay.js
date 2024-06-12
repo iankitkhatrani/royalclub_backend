@@ -280,9 +280,9 @@ module.exports.cardPack = async (requestData, client) => {
             username: playerInfo.username,
             cards: playerInfo.cards,
             seatIndex: client.seatIndex,
-            total_bet: playerInfo.totalBet,
-            play_status: "pack",
-            winning_card_status: winner_state.status
+            totalBet: playerInfo.totalBet,
+            playStatus: "pack",
+            winningCardStatus: winner_state.status
         }
 
         const upWh = {
@@ -361,7 +361,7 @@ module.exports.seeCard = async (requestData, client) => {
             cards: playerInfo.cards
         }
         commandAcions.sendEvent(client, CONST.TEEN_PATTI_SEE_CARD_INFO, response);
-        let isShow = await roundStartActions.checShowButton(tb.playerInfo,client.seatIndex);
+        let isShow = await roundStartActions.checShowButton(tb.playerInfo, client.seatIndex);
 
         let response1 = {
             seatIndex: client.seatIndex,

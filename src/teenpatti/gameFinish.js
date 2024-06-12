@@ -127,6 +127,8 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         }
 
         let winnerViewResponse = await this.winnerViewResponseFilter(tbInfo.gameTracks, winnerTrack, winnerIndexs);
+        logger.info("winnerDeclareCall winnerViewResponse:: ", winnerViewResponse);
+
         winnerViewResponse.gameId = tbInfo.gameId;
         winnerViewResponse.winnerIds = tbInfo.winnerIds;
 
@@ -151,7 +153,7 @@ module.exports.winnerViewResponseFilter = (playerInfos, winnerTrack, winnerIndex
                 _id: playerInfo[i]._id,
                 seatIndex: playerInfo[i].seatIndex,
                 cards: playerInfo[i].cards,
-                playStatus: playerInfo[i].playerStatus,
+                playStatus: playerInfo[i].playStatus,
                 cardStatus: playerInfo[i].winningCardStatus
             })
         }
