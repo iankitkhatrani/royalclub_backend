@@ -108,7 +108,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
 
                 let update = {
                     $inc: {
@@ -141,6 +141,7 @@ module.exports.resetUserData = async (tbId, playerInfo) => {
                         "playerInfo.$.turnMissCounter": 0,
                         "playerInfo.$.turnDone": false,
                         "playerInfo.$.turnCount": 0,
+                        "playerInfo.$.isSee": false
                     }
                 }
                 playerInfo[i].status = "play";
