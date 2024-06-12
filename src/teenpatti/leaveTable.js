@@ -13,7 +13,7 @@ const { filterBeforeSendSPEvent, getPlayingUserInTable } = require("../common-fu
 
 
 module.exports.leaveTable = async (requestData, client) => {
-    let requestData = (requestData != null) ? requestData : {}
+    requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
         commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
         return false;
