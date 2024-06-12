@@ -94,7 +94,6 @@ module.exports.leaveTable = async (requestData, client) => {
         reason: reason,
         tbid: tb._id,
         seatIndex: client.seatIndex,
-        avp: tb.activePlayer,
         ap: activePlayerInRound.length,
     }
 

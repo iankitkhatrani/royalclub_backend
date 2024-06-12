@@ -43,14 +43,16 @@ module.exports.lastUserWinnerDeclareCall = async (tb) => {
 
 
     let dcUWh = {
-        _id: MongoID(tb._id.toString()),
+        _id: MongoID(tabInfo._id.toString()),
         "playerInfo.seatIndex": Number(winner.seatIndex)
     }
     let up = {
         $set: {
-            "playerInfo.$.playStatus": "winner",
+            "playerInfo.$.playerStatus": "winner",
         }
     }
+    logger.info("lastUserWinnerDeclareCall dcUWh up ::", dcUWh, up);
+
     const tbInfo = await PlayingTables.findOneAndUpdate(dcUWh, up, { new: true });
     logger.info("lastUserWinnerDeclareCall tbInfo : ", tbInfo);
 
@@ -149,7 +151,7 @@ module.exports.winnerViewResponseFilter = (playerInfos, winnerTrack, winnerIndex
                 _id: playerInfo[i]._id,
                 seatIndex: playerInfo[i].seatIndex,
                 cards: playerInfo[i].cards,
-                playStatus: playerInfo[i].playStatus,
+                playStatus: playerInfo[i].playerStatus,
                 cardStatus: playerInfo[i].winningCardStatus
             })
         }
