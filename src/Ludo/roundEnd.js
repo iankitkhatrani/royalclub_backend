@@ -39,7 +39,7 @@ module.exports.roundFinish = async (tb) => {
         let tableId = tbInfo._id;
 
         let jobId = commandAcions.GetRandomString(10);
-        let delay = commandAcions.AddTime(5);
+        let delay = commandAcions.AddTime(10);
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
         logger.info("roundFinish delayRes : ", delayRes);
 
