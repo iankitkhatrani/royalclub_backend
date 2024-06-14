@@ -24,7 +24,31 @@ module.exports.gameTimerStart = async (tb) => {
         let update = {
             $set: {
                 gameState: "GameStartTimer",
-                "GameTimer.GST": new Date()
+                "GameTimer.GST": new Date(),
+                "playerInfo.0.kukaris": {
+                    k1: -1,
+                    k2: -1,
+                    k3: -1,
+                    k4: -1
+                },
+                "playerInfo.0.kukarisindex": {
+                    k1: -1,
+                    k2: -1,
+                    k3: -1,
+                    k4: -1
+                },
+                "playerInfo.2.kukaris": {
+                    k1: -1,
+                    k2: -1,
+                    k3: -1,
+                    k4: -1
+                },
+                "playerInfo.2.kukarisindex": {
+                    k1: -1,
+                    k2: -1,
+                    k3: -1,
+                    k4: -1
+                }
             }
         }
         logger.info("gameTimerStart UserInfo : ", wh, update);
