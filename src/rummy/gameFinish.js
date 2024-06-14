@@ -185,7 +185,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
     table.tableAmount -= parseFloat(amount.toFixed(2));
     logger.info('table.tableAmount ->', table.tableAmount);
 
-    //updateData.$inc['playerInfo.$.gameChips'] = table.tableAmount;
+    updateData.$inc['playerInfo.$.gameChips'] = table.tableAmount;
     updateData.$set['tableAmount'] = table.tableAmount;
 
     const tableInfo = await PlayingTables.findOneAndUpdate(upWh, updateData, {
