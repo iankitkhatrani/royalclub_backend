@@ -213,7 +213,7 @@ async function getTransactiobDetailByUserId(requestBody) {
     logger.info("get transaction requestBody ==>", requestBody)
     let { playerId } = requestBody
     const responseData = await WalletTrackTransaction.find({ userId: MongoID(playerId) }).sort({ createdAt: -1 }).lean();
-    logger.info("transaction 1==>", responseData)
+    // logger.info("transaction 1==>", responseData)
 
 
     responseData.forEach(doc => {
@@ -223,10 +223,13 @@ async function getTransactiobDetailByUserId(requestBody) {
       doc.time = createdAt.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' }); // Keep time in the default format
     });
 
-    logger.info("transactions date formate -> ", responseData); // Now you have formatted dates in each transaction object
+    // logger.info("transactions date formate -> ", responseData); // Now you have formatted dates in each transaction object
+    let response = {
+      "List": responseData
+    }
 
     if (responseData) {
-      return { status: 1, message: 'result sucessfully ', data: responseData };
+      return { status: 1, message: 'result sucessfully ', data: response };
     } else {
       return { status: 0, message: 'data not find' };
     }
