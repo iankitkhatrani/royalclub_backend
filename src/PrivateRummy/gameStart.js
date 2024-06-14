@@ -196,9 +196,12 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
         let totalWallet = Number(userInfo.chips);
         let totalWinWallet = Number(userInfo.winningChips);
 
+        let mainwalletdeduct = false;
+        let winwalletdeduct = false;
+
         // let totalbonus = Number(userInfo.bonusChips);
 
-        let playerGameChips = tabInfo.entryFee * 80;
+        let playerGameChips = tabInfo.entryFee;//* 80;
         let gameDepositChips = playerGameChips;
 
 

@@ -266,7 +266,7 @@ module.exports.addWalletWinngChpis = async (id, addCoins, tType, t, Wtype, tabIn
       await this.trackUserWallet(walletTrack);
     }
     // console.log("tbl.sckId ", tbl.sckId)
-    const totalChips = Number(tbl.chips) + Number(tbl.winningChips) + Number(tbl.bonusChips) + Number(tbl.lockbonusChips);
+    const totalChips = Number(tbl.chips) + Number(tbl.winningChips) //+ Number(tbl.bonusChips) + Number(tbl.lockbonusChips);
     const formattedBalance = totalChips.toFixed(2);
 
     commandAcions.sendDirectEvent(tbl.sckId, CONST.PLAYER_BALANCE, { chips: formattedBalance });

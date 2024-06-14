@@ -11,6 +11,8 @@ const commonHelper = require('../helper/commonHelper');
 
 const Users = mongoose.model('users');
 const OtpMobile = mongoose.model('otpMobile');
+const WalletTrackTransaction = mongoose.model('walletTrackTransaction');
+
 
 
 /**
@@ -204,7 +206,32 @@ async function verifyOTP(payload) {
   }
 }
 
+async function getTransactiobDetailByUserId(requestBody) {
+  try {
+    logger.info("get transaction requestBody ==>", requestBody)
+    let { playerId } = requestBody
+    const responseData = await WalletTrackTransaction.find({ userId: MongoID(playerId) }).sort({ createdAt: -1 }).lean();
+    logger.info("transaction 1==>", responseData)
 
+
+    responseData.forEach(doc => {
+      const createdAt = new Date(doc.createdAt);
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      doc.date = createdAt.toLocaleDateString('en-IN', options); // Format date as dd/mm/yyyy
+      doc.time = createdAt.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' }); // Keep time in the default format
+    });
+
+    logger.info("transactions date formate -> ", responseData); // Now you have formatted dates in each transaction object
+
+    if (responseData) {
+      return { status: 1, message: 'result sucessfully ', data: responseData };
+    } else {
+      return { status: 0, message: 'data not find' };
+    }
+  } catch (error) {
+    logger.error('mainController.js getBankDetailByUserId error=> ', error, requestBody);
+  }
+}
 
 // Export Functions
 module.exports = {
@@ -212,4 +239,5 @@ module.exports = {
   autoLogin,
   otpSend,
   verifyOTP,
+  getTransactiobDetailByUserId
 };

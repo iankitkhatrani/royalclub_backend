@@ -465,20 +465,20 @@ myIo.init = function (server) {
                         await gamePlayActionsLudo.MOVEKUKARI(payload.data, socket);
                         break;
                     }
-                        
-                        
+
+
                     case CONST.LEAVETABLELUDO: {
                         await gamePlayActionsLudo.leaveTable(payload.data, socket);
                         break;
                     }
-                        
+
 
                     case CONST.L_RECONNECT: {
                         await ludoRe.userReconnect(payload.data, socket);
                         break;
                     }
-                        
-                        
+
+
 
                     //Rummy ------------------------------
                     case CONST.R_GET_BET_LIST: {
@@ -712,6 +712,19 @@ myIo.init = function (server) {
                         }
                         break;
                     }
+
+
+                    case CONST.PLAYER_TRANSACTION_HISTORY: {
+                        try {
+                            let res = await mainCtrl.getTransactiobDetailByUserId(payload.data, socket);
+                            sendEvent(socket, CONST.PLAYER_TRANSACTION_HISTORY, res.data);
+
+                        } catch (error) {
+                            logger.error('socketServer.js GET_BANK_DETAILS => ', error);
+                        }
+                        break;
+                    }
+
                     default:
                         sendEvent(socket, CONST.INVALID_EVENT, {
                             msg: 'This Event Is Nothing',
