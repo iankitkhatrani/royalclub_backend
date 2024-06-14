@@ -37,13 +37,13 @@ module.exports.gameTimerStart = async (tb) => {
                     k3: -1,
                     k4: -1
                 },
-                "playerInfo.1.kukaris": {
+                "playerInfo.2.kukaris": {
                     k1: -1,
                     k2: -1,
                     k3: -1,
                     k4: -1
                 },
-                "playerInfo.1.kukarisindex": {
+                "playerInfo.2.kukarisindex": {
                     k1: -1,
                     k2: -1,
                     k3: -1,
