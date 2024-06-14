@@ -48,7 +48,11 @@ module.exports.gameTimerStart = async (tb) => {
                     k2: -1,
                     k3: -1,
                     k4: -1
-                }
+                },
+                status: "",
+                playerStatus: "",
+                turnMissCounter: 0,
+                turnCount: 0,
             }
         }
         logger.info("gameTimerStart UserInfo : ", wh, update);
