@@ -707,6 +707,7 @@ const rummyPushPlayerScoreToPlayerScoreBoard = async (table, player) => {
     logger.error('cardFunction.jsr pushPlayerScoreToPlayerScoreBoard error=> ', error);
   }
 };
+
 const rummyPrivatePushPlayerScoreToPlayerScoreBoard = async (table, player) => {
   try {
     table.playersScoreBoard.push({

@@ -206,7 +206,7 @@ module.exports.userTurnExpaire = async (tbid) => {
         disCard: pickedCard,
       };
 
-      sendEventInTable(tabInfo._id.toString(), CONST.USER_TIME_OUT, response);
+      sendEventInTable(tabInfo._id.toString(), CONST.R_USER_TIME_OUT, response);
     }
 
     const whPlayer = {
