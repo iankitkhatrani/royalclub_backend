@@ -50,7 +50,7 @@ module.exports.gameTimerStart = async (tb) => {
 
         setTimeout(async ()=>{
             this.StartJantaGame(tbId)
-        },2000)
+        },500)
 
         
 
