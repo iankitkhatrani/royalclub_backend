@@ -3,7 +3,7 @@
 const { JANTA_JOIN_TABLE } = require("./joinTable");
 const { leaveTable } = require("./leaveTable");
 const { disconnectTableHandle, findDisconnectTable } = require("./disconnectHandle");
-const { actionJanta,REMOVEBETJANTA,ClearBet,PASTBET,PASTBETSAVE,BETACTIONCALL } = require("./gamePlay");
+const { actionJanta,REMOVEBETJANTA,ClearBetJANTA,PASTBET,PASTBETSAVE,BETACTIONCALL } = require("./gamePlay");
 
 module.exports = {
   JANTA_JOIN_TABLE: JANTA_JOIN_TABLE,
@@ -12,7 +12,7 @@ module.exports = {
   disconnectTableHandle: disconnectTableHandle,
   actionJanta: actionJanta,
   REMOVEBETJANTA: REMOVEBETJANTA,
-  ClearBet: ClearBet,
+  ClearBetJANTA: ClearBetJANTA,
   PASTBET: PASTBET,
   PASTBETSAVE: PASTBETSAVE,
   BETACTIONCALL:BETACTIONCALL

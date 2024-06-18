@@ -279,36 +279,37 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
     }
 
 */
-module.exports.ClearBet = async (requestData, client) => {
+module.exports.ClearBetJANTA = async (requestData, client) => {
     try {
-        logger.info("ClearBet requestData : ", requestData);
-        if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined" || typeof requestData.bet == "undefined" || typeof requestData.type == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.ClearBet, requestData, false, "User session not set, please restart game!");
+        logger.info("ClearBetJANTA requestData : ", requestData);
+        if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
+            commandAcions.sendDirectEvent(client.sck, CONST.ClearBetJANTA, requestData, false, "User session not set, please restart game!");
             return false;
         }
-        if (typeof client.ClearBet != "undefined" && client.ClearBet) return false;
+        if (typeof client.ClearBetJANTA != "undefined" && client.ClearBetJANTA) return false;
 
-        client.ClearBet = true;
+        client.ClearBetJANTA = true;
 
         const wh = {
-            _id: MongoID(client.tbid.toString())
+            _id: MongoID(client.tbid.toString()),
+            "playerInfo.seatIndex": Number(client.seatIndex)
         }
         const project = {
-
+            "playerInfo.$":1
         }
         const tabInfo = await JantaTables.findOne(wh, project).lean();
-        logger.info("ClearBet tabInfo : ", tabInfo);
+        logger.info("ClearBetJANTA tabInfo : ", tabInfo);
 
         if (tabInfo == null) {
-            logger.info("ClearBet user not turn ::", tabInfo);
-            delete client.ClearBet;
+            logger.info("ClearBetJANTA user not turn ::", tabInfo);
+            delete client.ClearBetJANTA;
             return false
         }
 
 
-        let currentBet = Number(requestData.bet);
+        let currentBet = Number(tabInfo.playerInfo.totalbet);
 
-        logger.info("ClearBet currentBet ::", currentBet);
+        logger.info("ClearBetJANTA currentBet ::", currentBet);
 
         let gwh = {
             _id: MongoID(client.uid)
@@ -330,35 +331,38 @@ module.exports.ClearBet = async (requestData, client) => {
 
         await walletActions.addWallet(client.uid, chalvalue, 2, "Janta Bet Return", tabInfo, client.id, client.seatIndex, "Janta");
 
-        if (requestData.type == "NORMAL") {
-            updateData.$inc["playerInfo.$.selectObj." + requestData.item] = -chalvalue;
-        } else if (requestData.type == "Odd") {
-            updateData.$inc["playerInfo.$.selectObj.1"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.3"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.5"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.7"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.9"] = -chalvalue / 5;
+        // if (requestData.type == "NORMAL") {
+        //     updateData.$inc["playerInfo.$.selectObj." + requestData.item] = -chalvalue;
+        // } else if (requestData.type == "Odd") {
+        //     updateData.$inc["playerInfo.$.selectObj.1"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.3"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.5"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.7"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.9"] = -chalvalue / 5;
 
-        } else if (requestData.type == "Even") {
-            updateData.$inc["playerInfo.$.selectObj.2"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.4"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.6"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.8"] = -chalvalue / 5;
-        } else if (requestData.type == "onetofive") {
-            updateData.$inc["playerInfo.$.selectObj.1"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.2"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.3"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.4"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.5"] = -chalvalue / 5;
-        } else if (requestData.type == "sixtozero") {
-            updateData.$inc["playerInfo.$.selectObj.6"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.7"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.8"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.9"] = -chalvalue / 5;
-            updateData.$inc["playerInfo.$.selectObj.0"] = -chalvalue / 5;
-        }
+        // } else if (requestData.type == "Even") {
+        //     updateData.$inc["playerInfo.$.selectObj.2"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.4"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.6"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.8"] = -chalvalue / 5;
+        // } else if (requestData.type == "onetofive") {
+        //     updateData.$inc["playerInfo.$.selectObj.1"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.2"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.3"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.4"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.5"] = -chalvalue / 5;
+        // } else if (requestData.type == "sixtozero") {
+        //     updateData.$inc["playerInfo.$.selectObj.6"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.7"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.8"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.9"] = -chalvalue / 5;
+        //     updateData.$inc["playerInfo.$.selectObj.0"] = -chalvalue / 5;
+        // }
 
-        updateData.$inc["playerInfo.$.totalbet"] = -chalvalue;
+        updateData.$inc["playerInfo.$.selectObj"] = [
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ];
+        updateData.$inc["playerInfo.$.totalbet"] = 0;
 
 
         updateData.$inc["totalbet"] = -chalvalue;
@@ -369,28 +373,20 @@ module.exports.ClearBet = async (requestData, client) => {
             _id: MongoID(client.tbid.toString()),
             "playerInfo.seatIndex": Number(client.seatIndex)
         }
-        logger.info("ClearBet upWh updateData :: ", upWh, updateData);
+        logger.info("ClearBetJANTA upWh updateData :: ", upWh, updateData);
 
         const tb = await JantaTables.findOneAndUpdate(upWh, updateData, { new: true });
-        logger.info("ClearBet tb : ", tb);
+        logger.info("ClearBetJANTA tb : ", tb);
 
         let response = {
-            bet: chalvalue,
-            item: requestData.item,
-            type: requestData.type,
-            betAnimationType: requestData.betAnimationType
         }
 
-        commandAcions.sendEvent(client, CONST.ClearBet, response, false, "");
+        commandAcions.sendEvent(client, CONST.ClearBetJANTA, response, false, "");
 
-
-        delete client.ClearBet;
-
-
-
+        delete client.ClearBetJANTA;
         return true;
     } catch (e) {
-        logger.info("Exception ClearBet : ", e);
+        logger.info("Exception ClearBetJANTA : ", e);
     }
 }
 

@@ -322,8 +322,8 @@ myIo.init = function (server) {
                     }
 
 
-                    case CONST.ClearBet: {
-                        await gamePlayActionsJanta.ClearBet(payload.data, socket);
+                    case CONST.ClearBetJANTA: {
+                        await gamePlayActionsJanta.ClearBetJANTA(payload.data, socket);
                         break;
                     }
 

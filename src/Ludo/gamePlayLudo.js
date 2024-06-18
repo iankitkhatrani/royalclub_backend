@@ -149,6 +149,80 @@ module.exports.RollDice = async (requestData, client) => {
 
             }
 
+            let movekukri = 0;
+
+            if(UserInfo.Iscom == 0 &&
+                tb.playerInfo[tb.turnSeatIndex] != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined && 
+                (DiceNumber == 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1)
+                ||
+                (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber < playerRoutePos.length)
+            ) {
+                movekukri++;
+            }
+
+
+            if(UserInfo.Iscom == 0 &&
+                tb.playerInfo[tb.turnSeatIndex] != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k2 != undefined && 
+                (DiceNumber == 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1)
+                ||
+                (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber < playerRoutePos.length)
+            ) {
+                movekukri++;
+            }
+
+            if(UserInfo.Iscom == 0 &&
+                tb.playerInfo[tb.turnSeatIndex] != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k3 != undefined && 
+                (DiceNumber == 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1)
+                ||
+                (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber < playerRoutePos.length)
+            ) {
+                movekukri++;
+            }
+
+
+            if (UserInfo.Iscom == 0 &&
+                tb.playerInfo[tb.turnSeatIndex] != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined &&
+
+                (DiceNumber != 6 &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) &&
+                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1])
+                ) ||
+                (
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1] ) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber >= playerRoutePos.length) &&
+                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1]) ||
+                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k4"] + DiceNumber >= playerRoutePos.length)
+
+                )
+
+            ) {
+
+
+                let jobId = commandAcions.GetRandomString(10);
+                let delay = commandAcions.AddTime(3);
+                const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
+
+                // Move Kukraies 
+
+                //return false;
+
+            }
+
+
 
             if (UserInfo.Iscom == 1) {
                 // Take turn for kukari 
