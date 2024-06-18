@@ -394,6 +394,11 @@ module.exports.ClearBet = async (requestData, client) => {
     }
 }
 
+/*
+    playerId:""
+    tbid:""
+
+*/
 module.exports.PASTBET = async (requestData, client) => {
     try {
         logger.info("PASTBET requestData : ", requestData);
@@ -404,18 +409,18 @@ module.exports.PASTBET = async (requestData, client) => {
         }
 
 
-        const userInfo = await GameUser.findOne({ _id: MongoID(requestData.playerId) }, {}).lean();
-        logger.info("PASTBET userInfo : ", userInfo);
+        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tbid) , "playerInfo._id": requestData.playerId }, {"playerInfo.$":1})
+        logger.info("PASTBET PlayerInfo : ", PlayerInfo);
 
-        if (userInfo == null) {
-            logger.info("PASTBET user not turn ::", userInfo);
+        if (PlayerInfo == null) {
+            logger.info("PASTBET user not turn ::", PlayerInfo);
             return false
         }
 
-        this.BETACTIONCALL(userInfo.pastbetObject, client, 0)
+        this.BETACTIONCALL(userInfo.playerInfo.pastbetObject, client, 0)
 
         let response = {
-            userbet: userInfo.pastbetObject
+            userbet: userInfo.playerInfo.pastbetObject
         }
 
         commandAcions.sendEvent(client, CONST.PASTBET, response, false, "");
@@ -427,56 +432,56 @@ module.exports.PASTBET = async (requestData, client) => {
 }
 
 
-/*
-  Past Bet SAVE
-    pastbetObject
-*/
-module.exports.PASTBETSAVE = async (requestData, client) => {
-    try {
-        logger.info("PASTBETSAVE requestData : ", requestData);
-        if (typeof client.tbid == "undefined"
-            || typeof client.uid == "undefined"
-            || typeof client.seatIndex == "undefined"
-            || typeof requestData.pastbetObject == "undefined"
+// /*
+//   Past Bet SAVE
+//     pastbetObject
+// */
+// module.exports.PASTBETSAVE = async (requestData, client) => {
+//     try {
+//         logger.info("PASTBETSAVE requestData : ", requestData);
+//         if (typeof client.tbid == "undefined"
+//             || typeof client.uid == "undefined"
+//             || typeof client.seatIndex == "undefined"
+//             || typeof requestData.pastbetObject == "undefined"
 
-        ) {
-            commandAcions.sendDirectEvent(client.sck, CONST.PASTBETSAVE, requestData, false, "User session not set, please restart game!");
-            return false;
-        }
-
-
-        const upWh = {
-            _id: MongoID(client.uid)
-        }
-        let updateData = {}
-
-        updateData = {
-            $set: {
-                "pastbetObject": requestData.pastbetObject
-            }
-        };
-
-        logger.info("PASTBETSAVE upWh updateData :: ", upWh, updateData);
-
-        let userInfo = await GameUser.findOneAndUpdate(upWh, updateData, { new: true });
-
-        if (userInfo == null) {
-            logger.info("PASTBETSAVE user not turn ::", userInfo);
-            return false
-        }
+//         ) {
+//             commandAcions.sendDirectEvent(client.sck, CONST.PASTBETSAVE, requestData, false, "User session not set, please restart game!");
+//             return false;
+//         }
 
 
-        let response = {
-            pastbetObject: userInfo.pastbetObject
-        }
+//         const upWh = {
+//             _id: MongoID(client.uid)
+//         }
+//         let updateData = {}
 
-        commandAcions.sendEvent(client, CONST.PASTBETSAVE, response, false, "");
+//         updateData = {
+//             $set: {
+//                 "pastbetObject": requestData.pastbetObject
+//             }
+//         };
 
-        return true;
-    } catch (e) {
-        logger.info("Exception action : ", e);
-    }
-}
+//         logger.info("PASTBETSAVE upWh updateData :: ", upWh, updateData);
+
+//         let userInfo = await GameUser.findOneAndUpdate(upWh, updateData, { new: true });
+
+//         if (userInfo == null) {
+//             logger.info("PASTBETSAVE user not turn ::", userInfo);
+//             return false
+//         }
+
+
+//         let response = {
+//             pastbetObject: userInfo.pastbetObject
+//         }
+
+//         commandAcions.sendEvent(client, CONST.PASTBETSAVE, response, false, "");
+
+//         return true;
+//     } catch (e) {
+//         logger.info("Exception action : ", e);
+//     }
+// }
 
 // payload :::::::::::::::: {
 //     eventName: 'ACTIONROULETTE',

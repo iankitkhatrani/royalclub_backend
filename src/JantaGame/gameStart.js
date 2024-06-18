@@ -190,7 +190,22 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         console.log("itemIndex ",itemIndex)
         for (let i = 0; i < tbInfo.playerInfo.length; i++) {
             if(tbInfo.playerInfo[i].seatIndex != undefined){
-                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ",tbInfo.playerInfo[i].selectObj[itemIndex])
+                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ", tbInfo.playerInfo[i].selectObj[itemIndex])
+
+                const upWh = {
+                    _id: MongoID(tbid),
+                    "playerInfo.seatIndex": tbInfo.playerInfo[i].seatIndex
+                }
+                const updateData = {
+                    $set: {
+                        "playerInfo.$.pastbetObject": tbInfo.playerInfo[i].selectObj,
+                    }
+                };
+                logger.info("winnerSorat upWh updateData :: ", upWh, updateData);
+
+                await JantaTables.findOneAndUpdate(upWh, updateData, { new: true });
+
+
                 if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
                     winnerData.push({
                         uid:tbInfo.playerInfo[i]._id,
