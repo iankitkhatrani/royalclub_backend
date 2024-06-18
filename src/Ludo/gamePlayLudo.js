@@ -117,7 +117,6 @@ module.exports.RollDice = async (requestData, client) => {
                 tb.playerInfo[tb.turnSeatIndex] != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined &&
-
                 (DiceNumber != 6 &&
                     (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1]) &&
                     (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) &&
@@ -137,7 +136,6 @@ module.exports.RollDice = async (requestData, client) => {
                 )
 
             ) {
-
 
                 let jobId = commandAcions.GetRandomString(10);
                 let delay = commandAcions.AddTime(3);
@@ -150,7 +148,8 @@ module.exports.RollDice = async (requestData, client) => {
             }
 
             let movekukri = 0;
-
+            let movekukari = -1;
+                
             if(UserInfo.Iscom == 0 &&
                 tb.playerInfo[tb.turnSeatIndex] != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
@@ -160,6 +159,7 @@ module.exports.RollDice = async (requestData, client) => {
                 (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber < playerRoutePos.length)
             ) {
                 movekukri++;
+                movekukari = "k1"
             }
 
 
@@ -172,6 +172,8 @@ module.exports.RollDice = async (requestData, client) => {
                 (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber < playerRoutePos.length)
             ) {
                 movekukri++;
+                movekukari = "k2"
+
             }
 
             if(UserInfo.Iscom == 0 &&
@@ -183,46 +185,33 @@ module.exports.RollDice = async (requestData, client) => {
                 (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber < playerRoutePos.length)
             ) {
                 movekukri++;
+
+                movekukari = "k3"
+
             }
 
-
-            if (UserInfo.Iscom == 0 &&
+            if(UserInfo.Iscom == 0 &&
                 tb.playerInfo[tb.turnSeatIndex] != undefined &&
                 tb.playerInfo[tb.turnSeatIndex].kukaris != undefined &&
-                tb.playerInfo[tb.turnSeatIndex].kukaris.k1 != undefined &&
-
-                (DiceNumber != 6 &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1]) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) &&
-                    (tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1 || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1])
-                ) ||
-                (
-                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k1 == playerRoutePos[playerRoutePos.length - 1] ) ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k1"] + DiceNumber >= playerRoutePos.length) &&
-                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k2 == playerRoutePos[playerRoutePos.length - 1]) ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k2"] + DiceNumber >= playerRoutePos.length) &&
-                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k3 == playerRoutePos[playerRoutePos.length - 1]) ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k3"] + DiceNumber >= playerRoutePos.length) &&
-                    (((DiceNumber != 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1) || tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == playerRoutePos[playerRoutePos.length - 1]) ||
-                        tb.playerInfo[tb.turnSeatIndex].kukarisindex["k4"] + DiceNumber >= playerRoutePos.length)
-
-                )
-
+                tb.playerInfo[tb.turnSeatIndex].kukaris.k4 != undefined && 
+                (DiceNumber == 6 && tb.playerInfo[tb.turnSeatIndex].kukaris.k4 == -1)
+                ||
+                (tb.playerInfo[tb.turnSeatIndex].kukaris.k4 != -1 && tb.playerInfo[tb.turnSeatIndex].kukarisindex["k4"] + DiceNumber < playerRoutePos.length)
             ) {
+                movekukri++;
+                movekukari = "k4"
 
+            }
+
+            if (movekukri == 1 && movekukari != -1) {
 
                 let jobId = commandAcions.GetRandomString(10);
                 let delay = commandAcions.AddTime(3);
                 const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
-                // Move Kukraies 
-
-                //return false;
-
+                this.MOVEKUKARI({ movenumber : DiceNumber,
+                    movekukari: movekukari },client)
             }
-
-
 
             if (UserInfo.Iscom == 1) {
                 // Take turn for kukari 
