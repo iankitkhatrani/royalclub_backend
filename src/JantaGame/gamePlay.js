@@ -405,7 +405,7 @@ module.exports.PASTBET = async (requestData, client) => {
         }
 
         logger.info("requestData.playerId : ", requestData.playerId);
-        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tableId) , "playerInfo._id": requestData.playerId }, {"playerInfo.$":1})
+        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tableId) , "playerInfo._id": MongoID(requestData.playerId) }, {"playerInfo.$":1})
         logger.info("PASTBET PlayerInfo : ", PlayerInfo);
 
         if (PlayerInfo == null) {
