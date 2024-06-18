@@ -307,7 +307,7 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
         }
 
 
-        let currentBet = Number(tabInfo.playerInfo.totalbet);
+        let currentBet = Number(tabInfo.playerInfo[0].totalbet);
 
         logger.info("ClearBetJANTA currentBet ::", currentBet);
 
@@ -359,10 +359,10 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
         //     updateData.$inc["playerInfo.$.selectObj.0"] = -chalvalue / 5;
         // }
 
-        updateData.$inc["playerInfo.$.selectObj"] = [
+        updateData.$set["playerInfo.$.selectObj"] = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
-        updateData.$inc["playerInfo.$.totalbet"] = 0;
+        updateData.$set["playerInfo.$.totalbet"] = 0;
 
 
         updateData.$inc["totalbet"] = -chalvalue;
@@ -413,10 +413,10 @@ module.exports.PASTBET = async (requestData, client) => {
             return false
         }
 
-        this.BETACTIONCALL(userInfo.playerInfo.pastbetObject, client, 0)
+        this.BETACTIONCALL(PlayerInfo.playerInfo[0].pastbetObject, client, 0)
 
         let response = {
-            userbet: userInfo.playerInfo.pastbetObject
+            userbet: PlayerInfo.playerInfo[0].pastbetObject
         }
 
         commandAcions.sendEvent(client, CONST.PASTBET, response, false, "");
