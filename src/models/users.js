@@ -53,6 +53,7 @@ const GameUserSchema = new Schema(
     lastTableId: [],
     createdAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now },
+    pastbetObject: []
   },
   { versionKey: false }
 );

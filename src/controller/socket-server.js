@@ -316,6 +316,32 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.REMOVEBETJANTA: {
+                        await gamePlayActionsJanta.REMOVEBETJANTA(payload.data, socket);
+                        break;
+                    }
+
+
+                    case CONST.ClearBet: {
+                        await gamePlayActionsJanta.ClearBet(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.PASTBET: {
+                        await gamePlayActionsJanta.PASTBET(payload.data, socket);
+                        break;
+                    }
+                        
+                    case CONST.PASTBETSAVE: {
+                        await gamePlayActionsJanta.PASTBETSAVE(payload.data, socket);
+                        break;
+                    }
+                        
+                    case CONST.BETACTIONCALL: {
+                        await gamePlayActionsJanta.BETACTIONCALL(payload.data, socket);
+                        break;
+                    }
+                        
                     case CONST.LEAVETABLESJANTA: {
                         await gamePlayActionsJanta.leaveTable(payload.data, socket);
                         break;
