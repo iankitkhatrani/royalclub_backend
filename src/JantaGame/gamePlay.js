@@ -400,12 +400,12 @@ module.exports.PASTBET = async (requestData, client) => {
         logger.info("PASTBET requestData : ", requestData);
         if (typeof requestData.playerId == "undefined"
         ) {
-            commandAcions.sendDirectEvent(client.sck, CONST.PASTBET, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.PASTBETJANTA, requestData, false, "User session not set, please restart game!");
             return false;
         }
 
-
-        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tbid) , "playerInfo._id": requestData.playerId }, {"playerInfo.$":1})
+        logger.info("requestData.playerId : ", requestData.playerId);
+        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tableId) , "playerInfo._id": requestData.playerId }, {"playerInfo.$":1})
         logger.info("PASTBET PlayerInfo : ", PlayerInfo);
 
         if (PlayerInfo == null) {
@@ -419,7 +419,7 @@ module.exports.PASTBET = async (requestData, client) => {
             userbet: PlayerInfo.playerInfo[0].pastbetObject
         }
 
-        commandAcions.sendEvent(client, CONST.PASTBET, response, false, "");
+        commandAcions.sendEvent(client, CONST.PASTBETJANTA, response, false, "");
 
         return true;
     } catch (e) {

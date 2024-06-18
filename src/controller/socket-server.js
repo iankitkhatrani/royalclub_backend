@@ -330,7 +330,7 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    case CONST.PASTBET: {
+                    case CONST.PASTBETJANTA: {
                         await gamePlayActionsJanta.PASTBET(payload.data, socket);
                         break;
                     }
