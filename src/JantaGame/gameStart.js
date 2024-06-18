@@ -128,7 +128,7 @@ module.exports.StartJantaGame = async (tbId) => {
         setTimeout(async ()=> {
             
             this.winnerJanta(tabInfo,WinnerNumber);
-        },35000);
+        },31000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 
@@ -231,7 +231,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         });
 
         let jobId = CONST.JANTA_GAME_START_TIMER + ":" + tbInfo._id.toString();
-        let delay = commandAcions.AddTime(5);
+        let delay = commandAcions.AddTime(7);
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
