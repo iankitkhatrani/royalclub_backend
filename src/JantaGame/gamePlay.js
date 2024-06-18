@@ -510,11 +510,14 @@ module.exports.BETACTIONCALL = async (pastbetObject, client, x) => {
                 tableId: client.tbid,
                 playerId: client.uid,
                 bet: userBet,
-                data: {
-                    "item": x,
-                    "bet": userBet,
-                    "type": "NORMAL"
-                }
+                // data: {
+                //     "item": x,
+                //     "bet": userBet,
+                //     "type": "NORMAL"
+                // }
+                item: x,
+                    bet: userBet,
+                    type: "NORMAL"
             }, client, (d) => {
                 x = x + 1
                 this.BETACTIONCALL(pastbetObject, client, x)
