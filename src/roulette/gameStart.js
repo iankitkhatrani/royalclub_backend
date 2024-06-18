@@ -263,7 +263,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
             // }, { new: true });
 
             this.winnerSpinner(tabInfo);
-        }, 12000);
+        }, 15000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 

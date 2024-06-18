@@ -128,7 +128,7 @@ module.exports.StartJantaGame = async (tbId) => {
         setTimeout(async ()=> {
             
             this.winnerJanta(tabInfo,WinnerNumber);
-        },31000);
+        },35000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 

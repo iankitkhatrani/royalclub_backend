@@ -129,6 +129,7 @@ module.exports.actionJanta = async (requestData, client) => {
             bet: chalvalue,
             item:requestData.item,
             type:requestData.type,
+            betAnimationType: requestData.betAnimationType
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONJANTA, response, false, "");
