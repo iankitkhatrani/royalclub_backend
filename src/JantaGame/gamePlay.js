@@ -19,14 +19,22 @@ const walletActions = require("./updateWallet");
     }
 
 */
-module.exports.actionJanta = async (requestData, client) => {
+module.exports.actionJanta = async (requestData, client,callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined" || typeof requestData.bet == "undefined" || typeof requestData.type == "undefined") {
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONJANTA, requestData, false, "User session not set, please restart game!");
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false;
         }
-        if (typeof client.action != "undefined" && client.action) return false;
+        if (typeof client.action != "undefined" && client.action){
+            if (typeof callback == "function") {
+                return callback("error")
+            }
+            return false;
+        } 
 
         client.action = true;
 
@@ -43,6 +51,9 @@ module.exports.actionJanta = async (requestData, client) => {
         if (tabInfo == null) {
             logger.info("action user not turn ::", tabInfo);
             delete client.action;
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false
         }
 
@@ -75,6 +86,9 @@ module.exports.actionJanta = async (requestData, client) => {
             logger.info("action client.su ::", client.seatIndex);
             delete client.action;
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONJANTA, requestData, false, "Please add wallet!!");
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
@@ -137,7 +151,9 @@ module.exports.actionJanta = async (requestData, client) => {
 
         delete client.action;
 
-
+        if (typeof callback == "function") {
+            return callback("error")
+        }
 
         return true;
     } catch (e) {
