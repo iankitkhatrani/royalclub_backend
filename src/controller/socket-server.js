@@ -315,7 +315,7 @@ myIo.init = function (server) {
                     }
 
                     case CONST.ACTIONJANTA: {
-                        await gamePlayActionsJanta.actionJanta(payload.data, socket);
+                        await gamePlayActionsJanta.actionJanta(false,payload.data, socket);
                         break;
                     }
 

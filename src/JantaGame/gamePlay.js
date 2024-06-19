@@ -19,7 +19,7 @@ const walletActions = require("./updateWallet");
     }
 
 */
-module.exports.actionJanta = async (requestData, client,callback) => {
+module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined" || typeof requestData.bet == "undefined" || typeof requestData.type == "undefined") {
@@ -148,7 +148,8 @@ module.exports.actionJanta = async (requestData, client,callback) => {
             bet: chalvalue,
             item: requestData.item,
             type: requestData.type,
-            betAnimationType: requestData.betAnimationType
+            betAnimationType: requestData.betAnimationType,
+            pastbet:pastbet
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONJANTA, response, false, "");
@@ -560,7 +561,7 @@ module.exports.BETACTIONCALL = async (pastbetObject, client) => {
         logger.info("userBet ", userBet)
         logger.info("pastbetObject ", pastbetObject)
         
-            this.actionJanta(userBet[0], client, (d) => {
+            this.actionJanta(true,userBet[0], client, (d) => {
                 
                 this.BETACTIONCALL(pastbetObject, client)
 
