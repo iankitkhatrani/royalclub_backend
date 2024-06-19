@@ -46,12 +46,15 @@ myIo.init = function (server) {
     io.on('connection', async (socket) => {
 
         try {
-            // logger.info("Socket connected ===> ", socket.id);
+            //logger.info("Socket connected ===> ", socket.id);
             sendEvent(socket, CONST.DONE, {});
 
             socket.on('req', async (data) => {
                 const decryptObj = commonHelper.decrypt(data.payload);
                 const payload = JSON.parse(decryptObj);
+
+                logger.info("req connected ===> ",payload);
+
 
                 switch (payload.eventName) {
 
@@ -316,6 +319,32 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.REMOVEBETJANTA: {
+                        await gamePlayActionsJanta.REMOVEBETJANTA(payload.data, socket);
+                        break;
+                    }
+
+
+                    case CONST.ClearBetJANTA: {
+                        await gamePlayActionsJanta.ClearBetJANTA(payload.data, socket);
+                        break;
+                    }
+
+                    case CONST.PASTBETJANTA: {
+                        await gamePlayActionsJanta.PASTBET(payload.data, socket);
+                        break;
+                    }
+                        
+                    case CONST.PASTBETSAVE: {
+                        await gamePlayActionsJanta.PASTBETSAVE(payload.data, socket);
+                        break;
+                    }
+                        
+                    case CONST.BETACTIONCALL: {
+                        await gamePlayActionsJanta.BETACTIONCALL(payload.data, socket);
+                        break;
+                    }
+                        
                     case CONST.LEAVETABLESJANTA: {
                         await gamePlayActionsJanta.leaveTable(payload.data, socket);
                         break;

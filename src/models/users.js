@@ -52,7 +52,7 @@ const GameUserSchema = new Schema(
     isBlock: { type: Boolean, default: false },
     lastTableId: [],
     createdAt: { type: Date, default: Date.now },
-    modifiedAt: { type: Date, default: Date.now },
+    modifiedAt: { type: Date, default: Date.now }
   },
   { versionKey: false }
 );

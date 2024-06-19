@@ -251,7 +251,172 @@ module.exports.StartSpinnerGame = async (tbId) => {
         const tabInfo = await RouletteTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("startSpinner tabInfo :: ", tabInfo);
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.START_ROULETTE, { itemObject: itemObject, timelimit: 10 });
+
+        let winnerData = [
+
+        ]
+
+        let itemIndex = itemObject;
+
+        logger.info("itemIndex", itemIndex);
+
+
+        for (let x = 0; x < tabInfo.playerInfo.length; x++) {
+            if (tabInfo.playerInfo[x].seatIndex != undefined && tabInfo.playerInfo[x].betObject != undefined) {
+
+                let betObjectData = tabInfo.playerInfo[x].betObject;
+
+                for (let i = 0; i < betObjectData.length; i++) {
+                    if (betObjectData[i].bet != undefined) {
+
+                        if (betObjectData[i].type == "number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 35,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "1to34" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "2to35" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "3to36" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "1st12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "2nd12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "3rd12" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 3,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "1to18" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "19to36" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "odd" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "even" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "red" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "black" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 2,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "2_number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 17.5,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "3_number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 11.66,
+                            })
+                        }
+
+                        if (betObjectData[i].type == "4_number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 8.75,
+                            })
+                        }
+
+
+                        if (betObjectData[i].type == "6_number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
+                            winnerData.push({
+                                uid: tabInfo.playerInfo[x]._id,
+                                seatIndex: 0,
+                                winAmount: betObjectData[i].bet * 5.83,
+                            })
+                        }
+                    }
+                }
+            }
+        }
+
+
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.START_ROULETTE, { itemObject: itemObject,winnerData:winnerData, timelimit: 10 });
 
         setTimeout(async () => {
             // Clear destory 
@@ -263,7 +428,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
             // }, { new: true });
 
             this.winnerSpinner(tabInfo);
-        }, 12000);
+        }, 15000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 

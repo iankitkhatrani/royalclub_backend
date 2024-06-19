@@ -48,7 +48,11 @@ module.exports.gameTimerStart = async (tb) => {
                     k2: -1,
                     k3: -1,
                     k4: -1
-                }
+                },
+                status: "",
+                playerStatus: "",
+                turnMissCounter: 0,
+                turnCount: 0,
             }
         }
         logger.info("gameTimerStart UserInfo : ", wh, update);
@@ -132,7 +136,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.boot), 1, "Ludo Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
 
                 let update = {
                     $inc: {

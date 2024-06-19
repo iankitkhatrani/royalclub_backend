@@ -164,7 +164,8 @@ module.exports.actionSpin = async (requestData, client,callback) => {
         let response = {
             bet: chalvalue,
             betaction: requestData.betaction,
-            isOutSideBet: requestData.isOutSideBet
+            isOutSideBet: requestData.isOutSideBet,
+            betAnimationType: requestData.betAnimationType
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONROULETTE, response, false, "");

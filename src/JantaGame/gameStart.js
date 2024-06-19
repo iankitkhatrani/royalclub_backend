@@ -27,7 +27,8 @@ module.exports.gameTimerStart = async (tb) => {
                 gameState: "JantaGameStartTimer",
                 "gameTimer.GST": new Date(),
                 "totalbet":0,
-                "playerInfo.$.selectObj":[0,0,0,0,0,0,0,0,0,0],
+                "playerInfo.$.selectObj": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                "playerInfo.$.betObject": [],
                 "isFinalWinner":false,
                 sumofcard:-1,
                 opencards:[],
@@ -50,7 +51,7 @@ module.exports.gameTimerStart = async (tb) => {
 
         setTimeout(async ()=>{
             this.StartJantaGame(tbId)
-        },2000)
+        },500)
 
         
 
@@ -189,8 +190,24 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         let itemIndex = tbInfo.TableObject.indexOf(itemObject)
         console.log("itemIndex ",itemIndex)
         for (let i = 0; i < tbInfo.playerInfo.length; i++) {
-            if(tbInfo.playerInfo[i].seatIndex != undefined){
-                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ",tbInfo.playerInfo[i].selectObj[itemIndex])
+            if (tbInfo.playerInfo[i].seatIndex != undefined) {
+                //"playerInfo.$.betObject": [],
+                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ", tbInfo.playerInfo[i].betObject)
+                if (tbInfo.playerInfo[i].betObject.length > 0) {
+                    const upWh = {
+                        _id: MongoID(tbid),
+                        "playerInfo.seatIndex": tbInfo.playerInfo[i].seatIndex
+                    }
+                    const updateData = {
+                        $set: {
+                            "playerInfo.$.pastbetObject": tbInfo.playerInfo[i].betObject,
+                        }
+                    };
+                    logger.info("winnerSorat upWh updateData :: ", upWh, updateData);
+
+                    await JantaTables.findOneAndUpdate(upWh, updateData, { new: true });
+                }
+
                 if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
                     winnerData.push({
                         uid:tbInfo.playerInfo[i]._id,
@@ -216,7 +233,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         });
 
         let jobId = CONST.JANTA_GAME_START_TIMER + ":" + tbInfo._id.toString();
-        let delay = commandAcions.AddTime(5);
+        let delay = commandAcions.AddTime(7);
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
