@@ -19,15 +19,24 @@ const walletActions = require("./updateWallet");
     }
 
 */
-module.exports.actionJanta = async (requestData, client) => {
+module.exports.actionJanta = async (requestData, client,callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined" || typeof requestData.bet == "undefined" || typeof requestData.type == "undefined") {
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONJANTA, requestData, false, "User session not set, please restart game!");
+
+            if (typeof callback == "function") {
+                return callback("error")
+            }
+
             return false;
         }
-        if (typeof client.action != "undefined" && client.action) return false;
-
+        if (typeof client.action != "undefined" && client.action) {
+            if (typeof callback == "function") {
+                return callback("error")
+            }
+            return false;
+        }
         client.action = true;
 
         const wh = {
@@ -43,6 +52,9 @@ module.exports.actionJanta = async (requestData, client) => {
         if (tabInfo == null) {
             logger.info("action user not turn ::", tabInfo);
             delete client.action;
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false
         }
 
@@ -78,6 +90,9 @@ module.exports.actionJanta = async (requestData, client) => {
             logger.info("action client.su ::", client.seatIndex);
             delete client.action;
             commandAcions.sendDirectEvent(client.sck, CONST.ACTIONJANTA, requestData, false, "Please add wallet!!");
+            if (typeof callback == "function") {
+                return callback("error")
+            }
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
@@ -141,7 +156,9 @@ module.exports.actionJanta = async (requestData, client) => {
 
         delete client.action;
 
-
+        if (typeof callback == "function") {
+            return callback("error")
+        }
 
         return true;
     } catch (e) {
@@ -210,6 +227,27 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
 
         await walletActions.addWallet(client.uid, chalvalue, 2, "Janta Bet Return", tabInfo, client.id, client.seatIndex, "Janta");
 
+        // {
+        //     tableId: '6672c42aaf99441c68fd8011',
+        //     playerId: '65ae2f5d44a9765ef418fa71',
+        //     bet: 50,
+        //     item: '1',
+        //     type: 'NORMAL',
+        //     betAnimationType: 'Touch'
+        // }
+        let betObject = tabInfo.playerInfo[client.seatIndex].betObject;
+        let leftberObject = betObject.filter((e) => {
+            if (requestData.type == "NORMAL")
+                return e.item != requestData.item && e.type != requestData.type;
+            else
+                return e.type != requestData.type;
+        })
+        logger.info(" REMOVEBETJANTA betObject  :: ", betObject);
+            
+
+        logger.info(" REMOVEBETJANTA leftberObject  :: ", leftberObject);
+
+        
         if (requestData.type == "NORMAL") {
             updateData.$inc["playerInfo.$.selectObj." + requestData.item] = -chalvalue;
         } else if (requestData.type == "Odd") {
@@ -243,6 +281,8 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
 
         updateData.$inc["totalbet"] = -chalvalue;
         updateData.$set["turnDone"] = true;
+        updateData.$set["playerInfo.$.betObject"] = leftberObject;
+
         commandAcions.clearJob(tabInfo.job_id);
 
         const upWh = {
@@ -366,6 +406,7 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
         updateData.$set["playerInfo.$.selectObj"] = [
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
+        updateData.$set["playerInfo.$.betObject"] = [];
         updateData.$set["playerInfo.$.totalbet"] = 0;
 
 
@@ -417,7 +458,7 @@ module.exports.PASTBET = async (requestData, client) => {
             return false
         }
 
-        this.BETACTIONCALL(PlayerInfo.playerInfo[0].pastbetObject, client, 0)
+        this.BETACTIONCALL(PlayerInfo.playerInfo[0].pastbetObject, client)
 
         let response = {
             userbet: PlayerInfo.playerInfo[0].pastbetObject
@@ -498,39 +539,33 @@ module.exports.PASTBET = async (requestData, client) => {
 //     }
 //   }
 
-module.exports.BETACTIONCALL = async (pastbetObject, client, x) => {
+module.exports.BETACTIONCALL = async (pastbetObject, client) => {
 
     try {
 
-        if (x >= pastbetObject.length) {
-            return false;
-        }
+        // if (x >= pastbetObject.length) {
+        //     return false;
+        // }
 
-        let userBet = pastbetObject[x]
-        console.log("userBet ", userBet)
-        console.log("pastbetObject ", pastbetObject)
-        if (userBet != 0) {
-            this.actionJanta({
-                tableId: client.tbid,
-                playerId: client.uid,
-                bet: userBet,
-                // data: {
-                //     "item": x,
-                //     "bet": userBet,
-                //     "type": "NORMAL"
-                // }
-                item: x,
-                    bet: userBet,
-                    type: "NORMAL"
-            }, client, (d) => {
-                x = x + 1
-                this.BETACTIONCALL(pastbetObject, client, x)
+        // let userBet = pastbetObject[x]
+
+        if (pastbetObject.length == 0)
+            return false;
+
+        let userBet = pastbetObject.splice(0, 1)
+        logger.info("userBet ", userBet)
+        logger.info("pastbetObject ", pastbetObject)
+
+
+        logger.info("userBet ", userBet)
+        logger.info("pastbetObject ", pastbetObject)
+        
+            this.actionJanta(userBet[0], client, (d) => {
+                
+                this.BETACTIONCALL(pastbetObject, client)
 
             })
-        } else {
-            x = x + 1
-            this.BETACTIONCALL(pastbetObject, client, x)
-        }
+        
 
     } catch (e) {
         logger.info("BETACTIONCALL BETACTIONCALL : ", e);
