@@ -48,7 +48,7 @@ module.exports.lastUserWinnerDeclareCall = async (tblInfo) => {
     updateData.$set['gameState'] = CONST.ROUND_END;
     updateData.$set['tableAmount'] = tb.tableAmount;
     updateData.$set['playerInfo.$.playerStatus'] = CONST.WON;
-    updateData.$inc['playerInfo.$.gameChips'] = tb.tableAmount;
+    // updateData.$inc['playerInfo.$.gameChips'] = tb.tableAmount;
 
     const upWh = {
       _id: MongoID(tbid),
@@ -185,7 +185,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
     table.tableAmount -= parseFloat(amount.toFixed(2));
     logger.info('table.tableAmount ->', table.tableAmount);
 
-    updateData.$inc['playerInfo.$.gameChips'] = table.tableAmount;
+    // updateData.$inc['playerInfo.$.gameChips'] = table.tableAmount;
     updateData.$set['tableAmount'] = table.tableAmount;
 
     const tableInfo = await PlayingTables.findOneAndUpdate(upWh, updateData, {

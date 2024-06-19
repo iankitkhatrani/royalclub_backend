@@ -334,6 +334,10 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
 };
 
 module.exports.RoundFinishdeduct = async (tbInfo, playerInfo, diff) => {
+
+  logger.info("RoundFinishdeduct tbInfo ", tbInfo)
+  logger.info("RoundFinishdeduct playerInfo ", playerInfo)
+  logger.info("RoundFinishdeduct diff ", diff)
   const tabInfo = tbInfo;
 
   try {
@@ -350,30 +354,31 @@ module.exports.RoundFinishdeduct = async (tbInfo, playerInfo, diff) => {
     }
 
     let totalWallet = Number(userInfo.chips);
-    let totalbonus = Number(userInfo.bonusChips);
+    // let totalbonus = Number(userInfo.bonusChips);
 
-    let playerGameChips = diff;
-    let gameDepositChips = playerGameChips;
+    // let playerGameChips = diff;
+    // let gameDepositChips = diff;
 
-    let perdecuct = GAMELOGICCONFIG.PLAYING_BONUS_DEDUCT_PER || 10
-    let bonuscutchips = Number((gameDepositChips * perdecuct) / 100)
-    let mainchipscut = Number(gameDepositChips - bonuscutchips)
+    // let perdecuct = GAMELOGICCONFIG.PLAYING_BONUS_DEDUCT_PER || 10
+    // let bonuscutchips = Number((gameDepositChips * perdecuct) / 100)
+    let mainchipscut = diff// Number(gameDepositChips - bonuscutchips)
 
-    let bonuswalletdeduct = false;
+    // let bonuswalletdeduct = false;
     let mainwalletdeduct = false;
 
 
-    if (bonuscutchips != 0 && mainchipscut != 0 && totalbonus >= bonuscutchips && totalWallet >= mainchipscut) {
-      bonuswalletdeduct = true
-      mainwalletdeduct = true
+    // if (bonuscutchips != 0 && mainchipscut != 0 && totalbonus >= bonuscutchips && totalWallet >= mainchipscut) {
+    //   // bonuswalletdeduct = true
+    //   mainwalletdeduct = true
 
-    } else if (mainchipscut != 0 && totalWallet >= mainchipscut) {
+    // } else
+    if (mainchipscut != 0 && totalWallet >= mainchipscut) {
       mainwalletdeduct = true
     }
 
 
     logger.info("point bonuswalletdeduct ", bonuswalletdeduct)
-    logger.info("point mainwalletdeduct ", mainwalletdeduct)
+    // logger.info("point mainwalletdeduct ", mainwalletdeduct)
 
 
     if (bonuswalletdeduct && mainwalletdeduct) {
@@ -401,7 +406,7 @@ module.exports.RoundFinishdeduct = async (tbInfo, playerInfo, diff) => {
       new: true,
     });
 
-    logger.info("tbInfo =>", tbInfo)
+    logger.info("RoundFinishdeduct tbInfo =>", tbInfo)
 
     return tbInfo;
   } catch (error) {

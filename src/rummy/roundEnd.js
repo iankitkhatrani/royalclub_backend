@@ -21,6 +21,7 @@ module.exports.roundFinish = async (tb) => {
     const list = [CONST.WON, CONST.LOST, CONST.LEAVE, CONST.PLAYING, CONST.INVALID_DECLARE, CONST.DROPPED];
 
     playerInGame.forEach(async (player) => {
+      logger.info('roundFinish player ->', player);
       if (list.includes(player.playerStatus)) {
         //player.playerStatus = CONST.WAITING;
 
