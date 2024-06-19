@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const collectionName = 'admin';
+const collectionName = 'superadmin';
 
 const AdminSchema = new Schema(
   {

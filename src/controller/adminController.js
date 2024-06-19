@@ -5,12 +5,12 @@ const logger = require('../../logger');
 const usersHelper = require('../helper/usersHelper');
 const commonHelper = require('../helper/commonHelper');
 
-const Admin = mongoose.model('admin');
+const SuperAdmin = mongoose.model('superadmin');
 const BetLists = mongoose.model('betList');
 
 
 /**
- * @description . Create Admin User
+ * @description . Create SuperAdmin User
  * @param {Object} requestBody
  * @returns {Object}
  */
@@ -20,7 +20,7 @@ async function registerAdmin(requestBody) {
         const { name, password, email } = requestBody;
         //logger.info('requestBody => ', requestBody);
 
-        const user = await Admin.countDocuments({ email });
+        const user = await SuperAdmin.countDocuments({ email });
         //logger.info("user =>", user);
 
         if (user > 0) {
@@ -49,7 +49,7 @@ async function registerAdmin(requestBody) {
             if (response.status) {
                 const token = await commonHelper.sign(response.data);
                 response.data.token = token;
-                //logger.info("Admin Regsitration Successfully");
+                //logger.info("SuperAdmin Regsitration Successfully");
             } else {
                 logger.info('At mainController.js:540 User not created => ', JSON.stringify(requestBody));
             }
@@ -66,7 +66,7 @@ async function registerAdmin(requestBody) {
 
 
 /**
- * @description . Admin Login
+ * @description . SuperAdmin Login
  * @param {Object} requestBody
  * @returns {Object}
  */
@@ -77,7 +77,7 @@ async function adminLogin(requestBody) {
     const { email, password } = requestBody;
     console.info('email => ', email, '\n password => ', password);
     try {
-        const data = await Admin.findOne({ email }).lean();
+        const data = await SuperAdmin.findOne({ email }).lean();
 
         const token = await commonHelper.sign(data);
         data.token = token;
