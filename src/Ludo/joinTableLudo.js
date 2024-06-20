@@ -50,7 +50,7 @@ module.exports.joinTable = async (requestData, client) => {
         let gwh1 = {
             "playerInfo._id": MongoID(client.uid)
         }
-        let tableInfo = await playingLudo.findOne(gwh1, {'playerInfo.$': 1}).lean();
+        let tableInfo = await playingLudo.findOne(gwh1, { 'playerInfo.$': 1 }).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
         if (tableInfo != null) {
@@ -69,7 +69,7 @@ module.exports.joinTable = async (requestData, client) => {
                     sck: tableInfo.playerInfo[0].sck,
                 }
             );
-            await this.findTable(BetInfo ,client, requestData)
+            await this.findTable(BetInfo, client, requestData)
 
             return false;
         } else {
@@ -172,7 +172,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             if (table._ip == 1) {
                 sendEvent(client, CONST.CLPT, {}, false, "Not seat availabe !!");
             } else {
-                await this.findTable(betInfo, client,requestData)
+                await this.findTable(betInfo, client, requestData)
             }
             return false;
         }
@@ -250,7 +250,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
                 sendEvent(client, CONST.CLPT, {}, false, "Please Join Table....!!");
             } else {
 
-                await this.findTable(betInfo, client,requestData);
+                await this.findTable(betInfo, client, requestData);
             }
             return false;
         }
@@ -293,7 +293,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client, request
             agoraUid: requestData.agoraUid,
             tableCode: tableInfo.tableCode,
             gameState: tableInfo.gameState,
-            adminId:tableInfo.adminId
+            adminId: tableInfo.adminId
         });
 
         if (userInfo.Iscom == undefined || userInfo.Iscom == 0)
@@ -392,13 +392,13 @@ module.exports.CLPT = async (requestData, client) => {
                     sck: tableInfo.playerInfo[0].sck,
                 }
             );
-            
+
             requestData._ip = 1;
             let table = await this.createTable(requestData, { _ip: 1, adminId: client.uid.toString() });
             console.log("table ", table)
             delete client.CLPT
             sendEvent(client, CONST.CLPT, { tableCode: table.tableCode, _id: table._id }, false, "");
-            
+
 
             return false;
         } else {
@@ -426,8 +426,8 @@ module.exports.RPT = async (requestData, client) => {
             sendEvent(client, CONST.RPT, requestData, false, "Please restart game!!");
             return false;
         }
-  
-        let tableInfo = await playingLudo.deleteOne({_id:MongoID(requestData.tbid)})
+
+        let tableInfo = await playingLudo.deleteOne({ _id: MongoID(requestData.tbid) })
 
     } catch (error) {
         console.info("RPT", RPT);
@@ -510,5 +510,45 @@ module.exports.JTOFC = async (requestData, client) => {
         }
     } else {
         sendEvent(client, CONST.JTOFC, requestData, false, "Please restart game!!");
+    }
+}
+
+module.exports.checkPrivateTableExists = async (requestBody, socket) => {
+    const { playerId, tableId } = requestBody;
+    logger.info("req.body => ", requestBody);
+
+    // Get the current date and time
+    const now = new Date();
+
+    // Calculate the date and time for 12 hours ago
+    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+
+    try {
+        const isExist = await BetListsLudo.findOne({
+            createTableplayerId: playerId,
+            createdAt: { $gte: twelveHoursAgo }
+        });
+
+        logger.info("isExist => ", isExist);
+        if (isExist) {
+            return {
+                message: "already exists",
+                status: 0,
+                tableId: isExist.tableId
+            };
+        } else {
+            return {
+                message: "already Not exists",
+                status: 1,
+            };
+        }
+
+    } catch (error) {
+        logger.info("privateTableCreate error => ", error);
+        return {
+            message:
+                "something went wrong while create private table, please try again",
+            status: 0,
+        };
     }
 }

@@ -315,7 +315,7 @@ myIo.init = function (server) {
                     }
 
                     case CONST.ACTIONJANTA: {
-                        await gamePlayActionsJanta.actionJanta(false,payload.data, socket);
+                        await gamePlayActionsJanta.actionJanta(false, payload.data, socket);
                         break;
                     }
 
@@ -432,6 +432,15 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.L_PRIVATE_TABLE_EXISTS: {
+                        try {
+                            let res = await gamePlayActionsLudo.checkPrivateTableExists(payload.data, socket)
+                            sendEvent(socket, CONST.L_PRIVATE_TABLE_EXISTS, res)
+                        } catch (error) {
+                            logger.error('socketServer.js R_PRIVATE_TABLE_EXISTS => ', error);
+                        }
+                        break;
+                    }
                     case CONST.JOINLUDO: {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;

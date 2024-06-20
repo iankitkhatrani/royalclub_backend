@@ -60,6 +60,7 @@ const CONST = {
   LEAVETABLELUDO: "LEAVETABLELUDO",
   L_RECONNECT: "L_RECONNECT",
   RPT: "RPT",
+  L_PRIVATE_TABLE_EXISTS: 'LPTE',
   //================
 
 
