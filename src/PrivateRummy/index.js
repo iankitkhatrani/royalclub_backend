@@ -1,6 +1,6 @@
 const { joinTable, gameStart } = require('./joinTable');
 const { rummyGetBetList } = require('./betList');
-const { privateTableCreate } = require('./createtable');
+const { privateTableCreate, checkPrivateTableExists } = require('./createtable');
 const { reconnect } = require('../common-function/reconnect');
 const { leaveTable, playerSwitch } = require('./leaveTable');
 const { getBetList, getPoolBet, getDealList } = require('../common-function/betList');
@@ -32,5 +32,6 @@ module.exports = {
   disconnectTableHandle: disconnectTableHandle,
   rummyGetBetList: rummyGetBetList,
   privateTableCreate: privateTableCreate,
+  checkPrivateTableExists: checkPrivateTableExists,
   gameStart: gameStart
 };
