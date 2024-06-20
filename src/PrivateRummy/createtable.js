@@ -112,15 +112,17 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
     const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
 
     try {
-        const isExist = await PrivateTable.countDocuments({
+        const isExist = await PrivateTable.findOne({
             createTableplayerId: playerId,
             createdAt: { $gte: twelveHoursAgo }
         });
 
+        logger.info("isExist => ", isExist);
         if (isExist > 0) {
             return {
                 message: "already exists",
                 status: 0,
+                tableId: isExist.tableId
             };
         } else {
             return {
