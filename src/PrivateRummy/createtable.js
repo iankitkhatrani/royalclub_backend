@@ -104,7 +104,13 @@ module.exports.makeObjects = (length = 0) => {
 module.exports.checkPrivateTableExists = async (requestBody, socket) => {
     const { playerId, tableId } = requestBody;
     logger.info("req.body => ", requestBody);
-    //logger.info(req.files);
+
+    // Get the current date and time
+    const now = new Date();
+
+    // Calculate the date and time for 12 hours ago
+    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+
     try {
         const isExist = await PrivateTable.countDocuments({
             createTableplayerId: playerId,
