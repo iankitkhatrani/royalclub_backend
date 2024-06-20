@@ -8,6 +8,7 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const roundStartActions = require("./roundStart");
 const walletActions = require("./updateWallet");
+const WinwalletActions = require("../roulette/updateWallet");
 const JantaTables = mongoose.model('JantaTables');
 // const leaveTableActions = require("./leaveTable");
 const { v4: uuidv4 } = require('uuid');
@@ -216,8 +217,8 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
                     })
 
 
-                    await walletActions.addWallet(tbInfo.playerInfo[i]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", tabInfo,"","","Janta");
-
+                    //await walletActions.addWallet(tbInfo.playerInfo[i]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", tabInfo,"","","Janta");
+                    await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", "Janta");
                 }
                
                 
