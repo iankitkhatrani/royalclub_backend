@@ -11,7 +11,7 @@ const logger = require('../../../logger');
 const UserWalletTracks = mongoose.model('userWalletTracks');
 // const Userdeposit = mongoose.model('userdeposit');
 // const Userpayout = mongoose.model('userpayout');
-const ShopWalletTracks = mongoose.model("shopWalletTracks");
+const AgentWalletTracks = mongoose.model("agentWalletTracks");
 const AdminWalletTracks = mongoose.model("adminWalletTracks");
 const SuperAdminWalletTracks = mongoose.model("superadminWalletTracks");
 
