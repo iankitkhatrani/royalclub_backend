@@ -53,7 +53,7 @@ myIo.init = function (server) {
                 const decryptObj = commonHelper.decrypt(data.payload);
                 const payload = JSON.parse(decryptObj);
 
-                logger.info("req connected ===> ",payload);
+                logger.info("req connected ===> ", payload);
 
 
                 switch (payload.eventName) {
@@ -334,17 +334,17 @@ myIo.init = function (server) {
                         await gamePlayActionsJanta.PASTBET(payload.data, socket);
                         break;
                     }
-                        
+
                     case CONST.PASTBETSAVE: {
                         await gamePlayActionsJanta.PASTBETSAVE(payload.data, socket);
                         break;
                     }
-                        
+
                     case CONST.BETACTIONCALL: {
                         await gamePlayActionsJanta.BETACTIONCALL(payload.data, socket);
                         break;
                     }
-                        
+
                     case CONST.LEAVETABLESJANTA: {
                         await gamePlayActionsJanta.leaveTable(payload.data, socket);
                         break;
@@ -710,6 +710,16 @@ myIo.init = function (server) {
                             await privateActionsRummy.privateTableCreate(payload.data, socket)
                         } catch (error) {
                             logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
+                        }
+                        break;
+                    }
+
+                    case CONST.R_PRIVATE_TABLE_EXISTS: {
+                        try {
+                            let res = await privateActionsRummy.checkPrivateTableExists(payload.data, socket)
+                            sendEvent(socket, CONST.R_PRIVATE_TABLE_EXISTS, res)
+                        } catch (error) {
+                            logger.error('socketServer.js R_PRIVATE_TABLE_EXISTS => ', error);
                         }
                         break;
                     }

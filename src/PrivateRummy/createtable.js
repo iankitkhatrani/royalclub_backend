@@ -17,7 +17,7 @@ const { sendEvent } = require("../helper/socketFunctions");
  * @returns {Object}
  */
 module.exports.privateTableCreate = async (requestBody, socket) => {
-    const { playerId, entryFee, gamePlayType, tableId } = requestBody;
+    const { playerId, entryFee, gamePlayType, tableId, deduct } = requestBody;
     logger.info("req.body => ", requestBody);
     //logger.info(req.files);
     try {
@@ -90,6 +90,7 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
         };
     }
 }
+
 module.exports.makeObjects = (length = 0) => {
     try {
         return Array.from({ length }, () => {
@@ -99,3 +100,41 @@ module.exports.makeObjects = (length = 0) => {
         logger.error('joinTable.js makeObjects error=> ', error);
     }
 };
+
+module.exports.checkPrivateTableExists = async (requestBody, socket) => {
+    const { playerId, tableId } = requestBody;
+    logger.info("req.body => ", requestBody);
+
+    // Get the current date and time
+    const now = new Date();
+
+    // Calculate the date and time for 12 hours ago
+    const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+
+    try {
+        const isExist = await PrivateTable.countDocuments({
+            createTableplayerId: playerId,
+            createdAt: { $gte: twelveHoursAgo }
+        });
+
+        if (isExist > 0) {
+            return {
+                message: "already exists",
+                status: 0,
+            };
+        } else {
+            return {
+                message: "already Not exists",
+                status: 1,
+            };
+        }
+
+    } catch (error) {
+        logger.info("privateTableCreate error => ", error);
+        return {
+            message:
+                "something went wrong while create private table, please try again",
+            status: 0,
+        };
+    }
+}
