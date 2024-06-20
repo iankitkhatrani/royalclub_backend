@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Agent = mongoose.model("agent");
-const GameUser = mongoose.model("users");
 const collectionName = 'agentWalletTracks';
 
 const agentWalletTracksSchema = new Schema(

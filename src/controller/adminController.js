@@ -336,7 +336,7 @@ async function getBannerList(requestBody) {
 
 module.exports = {
     registerAdmin,
-    registerAdminUpdate,
+    //registerAdminUpdate,
     adminLogin,
     registerBetList,
     updateBetList,
