@@ -8,6 +8,8 @@ const PlayingTables = mongoose.model("rummyPrivatePlayingTable");
 const users_helper = require("../helper/usersHelper");
 const logger = require("../../logger");
 const { sendEvent } = require("../helper/socketFunctions");
+const walletActions = require("../common-function/walletTrackTransaction");
+
 
 // const PrivateTable = require("../models/privateTable");
 
@@ -50,6 +52,8 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
 
             if (response.status) {
                 sendEvent(socket, CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID, { privateTableId: privateTableId }, "Create Private Table Id");
+                await walletActions.addWalletPayin(playerId, - Number(100), 'Debit', 'Rummy Private Table Charges', 'Rummy Private');
+
             } else {
                 sendEvent(socket, CONST.R_CREATE_RUMMY_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");
                 return

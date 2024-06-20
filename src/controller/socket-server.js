@@ -277,6 +277,16 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.T_PRIVATE_TABLE_EXISTS: {
+                        try {
+                            let res = await teenPrivateActions.checkPrivateTableExists(payload.data, socket)
+                            sendEvent(socket, CONST.T_PRIVATE_TABLE_EXISTS, res)
+                        } catch (error) {
+                            logger.error('socketServer.js T_PRIVATE_TABLE_EXISTS => ', error);
+                        }
+                        break;
+                    }
+
                     case CONST.T_JOIN_PRIVATE_TABLE: {
                         try {
                             // console.log("SP called");
