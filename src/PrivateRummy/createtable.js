@@ -118,7 +118,7 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
         });
 
         logger.info("isExist => ", isExist);
-        if (isExist > 0) {
+        if (isExist) {
             return {
                 message: "already exists",
                 status: 0,
