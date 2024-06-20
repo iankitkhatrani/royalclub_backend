@@ -7,7 +7,8 @@ const commonHelper = require('../helper/commonHelper');
 
 const SuperAdmin = mongoose.model('superadmin');
 const BetLists = mongoose.model('betList');
-
+const AdminUser = mongoose.model('admin');
+const Agent = mongoose.model('agent');
 
 /**
  * @description . Create SuperAdmin User
@@ -103,6 +104,84 @@ async function adminLogin(requestBody) {
         return { status: 0, message: 'No data found' };
     }
 }
+
+
+/**
+ * @description . Admin Login
+ * @param {Object} requestBody
+ * @returns {Object}
+ */
+async function AgentLogin(requestBody) {
+
+    const { email, password } = requestBody;
+    console.info('name => ', email, '\n password => ', password);
+    try {
+        const data = await AdminUser.findOne({ name:email,password:password }).lean();
+
+        const token = await commonHelper.sign(data);
+        data.token = token;
+        delete data.password;
+        return { status: 1, message: 'Login Succesfully', data };
+
+
+        if (data !== null) {
+            const passwordMatch = await bcrypt.compare(password, data.password);
+            //logger.info('passwordMatch =====> ', passwordMatch, "\n data =====> ", data);
+            if (passwordMatch) {
+                const token = await commonHelper.sign(data);
+                data.token = token;
+                delete data.password;
+                return { status: 1, message: 'Login Succesfully', data };
+            } else return { status: 0, message: 'Incorrect Password' };
+        } else {
+            logger.info('At mainController.js:571 userId not found => ', JSON.stringify(requestBody));
+            return { status: 0, message: 'Id not Found' };
+        }
+    } catch (error) {
+        logger.error('mainController.js adminLogin error=> ', error, requestBody);
+        return { status: 0, message: 'No data found' };
+    }
+}
+
+
+/**
+ * @description . Admin Login
+ * @param {Object} requestBody
+ * @returns {Object}
+ */
+async function ShopLogin(requestBody) {
+
+    const { email, password } = requestBody;
+    console.info('name => ', email, '\n password => ', password);
+    try {
+        const data = await Agent.findOne({ name:email,password:password}).lean();
+
+        const token = await commonHelper.sign(data);
+        data.token = token;
+        delete data.password;
+        return { status: 1, message: 'Login Succesfully', data };
+
+
+        if (data !== null) {
+            const passwordMatch = await bcrypt.compare(password, data.password);
+            //logger.info('passwordMatch =====> ', passwordMatch, "\n data =====> ", data);
+            if (passwordMatch) {
+                const token = await commonHelper.sign(data);
+                data.token = token;
+                delete data.password;
+                return { status: 1, message: 'Login Succesfully', data };
+            } else return { status: 0, message: 'Incorrect Password' };
+        } else {
+            logger.info('At mainController.js:571 userId not found => ', JSON.stringify(requestBody));
+            return { status: 0, message: 'Id not Found' };
+        }
+    } catch (error) {
+        logger.error('mainController.js adminLogin error=> ', error, requestBody);
+        return { status: 0, message: 'No data found' };
+    }
+}
+
+
 
 
 /**
@@ -257,10 +336,13 @@ async function getBannerList(requestBody) {
 
 module.exports = {
     registerAdmin,
+    registerAdminUpdate,
     adminLogin,
     registerBetList,
     updateBetList,
     getBetList,
     getBetDetails,
     getBannerList,
+    AgentLogin,
+    ShopLogin
 }

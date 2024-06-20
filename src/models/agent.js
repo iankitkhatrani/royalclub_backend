@@ -11,8 +11,11 @@ const AgentSchema = new Schema(
     lastLoginDate: { type: Date, default: Date.now },
     status:{ type: String },
     location:{ type: String },
-    chips:{ type: Number,default: 0 }
-    
+    chips: { type: Number, default: 0 },
+    authorisedid: { type: String },
+    authorisedtype: { type: String },
+    authorisedname: { type: String },
+    type: { type: String, default: "Agent" },
   },
   { versionKey: false }
 );

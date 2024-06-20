@@ -10,6 +10,7 @@ const AdminSchema = new Schema(
     password: { type: String },
     createdAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now },
+    type: { type: String, default: "SuperAdmin" },
   },
   { versionKey: false }
 );

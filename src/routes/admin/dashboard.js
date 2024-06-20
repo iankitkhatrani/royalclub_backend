@@ -6,8 +6,14 @@ const config = require('../../../config');
 const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
-
-
+const UserWalletTracks = mongoose.model("userWalletTracks");
+const ShopWalletTracks = mongoose.model("shopWalletTracks");
+const AdminWalletTracks = mongoose.model("adminWalletTracks");
+const SuperAdminWalletTracks = mongoose.model("adminWalletTracks");
+const gamePlayActionsRoulette = require('../../roulette/gamePlay');
+const adminwinloss = mongoose.model('adminwinloss');
+const RouletteUserHistory = mongoose.model('RouletteUserHistory');
+const moment = require('moment');
 /**
  * @api {post} /admin/lobbies
  * @apiName  add-bet-list

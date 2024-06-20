@@ -14,7 +14,6 @@ const GameUserSchema = new Schema(
     email: { type: String, default: '' },
     password: { type: String, default: '' },
     chips: { type: Number },
-    winningChips: { type: Number },
     referralCode: { type: String },
     appVersion: { type: String },
     systemVersion: { type: String },
@@ -52,7 +51,10 @@ const GameUserSchema = new Schema(
     isBlock: { type: Boolean, default: false },
     lastTableId: [],
     createdAt: { type: Date, default: Date.now },
-    modifiedAt: { type: Date, default: Date.now }
+    modifiedAt: { type: Date, default: Date.now },
+    authorisedid: { type: String },
+    authorisedtype: { type: String },
+    authorisedname: { type: String }
   },
   { versionKey: false }
 );

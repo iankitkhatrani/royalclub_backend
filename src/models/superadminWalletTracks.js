@@ -1,24 +1,21 @@
 
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const AdminUser = mongoose.model("admin");
 
-const collectionName = 'adminWalletTracks';
+const collectionName = 'superadminWalletTracks';
 
-const adminWalletTracksSchema = new Schema(
-    {
-        adminId: { type: mongoose.Schema.Types.ObjectId, ref: AdminUser },
-        name: { type: String },
+const superadminWalletTracksSchema = new Schema(
+    {   
+        adminid:{ type: String ,default:""},
+        name: { type: String ,default:"Superadmin"},
         uniqueId: { type: String },
         trnxType: { type: String },
         trnxTypeTxt: { type: String },
         trnxAmount: { type: Number },
-        oppChips: { type: Number },
         chips: { type: Number },
-        gameWinning: { type: Number },
-        totalBucket: { type: Number },
         gameType: { type: String },
         DateandTime:{ type: Date,default:new Date() },
+        adminname: { type: String },
         authorisedid: { type: String },
         authorisedtype: { type: String },
         authorisedname: { type: String }
@@ -28,4 +25,4 @@ const adminWalletTracksSchema = new Schema(
     }
 );
 
-module.exports = mongoose.model(collectionName, adminWalletTracksSchema, collectionName);
+module.exports = mongoose.model(collectionName, superadminWalletTracksSchema, collectionName);
