@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
-const Admin = mongoose.model('admin');
+const SuperAdmin = mongoose.model('superadmin');
 const BetLists = mongoose.model('betList');
 const PrivateTable = mongoose.model('rummyPrivateTable');
 const TeenPrivateTable = mongoose.model('teenPrivatebetList');
@@ -55,7 +55,7 @@ const usersHelper = {
   },
 
   registerAdmin: async function (newData) {
-    const newUser = new Admin(newData);
+    const newUser = new SuperAdmin(newData);
     const data = await newUser.save();
 
     if (data) {
