@@ -41,32 +41,38 @@ router.get('/AdminTranscationData', async (req, res) => {
         
 
         let DepositeList = []
-        if (req.query.type == "SuperAdmin") {
+        if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
 
-            DepositeList = await AdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1, oppChips: 1, chips: 1, adminname: 1, adminid: 1, shopid: 1, shopname: 1 }).sort({createdAt:-1})
+            DepositeList = await AdminWalletTracks.find({}, { DateandTime: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                    trnxType: 1,
+                    oppChips: 1, chips: 1,
+                    authorisedid: 1,
+                    authorisedtype: 1,
+                    authorisedname: 1,
+                    id: 1,
+                    type: 1,
+                    trackname: 1, }).sort({DateandTime:-1})
 
-        }
-        // else if (req.query.type == "Agent") {
-
-        //     let totalsubagent  = await Agent.find({ agentId: MongoID(req.query.Id) }, { _id: 1 })
-
-        //     console.log("totalsubagent ",totalsubagent)
-        //     let totalid = []
-        //     for (let i = 0; i <= totalsubagent.length - 1; i++){
-        //         totalid.push(MongoID(totalsubagent[i]._id))
-        //     }
-
-        //     DepositeList = await AgentWalletTracks.find({ shopId: {$in:totalid} }, { DateandTime:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,shopid:1,shopname:1 })
-        
-        // }
-        
+        } 
         else if (req.query.type == "Admin") {
-
-            DepositeList = await AdminWalletTracks.find({ agentId: MongoID(req.query.Id) }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,shopid:1,shopname:1 }).sort({createdAt:-1})
+            console.log("ADMIN ::::::::::::::::::::::::")
+            DepositeList = await AdminWalletTracks.find({ adminId: MongoID(req.query.Id) },
+                {
+                    DateandTime: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                    trnxType: 1,
+                    oppChips: 1, chips: 1,
+                    authorisedid: 1,
+                    authorisedtype: 1,
+                    authorisedname: 1,
+                    id: 1,
+                    type: 1,
+                    trackname: 1,
+                    totalBucket:1
+                }).sort({ DateandTime: -1 })
         }
 
 
-        logger.info('admin/dahboard.js post dahboard  error => ', DepositeList);
+        logger.info('admin/dahboard.js post dahboard  error => DepositeList ', DepositeList);
 
         res.json({ DepositeList:DepositeList });
     } catch (error) {
