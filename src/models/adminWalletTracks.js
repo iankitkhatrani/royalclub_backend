@@ -21,7 +21,11 @@ const adminWalletTracksSchema = new Schema(
         DateandTime:{ type: Date,default:new Date() },
         authorisedid: { type: String },
         authorisedtype: { type: String },
-        authorisedname: { type: String }
+        authorisedname: { type: String },
+        id: { type: String,default:"" },
+        type: { type: String,default:"" },
+        trackname: { type: String,default:"" },
+        
     },
     {
         timestamps: true

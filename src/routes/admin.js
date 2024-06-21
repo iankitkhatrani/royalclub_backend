@@ -13,12 +13,19 @@ const gamementenance = require('./admin/gamementenance');
 const notification = require('./admin/notification');
 const banner = require('./admin/banner');
 const bot = require('./admin/bot');
+const admin = require('./admin/admin');
+const Agent = require('./admin/Agent');
+const usertransction = require('./admin/usertransction');
+
+
 
 
 
 
 
 router.use('/', auth);
+router.use('/admin', authMiddleware, admin);
+router.use('/agent', authMiddleware, Agent);
 router.use('/lobbies', authMiddleware, bet);
 router.use('/dashboard', authMiddleware, dashboard);
 router.use('/user', user);
@@ -30,6 +37,8 @@ router.use('/gamementenance', authMiddleware, gamementenance);
 router.use('/notification', authMiddleware, notification);
 router.use('/banner', authMiddleware, banner);
 router.use('/bot', bot);
+router.use('/usertransction', usertransction);
+
 
 
 

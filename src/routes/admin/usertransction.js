@@ -41,7 +41,7 @@ router.get('/AdminTranscationData', async (req, res) => {
         
 
         let DepositeList = []
-        if (req.query.type == "Admin") {
+        if (req.query.type == "SuperAdmin") {
 
             DepositeList = await AdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1, oppChips: 1, chips: 1, adminname: 1, adminid: 1, shopid: 1, shopname: 1 }).sort({createdAt:-1})
 
@@ -60,7 +60,7 @@ router.get('/AdminTranscationData', async (req, res) => {
         
         // }
         
-        else if (req.query.type == "Agent") {
+        else if (req.query.type == "Admin") {
 
             DepositeList = await AdminWalletTracks.find({ agentId: MongoID(req.query.Id) }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,shopid:1,shopname:1 }).sort({createdAt:-1})
         }
