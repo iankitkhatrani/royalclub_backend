@@ -491,6 +491,7 @@ module.exports.MOVEKUKARI = async (requestData, client) => {
 
             //Winner Of Ludo 
             gameFinishActions.winnerDeclareCallLudo([tb1.playerInfo[client.seatIndex]], tb1)
+            delete client.MOVEKUKARI;
             return false
         }
 
