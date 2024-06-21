@@ -180,6 +180,9 @@ module.exports.
                 const project = {};
                 const tabInfo = await JantaTables.findOne(wh, project).lean();
 
+                logger.info('Reconnect Final Data tabInfo => ', tabInfo);
+
+
                 if (tabInfo === null) {
                     const response = {
                         login: true,
