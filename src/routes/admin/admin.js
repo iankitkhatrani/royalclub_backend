@@ -7,7 +7,7 @@ const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
 const { registerUser } = require('../../helper/signups/signupValidation');
-const walletActions = require("../../roulette/updateWallet");
+const walletActions = require("../../common-function/walletTrackTransaction");
 
 /**
 * @api {post} /admin/lobbies
@@ -21,11 +21,11 @@ router.get('/AdminList', async (req, res) => {
     try {
         //console.info('requet => ', req);
 
-        const agentList = await AdminUser.find({}, { name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1 })
+        const adminList = await AdminUser.find({}, { name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1 })
 
-        logger.info('admin/dahboard.js post dahboard  error => ', agentList);
+        logger.info('admin/dahboard.js post dahboard   adminList ', adminList);
 
-        res.json({ agentList });
+        res.json({ adminList });
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -82,8 +82,7 @@ router.put('/AdminUpdate', async (req, res) => {
             $set: {
                 password: req.body.password,
                 name: req.body.name,
-                status: req.body.status,
-                location: req.body.location
+                status: req.body.status
             }
         }
 
@@ -123,8 +122,7 @@ router.post('/AddAdmin', async (req, res) => {
         if (
             req.body.password != undefined && req.body.password != null && req.body.password != "" &&
             req.body.name != undefined && req.body.name != null && req.body.name != "" &&
-            req.body.status != undefined && req.body.status != null && req.body.status != "" &&
-            req.body.location != undefined && req.body.location != null && req.body.location != ""
+            req.body.status != undefined
         ) {
 
             const Checkagent = await AdminUser.find({ name: req.body.name });
@@ -137,10 +135,7 @@ router.post('/AddAdmin', async (req, res) => {
             let response = {
                 password: req.body.password,
                 name: req.body.name,
-                createdAt: new Date(),
-                lastLoginDate: new Date(),
                 status: req.body.status,
-                location: req.body.location
             }
 
             console.log("response ", response)
@@ -207,7 +202,7 @@ router.put('/adminAddMoney', async (req, res) => {
         console.log("Add Money ", req.body)
         //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
 
-        await walletActions.addagentWalletAdmin(req.body.userId, Number(req.body.money), 2, "Super Admin Addeed Chips", "roulette", req.body.adminname, req.body.adminid);
+        await walletActions.addadminWalletAdmin(req.body.userId, Number(req.body.money),"credit", "Super Admin Addeed Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
         logger.info('admin/dahboard.js post dahboard  error => ');
 
@@ -233,7 +228,7 @@ router.put('/adminDeductMoney', async (req, res) => {
         console.log("adminDeductMoney ", req.body)
         //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
 
-        await walletActions.deductagentWallet(req.body.userId, -Number(req.body.money), 2, "Super Admin duduct Chips", "roulette", req.body.adminname, req.body.adminid);
+        await walletActions.deductadminWallet(req.body.userId, -Number(req.body.money),"debit", "Super Admin duduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
 
         logger.info('admin/dahboard.js post dahboard  error => ');

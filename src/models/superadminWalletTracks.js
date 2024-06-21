@@ -8,7 +8,6 @@ const superadminWalletTracksSchema = new Schema(
     {   
         adminid:{ type: String ,default:""},
         name: { type: String ,default:"Superadmin"},
-        uniqueId: { type: String },
         trnxType: { type: String },
         trnxTypeTxt: { type: String },
         trnxAmount: { type: Number },
@@ -16,9 +15,9 @@ const superadminWalletTracksSchema = new Schema(
         gameType: { type: String },
         DateandTime:{ type: Date,default:new Date() },
         adminname: { type: String },
-        authorisedid: { type: String },
-        authorisedtype: { type: String },
-        authorisedname: { type: String }
+        id: { type: String },
+        type: { type: String },
+        name: { type: String }
     },
     {
         timestamps: true

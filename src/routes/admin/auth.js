@@ -33,9 +33,33 @@ router.post('/signup-admin', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     // res.json(await mainCtrl.adminLogin(req.body));
-    const data = await mainCtrl.adminLogin(req.body);
-     logger.info('data => ', data);
-    res.status(OK_STATUS).json(data);
+    // const data = await mainCtrl.adminLogin(req.body);
+    //  logger.info('data => ', data);
+    // res.status(OK_STATUS).json(data);
+
+
+    if (req.body.logintype == "SuperAdmin") {
+
+      data = await mainCtrl.adminLogin(req.body);
+      data.data.type_name = "Super Admin"
+      data.data.name = req.body.email
+
+      res.status(OK_STATUS).json(data);
+
+    } else if (req.body.logintype == "Agent") {
+      data = await mainCtrl.AgentLogin(req.body);
+      data.data.type_name = "Agent"
+      res.status(OK_STATUS).json(data);
+    } else if (req.body.logintype == "Shop") {
+      data = await mainCtrl.ShopLogin(req.body);
+      data.data.type_name = "Shop"
+      res.status(OK_STATUS).json(data);
+    } else {
+      res.status(BAD_REQUEST).json({ status: 0, message: 'Something went wrong' });
+
+    }
+
+
   } catch (err) {
     logger.error('admin/auth.js login error => ', err);
     res.status(BAD_REQUEST).json({ status: 0, message: 'Something went wrong' });

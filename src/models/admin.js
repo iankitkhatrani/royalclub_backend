@@ -5,12 +5,11 @@ const collectionName = 'admin';
 
 const AdminSchema = new Schema(
   {
-    password:{type: String},
     name: { type: String },
+    password:{type: String},
     createdAt: { type: Date, default: Date.now },
     lastLoginDate: { type: Date, default: Date.now },
-    status:{ type: String },
-    location:{ type: String },
+    status: { type: Boolean, default: true },
     chips:{ type: Number,default: 0 },
     type: { type: String, default: "Admin" },
   },
