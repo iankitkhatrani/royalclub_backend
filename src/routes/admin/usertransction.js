@@ -43,7 +43,7 @@ router.get('/AdminTranscationData', async (req, res) => {
         let DepositeList = []
         if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
 
-            DepositeList = await AdminWalletTracks.find({}, { DateandTime: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+            DepositeList = await AdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
                     trnxType: 1,
                     oppChips: 1, chips: 1,
                     authorisedid: 1,
@@ -51,16 +51,17 @@ router.get('/AdminTranscationData', async (req, res) => {
                     authorisedname: 1,
                     id: 1,
                     type: 1,
-                    trackname: 1, }).sort({DateandTime:-1})
+                    trackname: 1, }).sort({createdAt:-1})
 
         } 
         else if (req.query.type == "Admin") {
             console.log("ADMIN ::::::::::::::::::::::::")
             DepositeList = await AdminWalletTracks.find({ adminId: MongoID(req.query.Id) },
                 {
-                    DateandTime: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                    createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
                     trnxType: 1,
-                    oppChips: 1, chips: 1,
+                    oppChips: 1,
+                    chips: 1,
                     authorisedid: 1,
                     authorisedtype: 1,
                     authorisedname: 1,
@@ -68,7 +69,7 @@ router.get('/AdminTranscationData', async (req, res) => {
                     type: 1,
                     trackname: 1,
                     totalBucket:1
-                }).sort({ DateandTime: -1 })
+                }).sort({ createdAt: -1 })
         }
 
 
