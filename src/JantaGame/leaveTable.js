@@ -93,7 +93,7 @@ module.exports.leaveTable = async (requestData, client) => {
     logger.info("leaveTable tbInfo : ", tbInfo);
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLESJANTA, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLESJANTA, response);
+ //   commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLESJANTA, response);
 
 
     await this.manageOnUserLeave(tbInfo);
