@@ -59,8 +59,8 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
                     reason: 'autoLeave',
                 },
                 {
-                    uid: tableInfo.playerInfo[0]._id.toString(),
-                    tbid: tableInfo._id.toString(),
+                    uid: tableInfo.playerInfo[0]._id?.toString(),
+                    tbid: tableInfo._id?.toString(),
                     seatIndex: tableInfo.playerInfo[0].seatIndex,
                     sck: tableInfo.playerInfo[0].sck,
                 }
