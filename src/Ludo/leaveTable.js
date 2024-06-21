@@ -76,9 +76,10 @@ module.exports.leaveTableLudo = async (requestData, client) => {
     let tbInfo = await playingLudo.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLELUDO, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLELUDO, response);
-
+    if (reason == undefined || reason != 'autoLeave') {
+        commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLELUDO, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLELUDO, response);
+    }
 
     await this.manageOnUserLeave(tbInfo);
 }
