@@ -20,15 +20,14 @@ const walletActions = require("../common-function/walletTrackTransaction");
  * 
  */
 module.exports.privateTableCreate = async (requestBody, socket) => {
-    const { playerId, entryFee, gamePlayType, tableId } = requestBody;
+    const { playerId, entryFee, gamePlayType, tableId, potLimit, chalLimit } = requestBody;
     logger.info("req.body => ", requestBody);
-    //logger.info(req.files);
+
     try {
         const user = await PrivateTable.countDocuments({ tableId });
         logger.info("get user details =>", user);
 
         if (user > 0) {
-            logger.info("checkkkkkkkkk");
             return {
                 message: "User already exists",
                 status: 0,
@@ -45,6 +44,8 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
                 entryFee: entryFee,
                 tableId: privateTableId,
                 gamePlayType: gamePlayType,
+                chalLimit: chalLimit,
+                potLimit: potLimit
             };
 
             logger.info("Before New Data", newData);
