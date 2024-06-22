@@ -129,10 +129,19 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
                 tableId: isExist.tableId
             };
         } else {
+            //remove a data after 12 hours
+            const res = await PrivateTable.deleteMany({
+                createdAt: { $lt: twelveHoursAgo },
+                createTableplayerId: playerId
+            })
+            logger.info("check data delete => ", res);
+
             return {
                 message: "already Not exists",
                 status: 1,
             };
+
+
         }
 
     } catch (error) {

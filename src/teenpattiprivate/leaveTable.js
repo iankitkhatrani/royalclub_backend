@@ -94,18 +94,18 @@ module.exports.leaveTable = async (requestData, client) => {
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
     commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
-    
+
     let userDetails = await GameUser.findOne({
         _id: MongoID(client.uid.toString()),
-      }).lean();
-  
-      logger.info("check user Details =>",userDetails)
-      
-      let finaldata = await filterBeforeSendSPEvent(userDetails);
+    }).lean();
 
-      logger.info("check user Details finaldata =>",finaldata)
-  
-      commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
+    logger.info("check user Details =>", userDetails)
+
+    let finaldata = await filterBeforeSendSPEvent(userDetails);
+
+    logger.info("check user Details finaldata =>", finaldata)
+
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
 
     await this.manageOnUserLeave(tbInfo);
 }
@@ -116,10 +116,34 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
-    if (tb.gameState == "RoundStated" || tb.gameState == "CollectBoot") {
-        if (playerInGame.length >= 2) {
+    const list = ['RoundStated', 'CollectBoot', 'CardDealing'];
+
+    if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex === client.seatIndex) {
+        if (playerInGame.length == 0) {
+            if (tb.activePlayer === 0) {
+                let wh = {
+                    _id: MongoID(tb._id.toString()),
+                };
+                await PlayingTables.deleteOne(wh);
+            }
+        } else if (playerInGame.length >= 2) {
             await roundStartActions.nextUserTurnstart(tb, false);
-        } else if (playerInGame.length == 1) {
+        } else if (playerInGame.length === 1) {
+
+            await roundStartActions.nextUserTurnstart(tb);
+        }
+    } else if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex !== client.seatIndex) {
+
+        if (playerInGame.length == 0) {
+            // await this.leaveallrobot(tb._id)
+            if (tb.activePlayer === 0) {
+                let wh = {
+                    _id: MongoID(tb._id.toString()),
+                };
+                await PlayingTables.deleteOne(wh);
+            }
+        } else if (playerInGame.length === 1) {
+
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         }
     } else if (["", "GameStartTimer"].indexOf(tb.gameState) != -1) {

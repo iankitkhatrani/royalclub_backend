@@ -128,7 +128,8 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    //Teenpatti
+
+
                     case CONST.GET_TEEN_PATTI_ROOM_LIST: {
                         try {
                             await gamePlayActions.getBetList(payload.data, socket);
@@ -146,12 +147,7 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    // case CONST.TEEn_PATTI_SHOW: {
-                    //     await gamePlayActions.show(payload.data, socket);
-                    //     break;
-                    // }
-
-                    case CONST.TEEn_PATTI_SHOW: {
+                    case CONST.TEEN_PATTI_SHOW: {
                         try {
                             switch (payload.data.gamePlayType) {
                                 case CONST.TEEN_GAME_TYPE.SIMPLE_TEEN:
@@ -168,11 +164,6 @@ myIo.init = function (server) {
                         }
                         break;
                     }
-
-                    // case CONST.TEEN_PATTI_CHAL: {
-                    //     await gamePlayActions.chal(payload.data, socket);
-                    //     break;
-                    // }
 
                     case CONST.TEEN_PATTI_CHAL: {
                         try {
@@ -192,11 +183,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    // case CONST.TEEN_PATTI_PACK: {
-                    //     await gamePlayActions.cardPack(payload.data, socket);
-                    //     break;
-                    // }
-
                     case CONST.TEEN_PATTI_PACK: {
                         try {
                             switch (payload.data.gamePlayType) {
@@ -214,11 +200,6 @@ myIo.init = function (server) {
                         }
                         break;
                     }
-
-                    // case CONST.TEEN_PATTI_CARD_SEEN: {
-                    //     await gamePlayActions.seeCard(payload.data, socket);
-                    //     break;
-                    // }
 
                     case CONST.TEEN_PATTI_CARD_SEEN: {
                         try {
@@ -238,11 +219,6 @@ myIo.init = function (server) {
                         break;
                     }
 
-                    // case CONST.TEEN_PATTI_LEAVE_TABLE: {
-                    //     await gamePlayActions.leaveTable(payload.data, socket);
-                    //     break;
-                    // }
-
                     case CONST.TEEN_PATTI_LEAVE_TABLE: {
                         try {
                             switch (payload.data.gamePlayType) {
@@ -261,13 +237,12 @@ myIo.init = function (server) {
                         break;
                     }
 
-
                     case CONST.RECONNECT: {
                         await userReconnect(payload.data, socket);
                         break;
                     }
 
-                    // Rummy Private Table
+                    // TEEN PATTI Private Table
                     case CONST.CREATE_TEEN_PRIVATE_TABLE_ID: {
                         try {
                             await teenPrivateActions.privateTableCreate(payload.data, socket)
