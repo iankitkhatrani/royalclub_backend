@@ -3,6 +3,7 @@ const User = mongoose.model('users');
 const SuperAdmin = mongoose.model('superadmin');
 const BetLists = mongoose.model('betList');
 const PrivateTable = mongoose.model('rummyPrivateTable');
+const LudoPrivateTable = mongoose.model('betListLudoPrivate');
 const TeenPrivateTable = mongoose.model('teenPrivatebetList');
 const bcrypt = require('bcrypt');
 const logger = require('../../logger');
@@ -87,6 +88,19 @@ const usersHelper = {
   },
 
   registerPrivateTable: async function (newData) {
+    console.info(' Private table newData => ', newData);
+
+    var newUser = new PrivateTable(newData);
+    var data = await newUser.save();
+
+    if (data) {
+      return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }
+    } else {
+      return { status: 0, message: "record not added", data: null }
+    }
+  },
+
+  registerLudoPrivateTable: async function (newData) {
     console.info(' Private table newData => ', newData);
 
     var newUser = new PrivateTable(newData);
