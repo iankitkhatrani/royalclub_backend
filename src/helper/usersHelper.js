@@ -90,8 +90,8 @@ const usersHelper = {
   registerPrivateTable: async function (newData) {
     console.info(' Private table newData => ', newData);
 
-    var newUser = new PrivateTable(newData);
-    var data = await newUser.save();
+    const newUser = new PrivateTable(newData);
+    const data = await newUser.save();
 
     if (data) {
       return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }
@@ -103,8 +103,8 @@ const usersHelper = {
   registerLudoPrivateTable: async function (newData) {
     console.info(' Private table newData => ', newData);
 
-    var newUser = new PrivateTable(newData);
-    var data = await newUser.save();
+    const newUser = new LudoPrivateTable(newData);
+    const data = await newUser.save();
 
     if (data) {
       return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }
@@ -116,8 +116,8 @@ const usersHelper = {
   registerTeenPrivateTable: async function (newData) {
     console.info(' Private table newData => ', newData);
 
-    var newUser = new TeenPrivateTable(newData);
-    var data = await newUser.save();
+    const newUser = new TeenPrivateTable(newData);
+    const data = await newUser.save();
 
     if (data) {
       return { status: 1, message: "record added", data: JSON.parse(JSON.stringify(data)) }

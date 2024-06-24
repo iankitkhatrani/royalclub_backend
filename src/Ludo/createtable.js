@@ -19,7 +19,7 @@ const walletActions = require("../common-function/walletTrackTransaction");
  * @returns {Object}
  */
 module.exports.privateTableCreate = async (requestBody, socket) => {
-    const { playerId, entryFee, gamePlayType, tableId, deduct } = requestBody;
+    const { playerId, entryFee, gamePlayType, tableId, deduct, _ip } = requestBody;
     logger.info("req.body => ", requestBody);
     //logger.info(req.files);
     try {
