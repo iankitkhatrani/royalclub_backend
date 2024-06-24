@@ -193,7 +193,9 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         for (let i = 0; i < tbInfo.playerInfo.length; i++) {
             if (tbInfo.playerInfo[i].seatIndex != undefined) {
                 //"playerInfo.$.betObject": [],
-                console.log("tbInfo.playerInfo[i].selectObj[itemIndex] ", tbInfo.playerInfo[i].betObject)
+                let betObjectData = tbInfo.playerInfo[i].betObject;
+                var TotalWinAmount = 0;
+                var TotalBetAmount = 0;
                 if (tbInfo.playerInfo[i].betObject.length > 0) {
                     const upWh = {
                         _id: MongoID(tbid),
@@ -208,18 +210,99 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
 
                     await JantaTables.findOneAndUpdate(upWh, updateData, { new: true });
                 }
+                logger.info("winnerJanta Data :  ", tbInfo.playerInfo[i].selectObj[itemIndex] , tbInfo.playerInfo[i].selectObj[itemIndex] * 9);
+                
 
-                if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
+                for (let j = 0; j < betObjectData.length; j++) {
+                    if (betObjectData[j].bet != undefined) {
+
+                        
+                        if (betObjectData[j].type == "NORMAL" && parseInt(betObjectData[j].item) == parseInt(itemObject)) {
+                          
+                            console.log("betObjectData[j] ",betObjectData[j])
+
+                            TotalWinAmount = TotalWinAmount + betObjectData[j].bet * 9;
+
+                            console.log("TotalWinAmount normal", TotalWinAmount)
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+                        }
+
+                        if (betObjectData[j].type == "sixtozeroc" && [0,6,7,8,9].indexOf(parseInt(itemObject)) != -1) {
+                          
+                            console.log("betObjectData[j] ",betObjectData[j])
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+
+                            console.log("TotalWinAmount normal", TotalWinAmount)
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+
+                        }
+
+                        
+
+                        if (betObjectData[j].type == "onetofive" && [1,2,3,4,5].indexOf(parseInt(itemObject)) != -1) {
+                          
+                            console.log("betObjectData[j] ",betObjectData[j])
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+
+                            console.log("TotalWinAmount normal", TotalWinAmount)
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+
+                        }
+                        
+
+                        
+
+                        if (betObjectData[j].type == "Odd" && itemObject%2 == 1) {
+                            console.log("betObjectData[j] ", betObjectData[j])
+
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+                            console.log("TotalWinAmount odd", TotalWinAmount)
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+
+                        }
+
+                        if (betObjectData[j].type == "Even" && itemObject%2 == 0) {
+                            console.log("betObjectData[j] ", betObjectData[j])
+
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+
+
+                            console.log("TotalWinAmount even", TotalWinAmount)
+
+                        }
+                    }
+
+
+                }
+                console.log("TotalWinAmount ", TotalWinAmount)
+                
+             
+        
+
+                if (TotalWinAmount != 0) {
                     winnerData.push({
                         uid:tbInfo.playerInfo[i]._id,
                         seatIndex:tbInfo.playerInfo[i].seatIndex,
-                        winAmount:tbInfo.playerInfo[i].selectObj[itemIndex] * 9,
+                        winAmount:TotalWinAmount-TotalBetAmount,
                     })
 
-
-                    //await walletActions.addWallet(tbInfo.playerInfo[i]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", tabInfo,"","","Janta");
-                    await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", "Janta");
+                    await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[i]._id, Number(TotalWinAmount), 4, "Janta Win", "Janta");
                 }
+                
+                
+                
+                // if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
+                //     
+
+
+                //     //await walletActions.addWallet(tbInfo.playerInfo[i]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", tabInfo,"","","Janta");
+                //     await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", "Janta");
+                // }
                
                 
             }

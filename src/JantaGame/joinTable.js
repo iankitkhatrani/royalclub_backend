@@ -37,7 +37,7 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
         let gwh1 = {
             "playerInfo._id": MongoID(client.uid)
         }
-        let tableInfo = await JantaTables.findOne(gwh1, {}).lean();
+        let tableInfo = await JantaTables.findOne(gwh1, {"playerInfo.$":1}).lean();
         logger.info("JoinTable tableInfo : ", gwh, JSON.stringify(tableInfo));
 
         // if (tableInfo != null) {
@@ -51,8 +51,8 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
 
 
         if (tableInfo != null) {
-            // sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Already In playing table!!");
-            // delete client.JT
+             //sendEvent(client, CONST.ROULETTE_GAME_JOIN_TABLE, requestData, false, "Already In playing table!!");
+             //delete client.JT
 
             await leaveTableActions.leaveTable(
                 {
