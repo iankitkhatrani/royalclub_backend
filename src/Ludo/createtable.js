@@ -50,14 +50,14 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
             let response = await users_helper.registerLudoPrivateTable(newData);
             logger.info("privateTableCreate response => ", response);
 
-            if (response.status) {
-                sendEvent(socket, CONST.CLPT, { tableCode: privateTableId }, "Create Private Ludo Table Id");
-                await walletActions.addWalletPayin(playerId, - Number(100), 'Debit', 'Ludo Private Table Charges', 'Rummy Private');
+            // if (response.status) {
+            //     sendEvent(socket, CONST.CLPT, { tableCode: privateTableId , _id: table._id }, "Create Private Ludo Table Id");
+            //     await walletActions.addWalletPayin(playerId, - Number(100), 'Debit', 'Ludo Private Table Charges', 'Rummy Private');
 
-            } else {
-                sendEvent(socket, CONST.CLPT, {}, false, "Private table Invalid Credential");
-                return
-            }
+            // } else {
+            //     sendEvent(socket, CONST.CLPT, {}, false, "Private table Invalid Credential");
+            //     return
+            // }
 
             try {
                 let insertobj = {
@@ -90,7 +90,7 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
                         27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 71, 72, 73, 74, 75, 76
                     ],
                     safeDice: [9, 22, 35, 48, 1, 14, 27, 40],
-                    _ip: requestData._ip != undefined ? requestData._ip : 0,
+                    _ip: _ip,
                     tableCode: privateTableId,//requestData._ip != undefined && requestData._ip == 1 ? Math.floor(1000000 + Math.random() * 9000000) : "",
                     adminId: playerId//requestData.adminId != undefined ? requestData.adminId : "",
                 };
@@ -98,7 +98,14 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
                 let insertInfo = await PlayingTables.create(insertobj);
                 logger.info("create Private Table : ", insertInfo);
 
-
+                if (response.status) {
+                    sendEvent(socket, CONST.CLPT, { tableCode: privateTableId , _id: insertInfo._id }, "Create Private Ludo Table Id");
+                    await walletActions.addWalletPayin(playerId, - Number(100), 'Debit', 'Ludo Private Table Charges', 'Rummy Private');
+    
+                } else {
+                    sendEvent(socket, CONST.CLPT, {}, false, "Private table Invalid Credential");
+                    return
+                }
                 return insertInfo;
             } catch (error) {
                 logger.error('joinTable.js createTable error=> ', error);

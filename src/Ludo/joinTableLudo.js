@@ -3,6 +3,7 @@ const MongoID = mongoose.Types.ObjectId;
 const GameUser = mongoose.model('users');
 const playingLudo = mongoose.model("playingLudo");
 const BetListsLudo = mongoose.model("betListLudo")
+const PrivateBetListsLudo = mongoose.model("betListLudoPrivate")
 
 const { sendEvent, sendDirectEvent, AddTime, setDelay, clearJob } = require('../helper/socketFunctions');
 
@@ -515,7 +516,7 @@ module.exports.JTOFC = async (requestData, client) => {
 
 module.exports.checkPrivateTableExists = async (requestBody, socket) => {
     const { playerId, tableId } = requestBody;
-    logger.info("req.body => ", requestBody);
+    logger.info("checkPrivateTableExists req.body => ", requestBody);
 
     // Get the current date and time
     const now = new Date();
@@ -524,7 +525,7 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
     const twelveHoursAgo = new Date(now.getTime() - 12 * 60 * 60 * 1000);
 
     try {
-        const isExist = await BetListsLudo.findOne({
+        const isExist = await PrivateBetListsLudo.findOne({
             createTableplayerId: playerId,
             createdAt: { $gte: twelveHoursAgo }
         });
@@ -534,7 +535,8 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
             return {
                 message: "already exists",
                 status: 0,
-                tableId: isExist.tableId
+                tableCode: isExist.tableCode,
+                _id:isExist.createTableplayerId
             };
         } else {
             return {
