@@ -439,7 +439,8 @@ myIo.init = function (server) {
                         socket.uid = payload.data.playerId;
                         socket.sck = socket.id;
 
-                        await gamePlayActionsLudo.CLPT(payload.data, socket);
+                        // await gamePlayActionsLudo.CLPT(payload.data, socket);
+                        await gamePlayActionsLudo.privateTableCreate(payload.data, socket);
                         break;
                     }
 

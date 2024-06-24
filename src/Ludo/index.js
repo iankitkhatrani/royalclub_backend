@@ -1,5 +1,6 @@
 
 const { getBetList } = require('./betList');
+const { privateTableCreate } = require('./createtable');
 const { joinTable, CLPT, JPTL, SPLT, JTOFC, RPT, checkPrivateTableExists } = require("./joinTableLudo");
 const { leaveTableLudo } = require("./leaveTable");
 const { disconnectTableHandle, findDisconnectTable } = require("./disconnectHandle");
@@ -18,5 +19,6 @@ module.exports = {
   SPLT: SPLT,
   JTOFC: JTOFC,
   RPT: RPT,
+  privateTableCreate: privateTableCreate,
   checkPrivateTableExists: checkPrivateTableExists
 };
