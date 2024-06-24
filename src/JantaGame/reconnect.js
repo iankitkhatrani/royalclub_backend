@@ -203,7 +203,8 @@ module.exports.
                     ap: playerInGame.length,
                     tableid: tabInfo._id,
                     sceneName: CONST.GAMEPLAY,
-                    tabInfo:tabInfo
+                    opencards:tabInfo.opencards,
+                    sumofcard:tabInfo.sumofcard
                 };
 
                 if (tabInfo.gameState === "StartJanta") {
