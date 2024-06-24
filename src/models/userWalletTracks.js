@@ -8,21 +8,22 @@ const collectionName = 'userWalletTracks';
 const userWalletTracksSchema = new Schema(
     {
         userId: { type: mongoose.Schema.Types.ObjectId, ref: GameUser },
-        id: { type: Number },
-        uniqueId: { type: String },
+        name: { type: String },
         trnxType: { type: String },
         trnxTypeTxt: { type: String },
         trnxAmount: { type: Number },
         oppChips: { type: Number },
-        //oppWinningChips: { type: Number },
-        //winningChips: { type: Number },
         chips: { type: Number },
         gameWinning: { type: Number },
         totalBucket: { type: Number },
         gameType: { type: String },
         DateandTime:{ type: Date,default:new Date() },
-        adminname: { type: String },
-        adminid: { type: String }
+        authorisedid: { type: String },
+        authorisedtype: { type: String },
+        authorisedname: { type: String },
+        id: { type: String,default:"" },
+        type: { type: String,default:"" },
+        trackname: { type: String,default:"" }
     },
     {
         timestamps: true

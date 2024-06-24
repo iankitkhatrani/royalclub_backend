@@ -8,7 +8,7 @@ const config = require('../../../config');
 const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
-
+const UserWalletTracks = mongoose.model('userWalletTracks');
 
 /**
 * @api {get} /admin/rouletteHistory
@@ -74,6 +74,43 @@ router.get('/rouletteHistory', async (req, res) => {
     }
 });
 
+
+/**
+* @api {get} /admin/TransactionData
+* @apiName  add-bet-list
+* @apiGroup  Admin
+* @apiHeader {String}  x-access-token Admin's unique access-key
+* @apiSuccess (Success 200) {Array} badges Array of badges document
+* @apiError (Error 4xx) {String} message Validation or error message.
+*/
+router.get('/TransactionData', async (req, res) => {
+    try {
+        console.info('TransactionData  => ', req.query);
+        let TransactionData = []
+        
+        TransactionData = await UserWalletTracks.find({ userId: MongoID(req.query.Id) },
+        {
+            createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+            trnxType: 1,
+            oppChips: 1,
+            chips: 1,
+            authorisedid: 1,
+            authorisedtype: 1,
+            authorisedname: 1,
+            id: 1,
+            type: 1,
+            trackname: 1,
+            totalBucket:1
+            }).sort({ createdAt: -1 })
+        
+        logger.info('admin/dahboard.js post dahboard  error TransactionData => ', TransactionData);
+
+        res.json({ TransactionData });
+    } catch (error) {
+        logger.error('admin/dahboard.js post bet-list error => ', error);
+        res.status(config.INTERNAL_SERVER_ERROR).json(error);
+    }
+});
 
 /**
 * @api {get} /admin/rouletteHistory

@@ -2,20 +2,23 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const collectionName = 'agent';
+const AdminUser = mongoose.model('admin');
 
 const AgentSchema = new Schema(
   {
+    
     password:{type: String},
     name: { type: String },
     createdAt: { type: Date, default: Date.now },
     lastLoginDate: { type: Date, default: Date.now },
-    status:{ type: String },
-    location:{ type: String },
+    status: { type: Boolean, default: true },
     chips: { type: Number, default: 0 },
     authorisedid: { type: String },
     authorisedtype: { type: String },
     authorisedname: { type: String },
-    type: { type: String, default: "Agent" },
+    commission: { type: Number, default: 0 },
+    partnerpercentage: { type: Number, default: 0 },
+    type: { type: String, default: "agent" },
   },
   { versionKey: false }
 );

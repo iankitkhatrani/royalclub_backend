@@ -124,37 +124,65 @@ router.get('/SuperAdminTranscationData', async (req, res) => {
 * @apiSuccess (Success 200) {Array} badges Array of badges document
 * @apiError (Error 4xx) {String} message Validation or error message.
 */
-router.get('/SubAgentTranscationData', async (req, res) => {
+router.get('/AgentTranscationData', async (req, res) => {
     try {
         console.log('requet => ', req.query.Id);
         console.log('requet => type ', req.query.type);
 
-        // const DepositeList = await ShopWalletTracks.find({  }, {
-        //     DateandTime: 1, userId: 1, oppChips: 1, oppWinningChips: 1, chips: 1, winningChips: 1, trnxAmount: 1, gameType: 1, trnxTypeTxt: 1,
-        //     adminname:1,adminid:1
-        // }).sort({ DateandTime: -1 })
+    
+
+        // let DepositeList = []
+        // if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
+
+        //     DepositeList = await AgentWalletTracks.find({}, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
+
+        // } else if(req.query.type == "Agent") {
+
+        //     let totalsubagent  = await Agent.find({ agentId: MongoID(req.query.Id) }, { _id: 1 })
+
+        //     console.log("totalsubagent ",totalsubagent)
+        //     let totalid = []
+        //     for (let i = 0; i <= totalsubagent.length - 1; i++){
+        //         totalid.push(MongoID(totalsubagent[i]._id))
+        //     }
+
+        //     DepositeList = await AgentWalletTracks.find({ shopId: {$in:totalid} }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
         
+        // } else if (req.query.type == "Agent") {
+
+        //     DepositeList = await AgentWalletTracks.find({ shopId: MongoID(req.query.Id) }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
+        // }
 
         let DepositeList = []
-        if (req.query.type == "Admin") {
+        if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
 
-            DepositeList = await ShopWalletTracks.find({}, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
+            DepositeList = await AgentWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                    trnxType: 1,
+                    oppChips: 1, chips: 1,
+                    authorisedid: 1,
+                    authorisedtype: 1,
+                    authorisedname: 1,
+                    id: 1,
+                    type: 1,
+                    trackname: 1, }).sort({createdAt:-1})
 
-        } else if(req.query.type == "Agent") {
-
-            let totalsubagent  = await Agent.find({ agentId: MongoID(req.query.Id) }, { _id: 1 })
-
-            console.log("totalsubagent ",totalsubagent)
-            let totalid = []
-            for (let i = 0; i <= totalsubagent.length - 1; i++){
-                totalid.push(MongoID(totalsubagent[i]._id))
-            }
-
-            DepositeList = await ShopWalletTracks.find({ shopId: {$in:totalid} }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
-        
-        } else if (req.query.type == "Agent") {
-
-            DepositeList = await ShopWalletTracks.find({ shopId: MongoID(req.query.Id) }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
+        } 
+        else if (req.query.type == "Agent") {
+            console.log("Agent ::::::::::::::::::::::::")
+            DepositeList = await AgentWalletTracks.find({ agentId: MongoID(req.query.Id) },
+                {
+                    createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                    trnxType: 1,
+                    oppChips: 1,
+                    chips: 1,
+                    authorisedid: 1,
+                    authorisedtype: 1,
+                    authorisedname: 1,
+                    id: 1,
+                    type: 1,
+                    trackname: 1,
+                    totalBucket:1
+                }).sort({ createdAt: -1 })
         }
 
 

@@ -191,32 +191,11 @@ const resendOTP = async (requestData_, socket) => {
 const registerUser = async (requestBody, socket) => {
   try {
     logger.info('Register User Request Body =>', requestBody);
-    const { mobileNumber, deviceId, isVIP } = requestBody;
-
-    let query = { mobileNumber: mobileNumber };
-    let result = await Users.findOne(query, {});
-    if (!result) {
-
-
+   
       let response = await getRegisterUserDetails(requestBody)
-      // let defaultData = await getUserDefaultFields(requestBody, socket);
-      // logger.info('registerUser defaultData : ', defaultData);
-
-      // let userInsertInfo = await saveGameUser(defaultData, socket);
-      // logger.info('registerUser userInsertInfo : ', userInsertInfo);
-
-      // let userData = userInsertInfo;
-
-      // socket && await userSesssionSet(userData, socket);
-
-      // let response = await filterBeforeSendSPEvent(userData);
-
+  
       commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
-    } else {
-      commandAcions.sendEvent(socket, CONST.DASHBOARD, requestBody, false, 'User Already Register!');
-      return false;
-    }
-
+   
   } catch (error) {
     logger.error('mainController.js registerUser error=> ', error);
     return {

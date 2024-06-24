@@ -12,6 +12,8 @@ const AdminSchema = new Schema(
     status: { type: Boolean, default: true },
     chips:{ type: Number,default: 0 },
     type: { type: String, default: "Admin" },
+    commission: { type: Number, default: 0 },
+    partnerpercentage: { type: Number, default: 0 },
   },
   { versionKey: false }
 );

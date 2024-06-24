@@ -59,18 +59,13 @@ module.exports.getUserDefaultFields = async (data, client) => {
   const setUserDetail = {
     id: 0,
     deviceId: data.deviceId,
-    username: data.username ? data.username : '',
     name: data.name ? data.name : '',
+    password:data.password ? data.password : '',
     status: data.status ? data.status : '',
-    mobileNumber: data.mobileNumber ? data.mobileNumber : '',
-    email: data.email ? data.email : '',
     isVIP: data.isVIP ? 1 : 0,
     Iscom: data.Iscom ? 1 : 0,
     uniqueId: '',
-    loginType: data.loginType,
-    avatar: data.avatar,
-    chips: 20000,
-    winningChips: 0,
+    chips: 0,
     flags: {
       isOnline: 1, //is Online
     },
@@ -82,6 +77,9 @@ module.exports.getUserDefaultFields = async (data, client) => {
     referralCode: '',
     tableId: '',
     sckId: client && client.id ? client.id : '',
+    authorisedid: data.authorisedid ? data.authorisedid : '',
+    authorisedtype:  data.authorisedtype ? data.authorisedtype : '',
+    authorisedname:  data.authorisedname ? data.authorisedname : '',
   };
 
   return setUserDetail;
@@ -123,7 +121,7 @@ module.exports.saveGameUser = async (userInfoDetails, client) => {
     let uniqueId = 'USER_' + number;
 
     userInfo.id = uCounter;
-    userInfo.username = 'USER_' + uCounter;
+    //userInfo.username = 'USER_' + uCounter;
     userInfo.uniqueId = uniqueId;
 
     logger.info('saveGameUser uniqueId ::', userInfo.uniqueId, userInfo.id);
