@@ -23,14 +23,17 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
     logger.info("req.body => ", requestBody);
     //logger.info(req.files);
     try {
-        const user = await PrivateTableBetList.countDocuments({ tableId });
-        //logger.info("avatar =>", avatar.data[0]);
+        const user = await PrivateTableBetList.countDocuments({ createTableplayerId:playerId });
+        logger.info("user =>", user);
 
         if (user > 0) {
             return {
                 message: "User already exists",
                 status: 0,
             };
+
+            //sendEvent(socket, CONST.CLPT, {}, false, "Private table Invalid Credential");
+
         } else {
 
             let privateTableId = uuidv4();
@@ -41,7 +44,7 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
             const newData = {
                 createTableplayerId: playerId,
                 entryFee: entryFee,
-                tableCode: privateTableId,
+                tableCode: privateTableId
                 // gamePlayType: gamePlayType,
             };
 
@@ -97,6 +100,8 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
 
                 let insertInfo = await PlayingTables.create(insertobj);
                 logger.info("create Private Table : ", insertInfo);
+
+                 await PrivateTableBetList.updateOne({tableCode:privateTableId},{tableid:insertInfo._id});
 
                 if (response.status) {
                     sendEvent(socket, CONST.CLPT, { tableCode: privateTableId , _id: insertInfo._id }, "Create Private Ludo Table Id");
