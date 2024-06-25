@@ -86,7 +86,14 @@ module.exports.leaveTable = async (requestData, client) => {
 
     logger.info("leaveTable updateData : ", wh, updateData);
 
-    let activePlayerInRound = await getPlayingUserInTable(tb.playerInfo);
+    let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, {
+        new: true,
+    });
+
+    if (!tbInfo) return;
+
+
+    let activePlayerInRound = await getPlayingUserInTable(tbInfo.playerInfo);
     logger.info("leaveTable activePlayerInRound : ", activePlayerInRound);
 
 
@@ -97,8 +104,8 @@ module.exports.leaveTable = async (requestData, client) => {
         ap: activePlayerInRound.length,
     }
 
-    let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, { new: true });
-    logger.info("leaveTable tbInfo : ", tbInfo);
+    // let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, { new: true });
+    // logger.info("leaveTable tbInfo : ", tbInfo);
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
     commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
@@ -115,7 +122,7 @@ module.exports.leaveTable = async (requestData, client) => {
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
 
-    await this.manageOnUserLeave(tbInfo);
+    await this.manageOnUserLeave(tbInfo, client);
 }
 
 module.exports.manageOnUserLeave = async (tb, client) => {

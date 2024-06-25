@@ -47,14 +47,15 @@ module.exports.getWaitingUserInRound = async (p) => {
 
 module.exports.getPlayingUserInTable = async (p) => {
   try {
-    // logger.info("\n get getPlayingUserInTable Round p :", p);
+
+    logger.info("\n get getPlayingUserInTable Round p :", p);
     let pl = [];
     if (typeof p === 'undefined' || p === null) {
       logger.info('\n get table Playing User In Round p find Null:', p);
       return pl;
     }
 
-    const list = [CONST.PLAYING, CONST.DROPPED, CONST.WAITING, CONST.WATCHING, CONST.INVALID_DECLARE, CONST.LEAVE];
+    const list = [CONST.PLAYING, CONST.DROPPED, CONST.WAITING, CONST.WATCHING, CONST.INVALID_DECLARE, CONST.LEAVE, 'play', 'pack', 'blind', 'win', 'loss', 'chal'];
 
     for (let x = 0; x < p.length; x++) {
       if (typeof p[x] === 'object' && p[x] !== null && typeof p[x].seatIndex !== 'undefined' && list.includes(p[x].status)) {
@@ -83,7 +84,7 @@ module.exports.getPlayingAndDropUserRound = async (p) => {
 };
 
 module.exports.filterBeforeSendSPEvent = async (userData) => {
-  logger.info("filterBeforeSendSPEvent =>",userData)
+  logger.info("filterBeforeSendSPEvent =>", userData)
   let findCountPlayer = await PlayingTables.aggregate([
     {
       $project: {
