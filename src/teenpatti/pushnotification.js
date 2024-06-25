@@ -11,7 +11,7 @@ const admin = require('firebase-admin');
 serviceAccount = require('../../firebaseToken.json');
 const topic = 'Gamz360';
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount),
 });
 /*
     Title:""
@@ -20,19 +20,19 @@ admin.initializeApp({
 */
 module.exports.sendAllUser = async (requestData) => {
     try {
-        
+
         const message = {
             notification: requestData,
             topic: topic, // Replace with the topic you want to send to
         };
 
         admin.messaging().send(message) // send noti from here
-        .then((response) => {
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.error('Error sending message:', error);
-        });
+            .then((response) => {
+                logger.info('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                logger.error('Error sending message:', error);
+            });
 
         return true;
     } catch (e) {
@@ -51,22 +51,22 @@ module.exports.sendAllUser = async (requestData) => {
 
 module.exports.sendPushNoti = async (requestData) => {
     try {
-        
+
         const message = {
             notification: {
-                title:requestData.Title,
-                body:requestData.Body
+                title: requestData.Title,
+                body: requestData.Body
             },
             tokens: requestData.Tokens, // Replace with the topic you want to send to
         };
 
         admin.messaging().send(message) // send noti from here
-        .then((response) => {
-            console.log('Successfully sent message:', response);
-        })
-        .catch((error) => {
-            console.error('Error sending message:', error);
-        });
+            .then((response) => {
+                logger.info('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                logger.error('Error sending message:', error);
+            });
 
         return true;
     } catch (e) {
@@ -75,18 +75,18 @@ module.exports.sendPushNoti = async (requestData) => {
 }
 
 
-module.exports.subscribeToken = async (requestData) =>{
+module.exports.subscribeToken = async (requestData) => {
 
-    if(requestData.fcmToken != undefined &&  requestData.fcmToken != null && requestData.fcmToken != "" ){
+    if (requestData.fcmToken != undefined && requestData.fcmToken != null && requestData.fcmToken != "") {
 
-        admin.messaging().subscribeToTopic([requestData.fcmToken],topic)
-        .then(() => {
-            console.log(`Successfully subscribed user to topic: topic`);
-        })
-        .catch((error) => {
-            console.error(`Error subscribing user to topic:topic`, error);
-        });
-    }else{
-        console.error('Error subscribing user to requestData', requestData);
+        admin.messaging().subscribeToTopic([requestData.fcmToken], topic)
+            .then(() => {
+                logger.info(`Successfully subscribed user to topic: topic`);
+            })
+            .catch((error) => {
+                logger.error(`Error subscribing user to topic:topic`, error);
+            });
+    } else {
+        logger.error('Error subscribing user to requestData', requestData);
     }
 }

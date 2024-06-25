@@ -8,21 +8,29 @@ const logger = require('../../../logger');
 const commandAcions = require('../socketFunctions');
 
 module.exports.appLunchDetails = async (requestData, client) => {
-  let { playerId, mobileNumber } = requestData;
-  let query = { _id: playerId.toString() };
-  let result = await GameUser.findOne(query, {});
-  if (result) {
-    await this.userSesssionSet(result, client);
+  try {
 
-    let response = await this.filterBeforeSendSPEvent(result);
-    //logger.info('Guest Final response Dashboard', response);
-    commandAcions.sendEvent(client, CONST.DASHBOARD, response);
-  } else {
-    commandAcions.sendEvent(client, CONST.DASHBOARD, requestData, false, 'Please register the user first');
+    let { playerId, mobileNumber } = requestData;
+    let query = { _id: playerId.toString() };
+    let result = await GameUser.findOne(query, {});
+    if (result) {
+      await this.userSesssionSet(result, client);
+
+      let response = await this.filterBeforeSendSPEvent(result);
+      logger.info('Guest Final response Dashboard', response);
+
+      commandAcions.sendEvent(client, CONST.DASHBOARD, response);
+    } else {
+      commandAcions.sendEvent(client, CONST.DASHBOARD, requestData, false, 'Please register the user first');
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    logger.error('appLunchDetails error : ', error);
     return false;
   }
 
-  return true;
 };
 
 module.exports.referralReward = async (referal_code) => {
@@ -60,7 +68,7 @@ module.exports.getUserDefaultFields = async (data, client) => {
     id: 0,
     deviceId: data.deviceId,
     name: data.name ? data.name : '',
-    password:data.password ? data.password : '',
+    password: data.password ? data.password : '',
     status: data.status ? data.status : '',
     isVIP: data.isVIP ? 1 : 0,
     Iscom: data.Iscom ? 1 : 0,
@@ -78,8 +86,8 @@ module.exports.getUserDefaultFields = async (data, client) => {
     tableId: '',
     sckId: client && client.id ? client.id : '',
     authorisedid: data.authorisedid ? data.authorisedid : '',
-    authorisedtype:  data.authorisedtype ? data.authorisedtype : '',
-    authorisedname:  data.authorisedname ? data.authorisedname : '',
+    authorisedtype: data.authorisedtype ? data.authorisedtype : '',
+    authorisedname: data.authorisedname ? data.authorisedname : '',
   };
 
   return setUserDetail;

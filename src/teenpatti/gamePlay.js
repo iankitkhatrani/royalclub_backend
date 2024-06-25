@@ -76,9 +76,9 @@ module.exports.chal = async (requestData, client) => {
             chalvalue = chalvalue * 2;
         }
 
-        if (playerInfo.playStatus == "blind" && playerInfo.isSee) {
+        if (playerInfo.playerStatus == "blind" && playerInfo.isSee) {
             chalvalue = chalvalue * 2;
-            updateData.$set["playerInfo.$.playStatus"] = "chal"
+            updateData.$set["playerInfo.$.playerStatus"] = "chal"
         }
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
 
@@ -281,7 +281,7 @@ module.exports.cardPack = async (requestData, client) => {
             cards: playerInfo.cards,
             seatIndex: client.seatIndex,
             totalBet: playerInfo.totalBet,
-            playStatus: "pack",
+            playerStatus: "pack",
             winningCardStatus: winner_state.status
         }
 
@@ -371,6 +371,6 @@ module.exports.seeCard = async (requestData, client) => {
 
         return true;
     } catch (e) {
-        logger.info("Exception PACK : ", e);
+        logger.info("Exception seeCard : ", e);
     }
 }

@@ -135,7 +135,7 @@ module.exports.resetUserData = async (tbId, playerInfo) => {
                 let update = {
                     $set: {
                         "playerInfo.$.status": "play",
-                        "playerInfo.$.playStatus": "blind",
+                        "playerInfo.$.playerStatus": "blind",
                         "playerInfo.$.chalValue": 0,
                         "playerInfo.$.cards": [],
                         "playerInfo.$.turnMissCounter": 0,

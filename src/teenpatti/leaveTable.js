@@ -67,7 +67,7 @@ module.exports.leaveTable = async (requestData, client) => {
             commandAcions.clearJob(tb.jobId)
         }
         if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playStatus) != -1) {
+            if (["chal", "blind"].indexOf(playerInfo.playerStatus) != -1) {
 
                 let userTrack = {
                     _id: playerInfo._id,
@@ -75,7 +75,7 @@ module.exports.leaveTable = async (requestData, client) => {
                     cards: playerInfo.cards,
                     seatIndex: playerInfo.seatIndex,
                     totalBet: playerInfo.totalBet,
-                    playStatus: "leaveTable"
+                    playerStatus: "leaveTable"
                 }
                 updateData["$push"] = {
                     "gameTracks": userTrack
@@ -168,18 +168,18 @@ module.exports.manageOnUserLeave = async (tb, client) => {
 }
 
 module.exports.leaveSingleUser = async (tbid) => {
-    console.log("leaveSingleUser call tbid : ", tbid);
+    logger.info("leaveSingleUser call tbid : ", tbid);
     let tbId = tbid
     let jobId = "LEAVE_SINGLE_USER:" + tbid;
     let delay = commandAcions.AddTime(120);
     const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
-    console.log("leaveSingleUser delayRes : ", delayRes);
+    logger.info("leaveSingleUser delayRes : ", delayRes);
 
     const wh1 = {
         _id: MongoID(tbId.toString())
     }
     const tabInfo = await PlayingTables.findOne(wh1, {}).lean();
-    console.log("leaveSingleUser tabInfo : ", tabInfo);
+    logger.info("leaveSingleUser tabInfo : ", tabInfo);
     if (tabInfo.activePlayer == 1) {
         let playerInfos = tabInfo.playerInfo
         for (let i = 0; i < playerInfos.length; i++) {

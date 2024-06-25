@@ -109,7 +109,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
                     seatIndex: playerInGame[i].seatIndex,
                     cards: playerInGame[i].cards,
                     totalBet: playerInGame[i].totalBet,
-                    playStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
+                    playerStatus: (winnerIndexs.indexOf(playerInGame[i].seatIndex) != -1) ? "win" : "loss",
                     winningCardStatus: winnerState.status
                 }
             )
@@ -121,7 +121,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
         logger.info("winnerDeclareCall winnerTrack:: ", winnerTrack);
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
-            if (tbInfo.gameTracks[i].playStatus == "win") {
+            if (tbInfo.gameTracks[i].playerStatus == "win") {
                 await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "TeenPatti Win", tabInfo);
             }
         }
@@ -134,6 +134,10 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.TEEN_PATTI_WINNER, winnerViewResponse);
 
+        let jobId = commandAcions.GetRandomString(10);
+        let delay = commandAcions.AddTime(4);
+        await commandAcions.setDelay(jobId, new Date(delay));
+
         await roundEndActions.roundFinish(tbInfo);
 
     } catch (err) {
@@ -141,7 +145,7 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
     }
 }
 
-module.exports.winnerViewResponseFilter = (playerInfos, winnerTrack, winnerIndexs) => {
+module.exports.winnerViewResponseFilter = async (playerInfos, winnerTrack, winnerIndexs) => {
     logger.info("winnerViewResponseFilter playerInfo : ", playerInfos);
     let userInfo = [];
     let playerInfo = playerInfos;
@@ -153,7 +157,7 @@ module.exports.winnerViewResponseFilter = (playerInfos, winnerTrack, winnerIndex
                 _id: playerInfo[i]._id,
                 seatIndex: playerInfo[i].seatIndex,
                 cards: playerInfo[i].cards,
-                playStatus: playerInfo[i].playStatus,
+                playerStatus: playerInfo[i].playerStatus,
                 cardStatus: playerInfo[i].winningCardStatus
             })
         }
