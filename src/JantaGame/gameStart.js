@@ -288,7 +288,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
                     winnerData.push({
                         uid:tbInfo.playerInfo[i]._id,
                         seatIndex:tbInfo.playerInfo[i].seatIndex,
-                        winAmount:TotalWinAmount-TotalBetAmount,
+                        winAmount:TotalWinAmount,
                     })
 
                     await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[i]._id, Number(TotalWinAmount), 4, "Janta Win", "Janta");
