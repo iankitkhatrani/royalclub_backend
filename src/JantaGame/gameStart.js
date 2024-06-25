@@ -194,8 +194,8 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
             if (tbInfo.playerInfo[i].seatIndex != undefined) {
                 //"playerInfo.$.betObject": [],
                 let betObjectData = tbInfo.playerInfo[i].betObject;
-                var TotalWinAmount = 0;
-                var TotalBetAmount = 0;
+                let TotalWinAmount = 0;
+                let TotalBetAmount = 0;
                 if (tbInfo.playerInfo[i].betObject.length > 0) {
                     const upWh = {
                         _id: MongoID(tbid),
@@ -204,6 +204,8 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
                     const updateData = {
                         $set: {
                             "playerInfo.$.pastbetObject": tbInfo.playerInfo[i].betObject,
+                            "playerInfo.$.selectObj": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            "playerInfo.$.betObject": [],
                         }
                     };
                     logger.info("winnerSorat upWh updateData :: ", upWh, updateData);
