@@ -130,6 +130,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         // }
         let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
+        logger.info("startUserTurn isShow :", isShow);
 
         let response = {
             previousTurn: objData.turnSeatIndex,
@@ -139,14 +140,13 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_USER_TURN_START, response);
 
-        if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {
-            // Rboot Logic Start Playing 
-            botLogic.PlayRobot(tb, tb.playerInfo[tb.turnSeatIndex], playerInGame)
-        }
+        // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {
+        //     // Rboot Logic Start Playing 
+        //     botLogic.PlayRobot(tb, tb.playerInfo[tb.turnSeatIndex], playerInGame)
+        // }
 
 
         let tbid = tb._id.toString();
-
         let time = 30;
         let turnChangeDelayTimer = commandAcions.AddTime(time);
         logger.info("startUserTurn jobId time ::", jobId, time, new Date(turnChangeDelayTimer), new Date());
@@ -316,9 +316,6 @@ module.exports.checShowButton = async (p, playerIndex) => {
     try {
         //&&  (p[i].playerStatus == "chal" || (p[i].playerStatus == "blind" &&
         let counter = 0;
-        logger.info("checShowButton  :playerIndex  ", playerIndex);
-
-
 
         for (let i = 0; i < p.length; i++) {
             logger.info("checShowButton  :seatIndex  ", p[i].seatIndex);

@@ -175,7 +175,7 @@ module.exports.show = async (requestData, client) => {
         if (playerInGame.length != 2) {
             logger.info("show : client.su ::", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "Not valid show!!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SHOW, requestData, false, "Not valid show!!");
             return false;
         }
 
