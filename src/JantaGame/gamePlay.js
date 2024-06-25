@@ -8,8 +8,7 @@ const logger = require("../../logger");
 const commandAcions = require("../helper/socketFunctions");
 const JantaTables = mongoose.model('JantaTables');
 
-const walletActions = require("./updateWallet");
-
+const walletActions = require("../roulette/updateWallet");
 
 /*
     bet : 10,
@@ -98,8 +97,9 @@ module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.deductWallet(client.uid, -chalvalue, 2, "Janta Bet", tabInfo, client.id, client.seatIndex, "Janta");
+        //await walletActions.deductWallet(client.uid, -chalvalue, 2, "Janta Bet", tabInfo, client.id, client.seatIndex, "Janta");
 
+        await walletActions.deductWallet(client.uid, -chalvalue, 2, "Janta Bet", "Janta");
         if (requestData.type == "NORMAL") {
             updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
         } else if (requestData.type == "Odd") {
@@ -227,7 +227,7 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
 
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.addWallet(client.uid, chalvalue, 2, "Janta Bet Return", tabInfo, client.id, client.seatIndex, "Janta");
+        await walletActions.addWalletAdmin(client.uid, Number(chalvalue), 2, "Janta Bet Return", "Janta");
 
         // {
         //     tableId: '6672c42aaf99441c68fd8011',
@@ -375,8 +375,8 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
 
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.addWallet(client.uid, chalvalue, 2, "Janta Bet Return", tabInfo, client.id, client.seatIndex, "Janta");
-
+        
+        await walletActions.addWalletAdmin(client.uid, Number(chalvalue), 2, "Janta Bet Return", "Janta");
         // if (requestData.type == "NORMAL") {
         //     updateData.$inc["playerInfo.$.selectObj." + requestData.item] = -chalvalue;
         // } else if (requestData.type == "Odd") {

@@ -351,8 +351,11 @@ module.exports.CLPT = async (requestData, client) => {
             sendEvent(client, CONST.CLPT, requestData, false, "Please restart game!!");
             return false;
         }
-        if (typeof client.CLPT != "undefined" && client.CLPT) return false;
+        if (typeof client.CLPT != "undefined" && client.CLPT){
+            console.log("CLPT ",client.CLPT)
+            return false;
 
+        }
         client.CLPT = true;
 
         let gwh = {
@@ -536,7 +539,7 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
                 message: "already exists",
                 status: 0,
                 tableCode: isExist.tableCode,
-                _id:isExist.createTableplayerId
+                _id:isExist.tableid
             };
         } else {
             return {

@@ -221,20 +221,20 @@ module.exports.addWalletAdmin = async (id, added_chips, tType, t, game, adminnam
             await this.trackUserWallet(walletTrack);
         }
 
-        if ((typeof upReps.chips.toString().split(".")[1] != "undefined" && upReps.chips.toString().split(".")[1].length > 2) || (typeof upReps.winningChips.toString().split(".")[1] != "undefined" && upReps.winningChips.toString().split(".")[1].length > 2)) {
+        // if ((typeof upReps.chips.toString().split(".")[1] != "undefined" && upReps.chips.toString().split(".")[1].length > 2) || (typeof upReps.winningChips.toString().split(".")[1] != "undefined" && upReps.winningChips.toString().split(".")[1].length > 2)) {
 
-            let updateData = {
-                $set: {}
-            }
-            updateData["$set"]["chips"] = parseFloat(upReps.chips.toFixed(2))
+        //     let updateData = {
+        //         $set: {}
+        //     }
+        //     updateData["$set"]["chips"] = parseFloat(upReps.chips.toFixed(2))
 
-            //updateData["$set"]["winningChips"] = parseFloat(upReps.winningChips.toFixed(2))
+        //     //updateData["$set"]["winningChips"] = parseFloat(upReps.winningChips.toFixed(2))
 
-            if (Object.keys(updateData.$set).length > 0) {
-                let upRepss = await GameUser.findOneAndUpdate(wh, updateData, { new: true });
-                logger.info("\ndedudctWallet upRepss  :: ", upRepss);
-            }
-        }
+        //     if (Object.keys(updateData.$set).length > 0) {
+        //         let upRepss = await GameUser.findOneAndUpdate(wh, updateData, { new: true });
+        //         logger.info("\ndedudctWallet upRepss  :: ", upRepss);
+        //     }
+        // }
         commandAcions.sendDirectEvent(userInfo.sckId, CONST.WALLET_UPDATE, {
            // winningChips: upReps.winningChips,
             chips: upReps.chips,

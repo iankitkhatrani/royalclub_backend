@@ -8,6 +8,7 @@ const LudoBetListSchema = new Schema(
         createTableplayerId: { type: String, required: true },
         gameType: { type: String, default: 'privateLudo' },
         tableCode: { type: String },
+        tableid: { type: String },
         entryFee: { type: Number },//boot Amount
         potLimit: { type: Number },//Max Pot
         createdAt: { type: Date, default: Date.now },
