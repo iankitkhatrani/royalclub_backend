@@ -202,7 +202,23 @@ router.put('/addMoney', async (req, res) => {
 
 
         }else if (req.body.authorisedtype == "Agent") {
-            
+
+            const agentInfo = await Agent.findOne({ _id: new mongoose.Types.ObjectId(req.body.authorisedid) }, { name: 1, chips: 1 })
+
+            console.log("agentInfo ", agentInfo)
+
+            if (agentInfo != null && agentInfo.chips < Number(req.body.money)) {
+                res.json({ status: false, msg: "not enough chips to adding user wallet" });
+                return false
+            }
+
+            const UsersInfo = await Users.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1 })
+
+            await walletActions.deductagentWallet(agentInfo._id, -Number(req.body.money),"debit", "Credited User Chips", "-","","","",UsersInfo._id,"User",UsersInfo.name);
+
+
+            await walletActions.addUserWallet(req.body.userId, Number(req.body.money),"credit", "Agent Added Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
         }
 
 
@@ -246,6 +262,9 @@ router.put('/deductMoney', async (req, res) => {
             //User Credit
             await walletActions.deductuserWallet(req.body.userId, -Number(req.body.money),"debit", "Super Admin duduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
+            res.json({ status: "ok", msg: "Successfully Debited...!!" });
+
+            return false
              
 
         } else if (req.body.authorisedtype == "Admin") {
@@ -260,13 +279,21 @@ router.put('/deductMoney', async (req, res) => {
 
             res.json({ status: "ok", msg: "Successfully Debited...!!" });
 
-            
+            return false
 
-        }else if (req.body.authorisedtype == "Agent") {
+        } else if (req.body.authorisedtype == "Agent") {
             
-            //Agent debit
-            
-            //User Credit
+            await walletActions.addagentWalletAdmin(req.body.authorisedid, Number(req.body.money),"credit", "User to deduct Chips", "-","","","",UserInfo._id,"User",UserInfo.name);
+
+
+            await walletActions.deductuserWallet(req.body.userId, -Number(req.body.money),"debit", "Agent duduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
+
+            logger.info('admin/dahboard.js post dahboard  error => ');
+
+            res.json({ status: "ok", msg: "Successfully Debited...!!" });
+
+            return false
 
         }
         logger.info('admin/dahboard.js post dahboard  error => ');
