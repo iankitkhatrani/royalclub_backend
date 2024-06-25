@@ -111,13 +111,13 @@ async function adminLogin(requestBody) {
  * @param {Object} requestBody
  * @returns {Object}
  */
-async function AgentLogin(requestBody) {
+async function AdminLogin(requestBody) {
 
     const { email, password } = requestBody;
     console.info('name => ', email, '\n password => ', password);
     try {
         const data = await AdminUser.findOne({ name:email,password:password }).lean();
-
+        
         const token = await commonHelper.sign(data);
         data.token = token;
         delete data.password;
@@ -149,7 +149,7 @@ async function AgentLogin(requestBody) {
  * @param {Object} requestBody
  * @returns {Object}
  */
-async function ShopLogin(requestBody) {
+async function AgentLogin(requestBody) {
 
     const { email, password } = requestBody;
     console.info('name => ', email, '\n password => ', password);
@@ -343,6 +343,6 @@ module.exports = {
     getBetList,
     getBetDetails,
     getBannerList,
-    AgentLogin,
-    ShopLogin
+    AdminLogin,
+    AgentLogin
 }

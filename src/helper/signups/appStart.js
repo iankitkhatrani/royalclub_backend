@@ -69,7 +69,7 @@ module.exports.getUserDefaultFields = async (data, client) => {
     deviceId: data.deviceId,
     name: data.name ? data.name : '',
     password: data.password ? data.password : '',
-    status: data.status ? data.status : '',
+    status: data.status ? data.status : true,
     isVIP: data.isVIP ? 1 : 0,
     Iscom: data.Iscom ? 1 : 0,
     uniqueId: '',

@@ -85,10 +85,10 @@ router.get('/rouletteHistory', async (req, res) => {
 */
 router.get('/TransactionData', async (req, res) => {
     try {
-        console.info('TransactionData  => ', req.query);
+        console.info('TransactionData  => :::::::::::::::::::::', req.query);
         let TransactionData = []
         
-        TransactionData = await UserWalletTracks.find({ userId: MongoID(req.query.Id) },
+        TransactionData = await UserWalletTracks.find({ userId: MongoID(req.query.userId) },
         {
             createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
             trnxType: 1,
@@ -104,6 +104,7 @@ router.get('/TransactionData', async (req, res) => {
             }).sort({ createdAt: -1 })
         
         logger.info('admin/dahboard.js post dahboard  error TransactionData => ', TransactionData);
+        console.info('TransactionData  => ', TransactionData);
 
         res.json({ TransactionData });
     } catch (error) {

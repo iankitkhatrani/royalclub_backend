@@ -1,4 +1,8 @@
 const mongoose = require('mongoose');
+const MongoID = mongoose.Types.ObjectId;
+
+const Agent = mongoose.model('agent');
+const AdminUser = mongoose.model("admin");
 const Users = mongoose.model('users');
 const express = require('express');
 const router = express.Router();
@@ -7,6 +11,7 @@ const commonHelper = require('../../helper/commonHelper');
 const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
 const { registerUser } = require('../../helper/signups/signupValidation');
+const walletActions = require("../../common-function/walletTrackTransaction");
 
 
 /**
@@ -19,14 +24,27 @@ const { registerUser } = require('../../helper/signups/signupValidation');
 */
 router.get('/UserList', async (req, res) => {
     try {
-        //console.info('requet => ', req);
+        
+        console.info('requet => ', req.query);
 
-        const userList = await Users.find({}, {
-            name: 1, id: 1, password: 1,
-            "counters.totalMatch": 1, isVIP: 1, chips: 1, referralCode: 1, createdAt: 1,
-            lastLoginDate: 1, status: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1,
-            uniqueId:1
-        }).sort({ createdAt: -1 })
+        let userList = []
+        if (req.query.Id == "SuperAdmin") {
+            userList = await Users.find({}, {
+                name: 1, id: 1, password: 1,
+                "counters.totalMatch": 1, isVIP: 1, chips: 1, referralCode: 1, createdAt: 1,
+                lastLoginDate: 1, status: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1,
+                uniqueId:1
+            }).sort({ createdAt: -1 })
+    
+        } else {
+            userList = await Users.find({authorisedid: MongoID(req.query.Id)}, {
+                name: 1, id: 1, password: 1,
+                "counters.totalMatch": 1, isVIP: 1, chips: 1, referralCode: 1, createdAt: 1,
+                lastLoginDate: 1, status: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1,
+                uniqueId:1
+            }).sort({ createdAt: -1 })
+            
+        }
 
         logger.info('admin/dahboard.js post dahboard  userList error => ', userList);
 
@@ -154,11 +172,44 @@ router.delete('/DeleteUser/:id', async (req, res) => {
 router.put('/addMoney', async (req, res) => {
     try {
         console.log("Add Money ", req.body)
-        //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
+        if (req.body.authorisedtype == "SuperAdmin") {
+
+            //SuperAdmin debit
+            
+            //User Credit
+            await walletActions.addUserWallet(req.body.userId, Number(req.body.money),"credit", "Super Admin Added Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
+             
+
+        } else if (req.body.authorisedtype == "Admin") {
+
+            const adminInfo = await AdminUser.findOne({ _id: new mongoose.Types.ObjectId(req.body.authorisedid) }, { name: 1, chips: 1 })
+
+            console.log("adminInfo ", adminInfo)
+
+            if (adminInfo != null && adminInfo.chips < Number(req.body.money)) {
+                res.json({ status: false, msg: "not enough chips to adding user wallet" });
+                return false
+            }
+
+            const UsersInfo = await Users.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1 })
+
+            //await walletActions.deductadminWallet(req.body.adminid, -Number(req.body.money),"debit", "Add Chips to Agent", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+            await walletActions.deductadminWallet(adminInfo._id, -Number(req.body.money),"debit", "Credited User Chips", "-","", "","",UsersInfo._id,"User",UsersInfo.name);
+
+
+            await walletActions.addUserWallet(req.body.userId, Number(req.body.money),"credit", "Admin Added Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
+
+        }else if (req.body.authorisedtype == "Agent") {
+            
+        }
+
 
         logger.info('admin/dahboard.js post dahboard  error => ');
 
-        res.json({ status: "ok" });
+        res.json({ status: "ok", msg: "Successfully Credited...!!" });
+
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         //res.send("error");
@@ -178,8 +229,46 @@ router.put('/addMoney', async (req, res) => {
 router.put('/deductMoney', async (req, res) => {
     try {
         console.log("deductMoney ", req.body)
-        //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
 
+        const UserInfo = await Users.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1,chips:1 })
+
+        if (UserInfo != null && UserInfo.chips < Math.abs(req.body.money)) {
+            res.json({ status: false, msg: "not enough chips to adding User wallet" });
+            return false
+        }
+
+
+        //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
+        if (req.body.authorisedtype == "SuperAdmin") {
+
+            //SuperAdmin debit
+            
+            //User Credit
+            await walletActions.deductuserWallet(req.body.userId, -Number(req.body.money),"debit", "Super Admin duduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
+             
+
+        } else if (req.body.authorisedtype == "Admin") {
+
+            await walletActions.addadminWalletAdmin(req.body.authorisedid, Number(req.body.money),"credit", "User to deduct Chips", "-","", "","",UserInfo._id,"User",UserInfo.name);
+
+
+            await walletActions.deductuserWallet(req.body.userId, -Number(req.body.money),"debit", "Admin duduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
+
+            logger.info('admin/dahboard.js post dahboard  error => ');
+
+            res.json({ status: "ok", msg: "Successfully Debited...!!" });
+
+            
+
+        }else if (req.body.authorisedtype == "Agent") {
+            
+            //Agent debit
+            
+            //User Credit
+
+        }
         logger.info('admin/dahboard.js post dahboard  error => ');
 
         res.json({ status: "ok" });

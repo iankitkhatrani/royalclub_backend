@@ -8,6 +8,49 @@ const mainCtrl = require('../../controller/adminController');
 const logger = require('../../../logger');
 const { registerUser } = require('../../helper/signups/signupValidation');
 const walletActions = require("../../common-function/walletTrackTransaction");
+const Users = mongoose.model('users');
+const Agent = mongoose.model('agent');
+
+
+/**
+ * @api {post} /admin/lobbies
+ * @apiName  add-bet-list
+ * @apiGroup  Admin
+ * @apiHeader {String}  x-access-token Admin's unique access-key
+ * @apiSuccess (Success 200) {Array} badges Array of badges document
+ * @apiError (Error 4xx) {String} message Validation or error message.
+ */
+router.get('/dashboardDataAdmin', async (req, res) => {
+    try {
+      console.log('requet dashboardDataAdmin1111111111111111 => ', req.query);
+      let totalUser = 0;
+      let totalAgent = 0
+        
+      if (req.query.Id == undefined || req.query.Id == "undefined" || req.query.Id == "Admin") {
+        totalUser = await Users.find().count()
+      } else {
+        totalUser = await Users.find({ authorisedid: req.query.Id.toString() }).count()
+  
+    }
+        
+        if (req.query.Id == undefined || req.query.Id == "undefined" || req.query.Id == "Admin") {
+            totalAgent = await Agent.find().count()
+  
+          } else {
+            totalAgent = await Agent.find({authorisedid: req.query.Id.toString()}).count()
+  
+        }
+        
+        console.log("totalUser ",totalUser,totalAgent)
+      
+
+      res.json({totalUser , totalAgent});
+    } catch (error) {
+      logger.error('admin/dahboard.js post bet-list error => ', error);
+      res.status(config.INTERNAL_SERVER_ERROR).json(error);
+    }
+});
+  
 
 /**
 * @api {post} /admin/lobbies

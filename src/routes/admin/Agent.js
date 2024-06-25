@@ -31,7 +31,7 @@ router.get('/AgentList', async (req, res) => {
             agentList = await Agent.find({}, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentage: 1, type: 1 })
 
         } else {
-            agentList = await Agent.find({ adminid: MongoID(req.query.agentId) }, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentage: 1, type: 1 })
+            agentList = await Agent.find({ authorisedid: MongoID(req.query.agentId) }, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentage: 1, type: 1 })
         }
         logger.info('ShopList admin/dahboard.js post dahboard  error => ', agentList);
 
@@ -226,26 +226,26 @@ router.put('/AgentAddMoney', async (req, res) => {
     try {
         console.log("AgentAddMoney ", req.body)
         //const RecentUser = //await Users.deleteOne({_id: new mongoose.Types.ObjectId(req.params.id)})
-        console.log("adminname ", req.body.adminname)
-        if (req.body.adminname == 'Admin') {
+        console.log("adminname ", req.body.authorisedtype)
+        if (req.body.authorisedtype == 'Admin') {
 
-            const agentInfo = await AdminUser.findOne({ _id: new mongoose.Types.ObjectId(req.body.adminid) }, { name: 1, chips: 1 })
+            const adminInfo = await AdminUser.findOne({ _id: new mongoose.Types.ObjectId(req.body.authorisedid) }, { name: 1, chips: 1 })
 
-            console.log("agentInfo ", agentInfo)
+            console.log("adminInfo ", adminInfo)
 
-            if (agentInfo != null && agentInfo.chips < Number(req.body.money)) {
+            if (adminInfo != null && adminInfo.chips < Number(req.body.money)) {
                 res.json({ status: false, msg: "not enough chips to adding user wallet" });
                 return false
             }
 
-            const ShopInfo = await Agent.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1 })
+            const AgentInfo = await Agent.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1 })
 
-            //await walletActions.deductagentWallet(req.body.adminid, -Number(req.body.money), 2, "Add Chips to Sub Agent", "roulette", agentInfo.name, req.body.adminid, req.body.userId, ShopInfo.name);
+            //await walletActions.deductadminWallet(req.body.adminid, -Number(req.body.money),"debit", "Add Chips to Agent", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+            await walletActions.deductadminWallet(adminInfo._id, -Number(req.body.money),"debit", "Credited Agent Chips", "-","", "","",AgentInfo._id,"Agent",AgentInfo.name);
 
-            await walletActions.deductadminWallet(req.body.adminid, -Number(req.body.money),"debit", "Add Chips to Agent", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
+            await walletActions.addagentWalletAdmin(req.body.userId, Number(req.body.money),"credit", "Admin Addeed Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
-            await walletActions.addshopWalletAdmin(req.body.userId, Number(req.body.money), 2, "Admin Addeed Chips", "roulette", agentInfo.name, req.body.adminid);
 
             logger.info('admin/dahboard.js post dahboard  error => ');
 
@@ -253,7 +253,7 @@ router.put('/AgentAddMoney', async (req, res) => {
 
         } else {
 
-            await walletActions.addadminWalletAdmin(req.body.userId, Number(req.body.money),"credit", "Super Admin Addeed Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+            await walletActions.addagentWalletAdmin(req.body.userId, Number(req.body.money),"credit", "Super Admin Addeed Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
             logger.info('admin/dahboard.js post dahboard  error => ');
 
@@ -277,36 +277,31 @@ router.put('/AgentAddMoney', async (req, res) => {
 */
 router.put('/agentDeductMoney', async (req, res) => {
     try {
-       
+
+        const AgentInfo = await Agent.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1,chips:1 })
+
+        if (AgentInfo != null && AgentInfo.chips < Math.abs(req.body.money)) {
+            res.json({ status: false, msg: "not enough chips to adding Agent wallet" });
+            return false
+        }
 
         console.log("adminname ", req.body.adminname)
-        if (req.body.adminname == 'Admin') {
+        if (req.body.authorisedtype == 'Admin') {
 
-            const agentInfo = await AdminUser.findOne({ _id: new mongoose.Types.ObjectId(req.body.adminid) }, { name: 1, chips: 1 })
-
-            console.log("agentInfo ", agentInfo)
-
-            if (agentInfo != null && agentInfo.chips < Number(req.body.money)) {
-                res.json({ status: false, msg: "not enough chips to adding user wallet" });
-                return false
-            }
-
-            const ShopInfo = await Agent.findOne({ _id: new mongoose.Types.ObjectId(req.body.userId) }, { name: 1 })
-
-            //await walletActions.deductagentWallet(req.body.adminid, -Number(req.body.money), 2, "Add Chips to Sub Agent", "roulette", agentInfo.name, req.body.adminid, req.body.userId, ShopInfo.name);
-
-            await walletActions.deductadminWallet(req.body.adminid, -Number(req.body.money),"debit", "Add Chips to Agent", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+            await walletActions.addadminWalletAdmin(req.body.authorisedid, Number(req.body.money),"credit", "Agent to deduct Chips", "-","", "","",AgentInfo._id,"Agent",AgentInfo.name);
 
 
-            await walletActions.addshopWalletAdmin(req.body.userId, Number(req.body.money), 2, "Admin Addeed Chips", "roulette", agentInfo.name, req.body.adminid);
+            await walletActions.deductagentWallet(req.body.userId, -Number(req.body.money),"debit", " Admin deduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+
 
             logger.info('admin/dahboard.js post dahboard  error => ');
 
             res.json({ status: "ok", msg: "Successfully Debited...!!" });
 
+            
         } else {
 
-            await walletActions.deductagentWallet(req.body.userId, -Number(req.body.money),"debit", "Super Admin Addeed Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
+            await walletActions.deductagentWallet(req.body.userId, -Number(req.body.money),"debit", "Super Admin deduct Chips", "-",req.body.authorisedid, req.body.authorisedtype,req.body.authorisedname);
 
             logger.info('admin/dahboard.js post dahboard  error => ');
 
