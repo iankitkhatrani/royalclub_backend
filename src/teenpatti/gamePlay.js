@@ -135,7 +135,7 @@ module.exports.show = async (requestData, client) => {
     try {
         logger.info("show requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "User session not set, please restart game!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SHOW, requestData, false, "User session not set, please restart game!");
             return false;
         }
         if (typeof client.show != "undefined" && client.show) return false;
@@ -165,7 +165,7 @@ module.exports.show = async (requestData, client) => {
         if (tabInfo.turnSeatIndex != client.seatIndex) {
             logger.info("show : client.su ::", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "It's not your turn!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SHOW, requestData, false, "It's not your turn!");
             return false;
         }
 
@@ -207,7 +207,7 @@ module.exports.show = async (requestData, client) => {
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("show client.su :: ", client.seatIndex);
             delete client.show;
-            commandAcions.sendDirectEvent(client.sck, CONST.TEEn_PATTI_SHOW, requestData, false, "Please add wallet!!");
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_SHOW, requestData, false, "Please add wallet!!");
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2));
@@ -231,7 +231,7 @@ module.exports.show = async (requestData, client) => {
             seatIndex: tb.turnSeatIndex,
             chalValue: chalvalue
         }
-        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEn_PATTI_SHOW, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_SHOW, response);
         delete client.show;
         await checkWinnerActions.winnercall(tb, true, tb.turnSeatIndex);
         return true;
