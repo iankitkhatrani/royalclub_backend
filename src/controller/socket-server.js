@@ -53,9 +53,6 @@ myIo.init = function (server) {
                 const decryptObj = commonHelper.decrypt(data.payload);
                 const payload = JSON.parse(decryptObj);
 
-                logger.info("req connected ===> ", payload);
-
-
                 switch (payload.eventName) {
 
                     case CONST.PING: {

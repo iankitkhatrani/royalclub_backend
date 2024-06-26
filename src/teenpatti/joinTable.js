@@ -36,7 +36,7 @@ module.exports.joinTable = async (requestData, client) => {
         let UserInfo = await GameUser.findOne(gwh, {}).lean();
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        let totalWallet = Number(UserInfo.chips)
         if (Number(totalWallet) < Number(BetInfo.entryFee)) {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
@@ -73,7 +73,7 @@ module.exports.getBetTable = async (BetInfo) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
         boot: Number(BetInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 5 /*BetInfo.maxSeat*/ }
+        activePlayer: { $gte: 0, $lt: 6 /*BetInfo.maxSeat*/ }
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -87,6 +87,8 @@ module.exports.getBetTable = async (BetInfo) => {
 
 module.exports.createTable = async (betInfo) => {
     try {
+        logger.info("Teen createTable betInfo : ", JSON.stringify(betInfo));
+
         let insertobj = {
             gameId: "",
             maxSeat: betInfo.maxPlayer,
@@ -124,9 +126,9 @@ module.exports.makeObjects = (no) => {
 
 module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
     try {
-        logger.info("findEmptySeatAndUserSeat table :=> ", table + '\n' + " betInfo :=> ", betInfo);
+        logger.info("Teen findEmptySeatAndUserSeat table :=> ", table + '\n' + " betInfo :=> ", betInfo);
         let seatIndex = this.findEmptySeat(table.playerInfo); //finding empty seat
-        logger.info("findEmptySeatAndUserSeat seatIndex ::", seatIndex);
+        logger.info("teen findEmptySeatAndUserSeat seatIndex ::", seatIndex);
 
         if (seatIndex == "-1") {
             await this.findTable(betInfo, client)
@@ -145,7 +147,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
         // };
         // let tbInfo = await PlayingTables.findOne(wh,{}).lean();
         // logger.info("findEmptySeatAndUserSeat tbInfo : ", tbInfo)
-        let totalWallet = Number(userInfo.chips) + Number(userInfo.winningChips)
+
+        let totalWallet = Number(userInfo.chips) //+ Number(userInfo.winningChips)
         let playerDetails = {
             seatIndex: seatIndex,
             _id: userInfo._id,

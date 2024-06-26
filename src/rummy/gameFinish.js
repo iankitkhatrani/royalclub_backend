@@ -218,7 +218,8 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
 
         let winningwallet = Number(winnerTrack.winningAmount)
 
-        await walletActions.addWalletWinngChpis(tableInfo.gameTracks[i]._id, Number(winningwallet), 'Credit', 'Game Win', 'Game', tableInfo);
+
+        await walletActions.addUserWalletGame(tableInfo.gameTracks[i]._id, Number(winningwallet), "credit", "Game Win", "Rummy", tableInfo._id);
 
       }
     }

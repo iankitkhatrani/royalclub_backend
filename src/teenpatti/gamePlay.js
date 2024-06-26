@@ -79,7 +79,7 @@ module.exports.chal = async (requestData, client) => {
             chalvalue = chalvalue * 2;
             updateData.$set["playerInfo.$.playerStatus"] = "chal"
         }
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
 
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("chal client.su ::", client.seatIndex);

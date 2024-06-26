@@ -38,7 +38,7 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
       chips: 1,
       sckId: 1,
       flags: 1,
-      _id:1
+      _id: 1
     }
 
     const adminInfo = await GameUser.findOne(wh, projection);
@@ -158,7 +158,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     let projection = {
       name: 1,
       chips: 1,
-      sckId:1
+      sckId: 1
     }
 
     const adminInfo = await GameUser.findOne(wh, projection);
@@ -223,10 +223,10 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
 
     commandAcions.sendDirectEvent(adminInfo.sckId, CONST.WALLET_UPDATE, {
       // winningChips: upReps.winningChips,
-       chips: upReps.chips,
-       totalWallet: totalRemaningAmount,
-       msg: t
-   });
+      chips: upReps.chips,
+      totalWallet: totalRemaningAmount,
+      msg: t
+    });
 
     return totalRemaningAmount;
   } catch (e) {

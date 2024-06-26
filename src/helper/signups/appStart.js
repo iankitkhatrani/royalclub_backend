@@ -1,18 +1,21 @@
 const mongoose = require('mongoose');
 const MongoID = mongoose.Types.ObjectId;
+
 const GameUser = mongoose.model('users');
 const IdCounter = mongoose.model('idCounter');
-//const bcrypt = require('bcrypt');
+
 const CONST = require('../../../constant');
 const logger = require('../../../logger');
 const commandAcions = require('../socketFunctions');
 
 module.exports.appLunchDetails = async (requestData, client) => {
   try {
-
     let { playerId, mobileNumber } = requestData;
-    let query = { _id: playerId.toString() };
+    let query = { _id: MongoID(playerId) };
+
     let result = await GameUser.findOne(query, {});
+    logger.info('appLunchDetails Guest User Details : ', result);
+
     if (result) {
       await this.userSesssionSet(result, client);
 
@@ -25,7 +28,6 @@ module.exports.appLunchDetails = async (requestData, client) => {
       return false;
     }
 
-    return true;
   } catch (error) {
     logger.error('appLunchDetails error : ', error);
     return false;
@@ -210,6 +212,7 @@ module.exports.userSesssionSet = async (userData, client) => {
     return false;
   }
 };
+
 module.exports.filterBeforeSendSPEvent = async (userData) => {
   logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', userData);
 

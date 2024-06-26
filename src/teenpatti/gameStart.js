@@ -16,7 +16,9 @@ const walletActions = require("./updateWallet");
 module.exports.gameTimerStart = async (tb) => {
     try {
         logger.info("gameTimerStart tb : ", tb);
-        if (tb.gameState != "") return false;
+        if (tb.gameState != "") {
+            return false;
+        }
 
         let wh = {
             _id: tb._id
@@ -102,13 +104,14 @@ module.exports.collectBoot = async (tbId) => {
 module.exports.deduct = async (tabInfo, playerInfo) => {
     try {
 
-        logger.info("\ndeduct playerInfo :: ", playerInfo);
+        logger.info("\n Teen deduct playerInfo :: ", playerInfo);
         let seatIndexs = [];
         for (let i = 0; i < playerInfo.length; i++) {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), "debit", "Teen Patti Boot Amount", "Teen Patti", tabInfo._id);
 
                 let update = {
                     $inc: {
@@ -118,6 +121,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                 }
                 let uWh = { _id: MongoID(tabInfo._id.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                 logger.info("deduct uWh update ::", uWh, update)
+
                 await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
             }
         }
