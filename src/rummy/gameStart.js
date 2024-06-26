@@ -204,38 +204,7 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
         let playerGameChips = tabInfo.entryFee * 80;
         let gameDepositChips = playerGameChips;
 
-
-        if (totalWallet >= gameDepositChips) {
-          mainwalletdeduct = true
-        }
-
-        // if (mainwalletdeduct === false && winwalletdeduct === false /*&& bonuswalletdeduct === true*/) {
-
-        //   let reminingAmount = mainchipscut - totalWallet
-
-        //   if (reminingAmount <= totalWinWallet) {
-
-        //     await walletActions.addWalletWinningPayin(pId, - Number(reminingAmount), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        //     await walletActions.addWalletPayin(pId, - Number(totalWallet), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        //   }
-        //   // await walletActions.addWalletBonusDeposit(pId, - Number(bonuscutchips), 'Debit', 'Point Playing Entry Deduct bonus', 'Game');
-
-        //   // bonuswalletdeduct = false;
-        //   mainwalletdeduct = false;
-        //   winwalletdeduct = false;
-
-        // } else {
-        //   if (mainwalletdeduct) {
-        //     await walletActions.addWalletPayin(pId, - Number(gameDepositChips), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        //   } else if (winwalletdeduct) {
-        //     await walletActions.addWalletWinningPayin(pId, - Number(mainchipscut), 'Debit', 'Point Playing Entry Deduct Deposit', 'Game');
-        //   }
-        // }
-
-
-        await walletActions.deductuserWalletGame(pId, -Number(gameDepositChips), "debit", "Point Playing Entry Deduct Deposit", "Rummy", tabInfo._id);
-
-
+        await walletActions.deductuserWalletGame(pId, -Number(gameDepositChips), "debit", "Ruumy Entry Fee Deduct", "Rummy", tabInfo._id);
 
         const upWh = {
           _id: MongoID(tabInfo._id),
