@@ -83,7 +83,7 @@ const userLogin = async (requestData, socket) => {
     commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
 
   } else {
-    commandAcions.sendEvent(socket, CONST.LOGIN, requestData, false, 'Mobile number not register!');
+    commandAcions.sendEvent(socket, CONST.LOGIN, requestData, false, 'Mobile number not register! or Invalid password');
   }
   return true;
 };
