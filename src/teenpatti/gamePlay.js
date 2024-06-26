@@ -1,17 +1,16 @@
 const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
-
-const PlayingTables = mongoose.model("playingTables");
 const GameUser = mongoose.model("users");
+const PlayingTables = mongoose.model("playingTables");
 
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const commandAcions = require("../helper/socketFunctions");
+
 const roundStartActions = require("./roundStart");
 const gameFinishActions = require("./gameFinish");
 const checkWinnerActions = require("./checkWinner");
 const checkUserCardActions = require("./checkUserCard");
-
 const walletActions = require("./updateWallet");
 
 module.exports.chal = async (requestData, client) => {
