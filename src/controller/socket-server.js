@@ -116,6 +116,15 @@ myIo.init = function (server) {
                         break;
                     }
 
+                    case CONST.CHANGE_PASSWORD: {
+                        try {
+                            await signupActions.changePassword(payload.data, socket);
+                        } catch (e) {
+                            logger.info('Exception userLogin :', e);
+                        }
+                        break;
+                    }
+
                     case CONST.DASHBOARD: {
                         try {
                             await signupActions.appLunchDetail(payload.data, socket);

@@ -155,6 +155,37 @@ const verifyOTP = async (requestData_, socket) => {
   return true;
 };
 
+const changePassword = async (requestData_, socket) => {
+  let requestData = requestData_;
+  let playerId = requestData.playerId;
+  let currentPassword = requestData.currentPassword;
+  let newPassword = requestData.newPassword;
+
+  let wh = {
+    _id: playerId,
+    password: currentPassword,
+  };
+
+  let data = await Users.findOne(wh, {});
+  logger.info('\n changePassword : ', data);
+
+  if (data !== null) {
+
+    let updateData = {
+      $set: {},
+      $inc: {}
+    }
+    updateData.$set["password"] = newPassword;
+    const userDetails = await Users.findOneAndUpdate(upWh, updateData, { new: true });
+    logger.info("Update Password: ", userDetails);
+
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, true, true, 'Password changed successfully');
+  } else {
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, false, false, 'Password do not matched! Please try again later');
+  }
+  return true;
+};
+
 const resendOTP = async (requestData_, socket) => {
   let requestData = requestData_;
   if (requestData.mobileNumber.length !== 10) {
@@ -191,11 +222,11 @@ const resendOTP = async (requestData_, socket) => {
 const registerUser = async (requestBody, socket) => {
   try {
     logger.info('Register User Request Body =>', requestBody);
-   
-      let response = await getRegisterUserDetails(requestBody)
-  
-      commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
-   
+
+    let response = await getRegisterUserDetails(requestBody)
+
+    commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
+
   } catch (error) {
     logger.error('mainController.js registerUser error=> ', error);
     return {
@@ -239,4 +270,5 @@ module.exports = {
   resendOTP,
   registerUser,
   getRegisterUserDetails,
+  changePassword
 };

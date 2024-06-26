@@ -1,4 +1,4 @@
-const { checkMobileNumber, checkReferalOrCouponCode, userLogin, userSignup, verifyOTP, resendOTP } = require('./signupValidation');
+const { checkMobileNumber, checkReferalOrCouponCode, userLogin, userSignup, verifyOTP, resendOTP, changePassword } = require('./signupValidation');
 const { appLunchDetails } = require('./appStart');
 
 module.exports = {
@@ -8,5 +8,6 @@ module.exports = {
   userSignup: userSignup,
   verifyOTP: verifyOTP,
   resendOTP: resendOTP,
+  changePassword: changePassword,
   appLunchDetail: appLunchDetails,
 };
