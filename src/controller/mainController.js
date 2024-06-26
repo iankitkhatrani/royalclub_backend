@@ -13,7 +13,6 @@ const commonHelper = require('../helper/commonHelper');
 
 const Users = mongoose.model('users');
 const OtpMobile = mongoose.model('otpMobile');
-//const WalletTrackTransaction = mongoose.model('walletTrackTransaction');
 const UserWalletTracks = mongoose.model('userWalletTracks');
 
 
