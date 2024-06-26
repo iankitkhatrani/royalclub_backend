@@ -8,7 +8,7 @@ const logger = require("../../logger");
 const commandAcions = require("../helper/socketFunctions");
 const RouletteTables = mongoose.model('RouletteTables');
 
-const walletActions = require("./updateWallet");
+const walletActions = require("../common-function/walletTrackTransaction");
 
 const RouletteUserHistory = mongoose.model('RouletteUserHistory');
 const adminwinloss = mongoose.model('adminwinloss');
@@ -123,7 +123,9 @@ module.exports.actionSpin = async (requestData, client,callback) => {
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.deductWallet(client.uid, -chalvalue, 2, "roulette Bet", "roulette");
+        
+        await walletActions.deductuserWalletGame(client.uid,-Number(chalvalue),"debit", "roulette Bet","Roulette",tabInfo._id);
+
 
         //updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
         let indextoinc = -1
@@ -298,7 +300,7 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
             return false
         }
 
-        await walletActions.addWalletAdmin(client.uid, Number(chalvalue), 4, "roulette Clear Bet", "roulette");
+        await walletActions.addUserWalletGame(client.uid,Number(chalvalue),"credit", "roulette Clear Bet","Roulette",tabInfo._id);
 
 
         updateData.$inc["playerInfo.$.totalbet"] = -chalvalue;
@@ -414,8 +416,8 @@ module.exports.ClearBet = async (requestData, client) => {
             }
         }
 
-        
-        await walletActions.addWalletAdmin(client.uid, Number(playerInfo.totalbet), 4, "roulette Clear Bet", "roulette");
+       
+        await walletActions.addUserWalletGame(client.uid,Number(playerInfo.totalbet),"credit", "roulette Clear Bet","Roulette",tabInfo._id);
 
 
         const upWh = {

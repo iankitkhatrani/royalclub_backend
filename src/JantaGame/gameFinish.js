@@ -12,7 +12,6 @@ const CONST = require("../../constant");
 const checkUserCardActions = require("./checkUserCard");
 const roundEndActions = require("./roundEnd");
 const roundStartActions = require("./roundStart");
-const walletActions = require("./updateWallet");
 const logger = require("../../logger");
 const { Logger } = require("mongodb");
 

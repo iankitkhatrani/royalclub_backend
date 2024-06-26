@@ -12,9 +12,6 @@ const gameFinishActions = require("./gameFinish");
 const checkWinnerActions = require("./checkWinner");
 const checkUserCardActions = require("./checkUserCard");
 
-const walletActions = require("./updateWallet");
-const { unescape } = require("underscore");
-
 
 module.exports.RollDice = async (requestData, client) => {
     try {

@@ -7,7 +7,6 @@ const commandAcions = require("../helper/socketFunctions");
 const CONST = require("../../constant");
 const logger = require("../../logger");
 const roundStartActions = require("./roundStart");
-const walletActions = require("./updateWallet");
 const RouletteTables = mongoose.model('RouletteTables');
 const RouletteUserHistory = mongoose.model('RouletteUserHistory');
 
@@ -739,8 +738,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                 }
                 console.log("TotalWinAmount ", TotalWinAmount)
 
-                TotalWinAmount != 0 && await walletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(TotalWinAmount), 4, "Roulette Win", "roulette");
+                TotalWinAmount != 0 && await walletActions.addUserWalletGame(tbInfo.playerInfo[x]._id,Number(TotalWinAmount),"credit", "roulette Win","Roulette",tbInfo._id);
 
+                
                 gamePlayActionsRoulette.AdminWinLossData(Number(TotalWinAmount), "loss")
 
                 let insertobj = {
