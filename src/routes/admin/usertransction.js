@@ -31,31 +31,36 @@ const Agent = mongoose.model('agent');
 */
 router.get('/AdminTranscationData', async (req, res) => {
     try {
-        console.log('requet => ', req.query.Id);
-        console.log('requet => type ', req.query.type);
+        console.log('requet =>', req.query.Id);
+        console.log('requet => type',req.query.type);
 
         // const DepositeList = await ShopWalletTracks.find({  }, {
         //     DateandTime: 1, userId: 1, oppChips: 1, oppWinningChips: 1, chips: 1, winningChips: 1, trnxAmount: 1, gameType: 1, trnxTypeTxt: 1,
         //     adminname:1,adminid:1
         // }).sort({ DateandTime: -1 })
-        
+
 
         let DepositeList = []
-        if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
+        if (req.query.type == "SuperAdmin") {
+            console.log("ddddddddddddddddddddd")
+            DepositeList = await AdminWalletTracks.find({}, {
+                createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+                trnxType: 1,
+                oppChips: 1,
+                chips: 1,
+                authorisedid: 1,
+                authorisedtype: 1,
+                authorisedname: 1,
+                id: 1,
+                type: 1,
+                trackname: 1,
+                totalBucket: 1
 
-            DepositeList = await AdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
-                    trnxType: 1,
-                    oppChips: 1, chips: 1,
-                    authorisedid: 1,
-                    authorisedtype: 1,
-                    authorisedname: 1,
-                    id: 1,
-                    type: 1,
-                    trackname: 1, }).sort({createdAt:-1})
+            }).sort({ createdAt: -1 })
 
-        } 
+        }
         else if (req.query.type == "Admin") {
-            console.log("ADMIN ::::::::::::::::::::::::")
+            
             DepositeList = await AdminWalletTracks.find({ adminId: MongoID(req.query.Id) },
                 {
                     createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
@@ -68,14 +73,14 @@ router.get('/AdminTranscationData', async (req, res) => {
                     id: 1,
                     type: 1,
                     trackname: 1,
-                    totalBucket:1
+                    totalBucket: 1
                 }).sort({ createdAt: -1 })
         }
 
-
+        console.log("ADMIN ::::::::::::::::::::::::",DepositeList)
         logger.info('admin/dahboard.js post dahboard  error => DepositeList ', DepositeList);
 
-        res.json({ DepositeList:DepositeList });
+        res.json({ DepositeList: DepositeList });
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -100,15 +105,15 @@ router.get('/SuperAdminTranscationData', async (req, res) => {
         //     DateandTime: 1, userId: 1, oppChips: 1, oppWinningChips: 1, chips: 1, winningChips: 1, trnxAmount: 1, gameType: 1, trnxTypeTxt: 1,
         //     adminname:1,adminid:1
         // }).sort({ DateandTime: -1 })
-        
+
 
         let DepositeList = []
-       
-        DepositeList = await SuperAdminWalletTracks.find({}, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,adminname:1,adminid:1,agentid:1,agentname:1 }).sort({createdAt:-1})
+
+        DepositeList = await SuperAdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1, adminname: 1, adminid: 1, agentid: 1, agentname: 1 }).sort({ createdAt: -1 })
 
         logger.info('admin/dahboard.js post dahboard  error => ', DepositeList);
 
-        res.json({ DepositeList:DepositeList });
+        res.json({ DepositeList: DepositeList });
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -129,7 +134,7 @@ router.get('/AgentTranscationData', async (req, res) => {
         console.log('requet => ', req.query.Id);
         console.log('requet => type ', req.query.type);
 
-    
+
 
         // let DepositeList = []
         // if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
@@ -147,26 +152,30 @@ router.get('/AgentTranscationData', async (req, res) => {
         //     }
 
         //     DepositeList = await AgentWalletTracks.find({ shopId: {$in:totalid} }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
-        
+
         // } else if (req.query.type == "Agent") {
 
         //     DepositeList = await AgentWalletTracks.find({ shopId: MongoID(req.query.Id) }, { createdAt:1,name:1,trnxTypeTxt:1,trnxAmount:1,oppChips:1,chips:1,adminname:1,adminid:1,userid:1,username:1 }).sort({createdAt:-1})
         // }
 
         let DepositeList = []
-        if (req.query.Id == undefined && req.query.type == "SuperAdmin") {
+        if (req.query.type == "SuperAdmin") {
 
-            DepositeList = await AgentWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
+            DepositeList = await AgentWalletTracks.find({}, {
+               createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1,
                     trnxType: 1,
-                    oppChips: 1, chips: 1,
+                    oppChips: 1,
+                    chips: 1,
                     authorisedid: 1,
                     authorisedtype: 1,
                     authorisedname: 1,
                     id: 1,
                     type: 1,
-                    trackname: 1, }).sort({createdAt:-1})
+                    trackname: 1,
+                    totalBucket: 1
+            }).sort({ createdAt: -1 })
 
-        } 
+        }
         else if (req.query.type == "Agent") {
             console.log("Agent ::::::::::::::::::::::::")
             DepositeList = await AgentWalletTracks.find({ agentId: MongoID(req.query.Id) },
@@ -181,14 +190,14 @@ router.get('/AgentTranscationData', async (req, res) => {
                     id: 1,
                     type: 1,
                     trackname: 1,
-                    totalBucket:1
+                    totalBucket: 1
                 }).sort({ createdAt: -1 })
         }
 
 
         logger.info('admin/dahboard.js post dahboard  error => ', DepositeList);
 
-        res.json({ DepositeList:DepositeList });
+        res.json({ DepositeList: DepositeList });
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -210,14 +219,14 @@ router.get('/DepositList', async (req, res) => {
 
         //Agent Addeed Chips
 
-        const DepositeList = await UserWalletTracks.find({ trnxTypeTxt:"Admin Addeed Chips" }, {
+        const DepositeList = await UserWalletTracks.find({ trnxTypeTxt: "Admin Addeed Chips" }, {
             DateandTime: 1, userId: 1, oppChips: 1, oppWinningChips: 1, chips: 1, winningChips: 1, trnxAmount: 1, gameType: 1, trnxTypeTxt: 1,
-            adminname:1,adminid:1
-        }).sort({DateandTime:-1})
+            adminname: 1, adminid: 1
+        }).sort({ DateandTime: -1 })
 
         logger.info('admin/dahboard.js post dahboard  error => ', DepositeList);
 
-        res.json({ DepositeList:DepositeList });
+        res.json({ DepositeList: DepositeList });
     } catch (error) {
         logger.error('admin/dahboard.js post bet-list error => ', error);
         res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -481,10 +490,10 @@ router.get('/PayoutAcceptList', async (req, res) => {
     try {
         console.log('PayoutAcceptList requet => ');
 
-        const AcceptList = await UserWalletTracks.find({ trnxTypeTxt:"Admin duduct Chips" }, {
+        const AcceptList = await UserWalletTracks.find({ trnxTypeTxt: "Admin duduct Chips" }, {
             DateandTime: 1, userId: 1, oppChips: 1, oppWinningChips: 1, chips: 1, winningChips: 1, trnxAmount: 1, gameType: 1, trnxTypeTxt: 1,
-            adminname:1,adminid:1
-        }).sort({DateandTime:-1})
+            adminname: 1, adminid: 1
+        }).sort({ DateandTime: -1 })
 
         console.log('AcceptList requet => ', AcceptList);
 

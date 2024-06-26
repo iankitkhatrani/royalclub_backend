@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-//const UserWalletTracks = mongoose.model('walletTrackTransaction');
 
 const GameUser = mongoose.model('users');
 const CONST = require('../../constant');
@@ -135,7 +134,8 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
     commandAcions.sendDirectEvent(adminInfo.sckId, CONST.WALLET_UPDATE, {
       chips: upReps.chips,
       totalWallet: totalRemaningAmount,
-      msg: t
+      msg: t,
+      userid: upReps._id.toString()
     });
 
     return totalRemaningAmount;
@@ -225,7 +225,8 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
       // winningChips: upReps.winningChips,
       chips: upReps.chips,
       totalWallet: totalRemaningAmount,
-      msg: t
+      msg: t,
+      userid: upReps._id.toString()
     });
 
     return totalRemaningAmount;
