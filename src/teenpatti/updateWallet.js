@@ -110,7 +110,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
                 trnxTypeTxt: t,
                 trnxAmount: tranferAmount,
                 oppChips: opChips,
-                oppWinningChips: opGameWinning,
+                // oppWinningChips: opGameWinning,
                 chips: upReps.chips,
                 winningChips: upReps.winningChips,
                 totalBucket: totalRemaningAmount,
@@ -126,7 +126,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
             await this.trackUserWallet(walletTrack);
         }
 
-        if ((typeof upReps.chips.toString().split(".")[1] != "undefined" && upReps.chips.toString().split(".")[1].length > 2) || (typeof upReps.winningChips.toString().split(".")[1] != "undefined" && upReps.winningChips.toString().split(".")[1].length > 2)) {
+        if ((typeof upReps.chips.toString().split(".")[1] != "undefined" && upReps.chips.toString().split(".")[1].length > 2)) {
 
             let updateData = {
                 $set: {}

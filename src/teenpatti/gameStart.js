@@ -9,7 +9,8 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const cardDealActions = require("./cardDeal");
 const roundStartActions = require("./roundStart");
-const walletActions = require("./updateWallet");
+const walletActions = require("../common-function/walletTrackTransaction");
+
 
 // const leaveTableActions = require("./leaveTable");
 
@@ -58,6 +59,12 @@ module.exports.collectBoot = async (tbId) => {
         };
         let tb = await PlayingTables.findOne(wh, {}).lean();
         logger.info("collectBoot tb : ", tb);
+
+        if (tb == null) {
+            logger.info("table not found::", tb);
+            return false
+        }
+        
 
         let playerInfo = await this.resetUserData(tb._id, tb.playerInfo);
         logger.info("collectBoot playerInfo : ", playerInfo, tb.maxSeat);

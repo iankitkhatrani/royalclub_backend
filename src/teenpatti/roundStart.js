@@ -217,6 +217,11 @@ module.exports.userTurnExpaire = async (tbid) => {
             let taabInfo = await PlayingTables.findOne(wh1, project1).lean();
             logger.info("userTurnExpaire taabInfo : ", taabInfo);
 
+            if (taabInfo == null) {
+                logger.info("table not found::", taabInfo);
+                return false
+            }
+
             const playerInGame = await this.getPlayingUserInRound(taabInfo.playerInfo);
             logger.info("userTurnExpaire playerInGame ::", playerInGame);
 
