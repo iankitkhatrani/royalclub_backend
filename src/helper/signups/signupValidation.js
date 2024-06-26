@@ -63,6 +63,7 @@ const userLogin = async (requestData, socket) => {
 
   let wh = {
     mobileNumber: requestData.mobileNumber,
+    password: requestData.password,
   };
   //  csl('F wh :', wh);
 
@@ -80,7 +81,6 @@ const userLogin = async (requestData, socket) => {
     let response = await filterBeforeSendSPEvent(resp);
 
     commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
-
 
   } else {
     commandAcions.sendEvent(socket, CONST.LOGIN, requestData, false, 'Mobile number not register!');
