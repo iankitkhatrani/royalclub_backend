@@ -171,6 +171,10 @@ const changePassword = async (requestData_, socket) => {
 
   if (data !== null) {
 
+    let upWh = {
+      _id: playerId,
+    };
+
     let updateData = {
       $set: {},
       $inc: {}
@@ -179,9 +183,9 @@ const changePassword = async (requestData_, socket) => {
     const userDetails = await Users.findOneAndUpdate(upWh, updateData, { new: true });
     logger.info("Update Password: ", userDetails);
 
-    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, true, true, 'Password changed successfully');
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, { status: 1, msg: 'Password changed successfully' }, true, 'Password changed successfully');
   } else {
-    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, false, false, 'Password do not matched! Please try again later');
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, { status: 0 }, false, 'Password do not matched! Please try again later');
   }
   return true;
 };
