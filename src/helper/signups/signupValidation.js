@@ -63,6 +63,7 @@ const userLogin = async (requestData, socket) => {
 
   let wh = {
     mobileNumber: requestData.mobileNumber,
+    password: requestData.password,
   };
   //  csl('F wh :', wh);
 
@@ -81,9 +82,8 @@ const userLogin = async (requestData, socket) => {
 
     commandAcions.sendEvent(socket, CONST.DASHBOARD, response);
 
-
   } else {
-    commandAcions.sendEvent(socket, CONST.LOGIN, requestData, false, 'Mobile number not register!');
+    commandAcions.sendEvent(socket, CONST.LOGIN, requestData, false, 'Mobile number not register! or Invalid password');
   }
   return true;
 };
@@ -171,6 +171,10 @@ const changePassword = async (requestData_, socket) => {
 
   if (data !== null) {
 
+    let upWh = {
+      _id: playerId,
+    };
+
     let updateData = {
       $set: {},
       $inc: {}
@@ -179,9 +183,9 @@ const changePassword = async (requestData_, socket) => {
     const userDetails = await Users.findOneAndUpdate(upWh, updateData, { new: true });
     logger.info("Update Password: ", userDetails);
 
-    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, true, true, 'Password changed successfully');
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, { status: 1, msg: 'Password changed successfully' });
   } else {
-    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, false, false, 'Password do not matched! Please try again later');
+    commandAcions.sendEvent(socket, CONST.CHANGE_PASSWORD, { status: 0, msg: 'Password do not matched! Please try again later' }, false,);
   }
   return true;
 };
