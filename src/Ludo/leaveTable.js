@@ -90,10 +90,15 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
+    logger.info("tb.gameState",tb.gameState)
+
+
+
     if (tb.gameState == "RoundStated" || tb.gameState == "CollectBoot") {
         if (playerInGame.length >= 2) {
             await roundStartActions.nextUserTurnstart(tb, false);
         } else if (playerInGame.length == 1) {
+            logger.info("playerInGame");
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         }
     } else if (["", "GameStartTimer"].indexOf(tb.gameState) != -1) {

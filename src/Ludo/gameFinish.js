@@ -19,7 +19,10 @@ const logger = require("../../logger");
 const { Logger } = require("mongodb");
 
 module.exports.lastUserWinnerDeclareCall = async (tb) => {
-    if (tb.isLastUserFinish) return false;
+    if (tb.isLastUserFinish){
+        logger.info("lastUserWinnerDeclareCall isLastUserFinish")
+        return false;
+    } 
     const upWh = {
         _id: tb._id,
     }
