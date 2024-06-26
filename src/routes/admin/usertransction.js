@@ -109,7 +109,7 @@ router.get('/SuperAdminTranscationData', async (req, res) => {
 
         let DepositeList = []
 
-        DepositeList = await SuperAdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1, adminname: 1, adminid: 1, agentid: 1, agentname: 1 }).sort({ createdAt: -1 })
+        DepositeList = await SuperAdminWalletTracks.find({}, { createdAt: 1, name: 1, trnxTypeTxt: 1, trnxAmount: 1, adminname: 1, adminid: 1, agentid: 1, agentname: 1,type:1 }).sort({ createdAt: -1 })
 
         logger.info('admin/dahboard.js post dahboard  error => ', DepositeList);
 
