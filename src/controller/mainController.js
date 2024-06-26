@@ -13,8 +13,8 @@ const commonHelper = require('../helper/commonHelper');
 
 const Users = mongoose.model('users');
 const OtpMobile = mongoose.model('otpMobile');
-const WalletTrackTransaction = mongoose.model('walletTrackTransaction');
-
+//const WalletTrackTransaction = mongoose.model('walletTrackTransaction');
+const UserWalletTracks = mongoose.model('userWalletTracks');
 
 
 /**
@@ -212,7 +212,7 @@ async function getTransactiobDetailByUserId(requestBody) {
   try {
     logger.info("get transaction requestBody ==>", requestBody)
     let { playerId } = requestBody
-    const responseData = await WalletTrackTransaction.find({ userId: MongoID(playerId) }).sort({ createdAt: -1 }).lean();
+    const responseData = await UserWalletTracks.find({ userId: MongoID(playerId) }).sort({ createdAt: -1 }).lean();
     // logger.info("transaction 1==>", responseData)
 
 
