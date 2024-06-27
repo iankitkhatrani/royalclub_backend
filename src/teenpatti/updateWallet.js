@@ -118,7 +118,7 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
                 withdrawId: (tbInfo && tbInfo.withdrawId) ? tbInfo.withdrawId : "",
                 gameId: (tbInfo && tbInfo.gameId) ? tbInfo.game_id : "",
                 isRobot: (typeof userInfo.flags != "undefined" && userInfo.flags.isRobot) ? userInfo.flags.isRobot : 0,
-                gameType: (tbInfo && tbInfo.gameType) ? tbInfo.gameType : "", //Game Type
+                gameType: "Teen Patti",//(tbInfo && tbInfo.gameType) ? tbInfo.gameType : "", //Game Type
                 maxSeat: (tbInfo && tbInfo.maxSeat) ? tbInfo.maxSeat : 0,//Maxumum Player.
                 betValue: (tbInfo && tbInfo.betValue) ? tbInfo.betValue : 0,
                 tableId: (tbInfo && tbInfo._id) ? tbInfo._id.toString() : ""
