@@ -47,7 +47,7 @@ router.get('/dashboardDataAdmin', async (req, res) => {
             
         }
         
-        console.log("totalUser ",totalUser,totalAgent)
+        
         let admindata = await AdminUser.findOne({ _id: MongoID(req.query.Id.toString()) }, { chips: 1 })
         totalAdminChips = admindata != null ? admindata.chips : 0
          
