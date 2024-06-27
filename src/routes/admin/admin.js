@@ -64,7 +64,12 @@ router.get('/AdminList', async (req, res) => {
     try {
         //console.info('requet => ', req);
 
-        const adminList = await AdminUser.find({}, { name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1 })
+        const adminList = await AdminUser.find({}, {
+            name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1,
+            partnerpercentagejanata : 1 ,
+            partnerpercentageroulette : 1 ,
+            commission:1
+         })
 
         logger.info('admin/dahboard.js post dahboard   adminList ', adminList);
 
@@ -125,7 +130,9 @@ router.put('/AdminUpdate', async (req, res) => {
             $set: {
                 password: req.body.password,
                 name: req.body.name,
-                status: req.body.status
+                status: req.body.status,
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette: req.body.partnerpercentageroulette,
             }
         }
 
@@ -165,6 +172,9 @@ router.post('/AddAdmin', async (req, res) => {
         if (
             req.body.password != undefined && req.body.password != null && req.body.password != "" &&
             req.body.name != undefined && req.body.name != null && req.body.name != "" &&
+            req.body.commission != undefined &&
+            req.body.partnerpercentagejanata != undefined &&
+            req.body.partnerpercentageroulette != undefined &&
             req.body.status != undefined
         ) {
 
@@ -178,6 +188,9 @@ router.post('/AddAdmin', async (req, res) => {
             let response = {
                 password: req.body.password,
                 name: req.body.name,
+                commission: req.body.commission,
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette: req.body.partnerpercentageroulette,
                 status: req.body.status,
             }
 
