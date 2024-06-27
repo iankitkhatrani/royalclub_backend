@@ -13,7 +13,9 @@ const AdminSchema = new Schema(
     chips:{ type: Number,default: 0 },
     type: { type: String, default: "Admin" },
     commission: { type: Number, default: 0 },
-    partnerpercentage: { type: Number, default: 0 },
+    partnerpercentagejanata: { type: Number, default: 0 },
+    partnerpercentageroulette: { type: Number, default: 0 },
+
   },
   { versionKey: false }
 );

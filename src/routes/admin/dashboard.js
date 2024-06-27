@@ -62,7 +62,8 @@ router.get('/', async (req, res) => {
   try {
     console.log('requet => ', req.query);
     let totalUser = 0;
-
+    let totalAdmin = 0;
+    let totalAgent = 0;
     let lastdate = AddTime(-86000)
 
     const startOfDay = moment().startOf('day').toDate();
@@ -76,6 +77,8 @@ router.get('/', async (req, res) => {
     }
 
     totalAgent = await Agent.find().count()
+    totalAdmin = await AdminUser.find().count()
+
 
     let totalDepositData = await AgentWalletTracks.aggregate([
       {
@@ -196,7 +199,26 @@ router.get('/', async (req, res) => {
 
     logger.info('admin/dahboard.js post dahboard  error => ', totalUser);
 
-    res.json({ totalUser, totalAgent, totalDeposit, todayDeposit, todayWithdraw, totalWithdraw, totalGamePay, toDayGamePay, todayProfit, totalProfit, totalPercentage,ConfigdaywiseWinloss });
+
+    let totalteenpatti = 0;
+    let totalrummy = 0;
+    let totalludo = 0;
+    let totaljanta = 0;
+    let totalRoulette = 0;
+
+
+
+
+
+    res.json({
+      totalUser,
+      totalteenpatti,
+      totalrummy,
+      totalludo,
+      totaljanta,
+      totalRoulette,
+      totalAgent, totalAdmin, totalDeposit, todayDeposit, todayWithdraw, totalWithdraw, totalGamePay, toDayGamePay, todayProfit, totalProfit, totalPercentage, ConfigdaywiseWinloss
+    });
   } catch (error) {
     logger.error('admin/dahboard.js post bet-list error => ', error);
     res.status(config.INTERNAL_SERVER_ERROR).json(error);

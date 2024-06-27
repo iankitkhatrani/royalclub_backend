@@ -28,10 +28,10 @@ router.get('/AgentList', async (req, res) => {
         //agentId
         let agentList = []
         if (req.query.agentId == "SuperAdmin") {
-            agentList = await Agent.find({}, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentage: 1, type: 1 })
+            agentList = await Agent.find({}, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentagejanata: 1,partnerpercentageroulette:1, type: 1 })
 
         } else {
-            agentList = await Agent.find({ authorisedid: MongoID(req.query.agentId) }, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentage: 1, type: 1 })
+            agentList = await Agent.find({ authorisedid: MongoID(req.query.agentId) }, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentagejanata: 1,partnerpercentageroulette:1, type: 1 })
         }
         logger.info('ShopList admin/dahboard.js post dahboard  error => ', agentList);
 
@@ -96,7 +96,8 @@ router.put('/AgentUpdate', async (req, res) => {
                 name: req.body.name,
                 status: req.body.status,
                 commission: req.body.commission,
-                partnerpercentage: req.body.partnerpercentage
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette:req.body.partnerpercentageroulette
             }
         }
 
@@ -138,7 +139,8 @@ router.post('/AddAgent', async (req, res) => {
             req.body.name != undefined && req.body.name != null && req.body.name != "" &&
             req.body.status != undefined &&
             req.body.commission != undefined &&
-            req.body.partnerpercentage != undefined &&
+            req.body.partnerpercentagejanata != undefined &&
+            req.body.partnerpercentageroulette != undefined &&
             req.body.authorisedid != undefined &&
             req.body.authorisedtype != undefined &&
             req.body.authorisedname != undefined
@@ -159,7 +161,8 @@ router.post('/AddAgent', async (req, res) => {
                 lastLoginDate: new Date(),
                 status: req.body.status,
                 commission: req.body.commission,
-                partnerpercentage: req.body.partnerpercentage,
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette: req.body.partnerpercentageroulette,
                 authorisedid :req.body.authorisedid,
                 authorisedtype: req.body.authorisedtype,
                 authorisedname: req.body.authorisedname,

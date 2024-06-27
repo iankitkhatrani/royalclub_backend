@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+
+const MongoID = mongoose.Types.ObjectId;
 const AdminUser = mongoose.model('admin');
 const express = require('express');
 const router = express.Router();
@@ -24,7 +26,11 @@ router.get('/dashboardDataAdmin', async (req, res) => {
     try {
       console.log('requet dashboardDataAdmin1111111111111111 => ', req.query);
       let totalUser = 0;
-      let totalAgent = 0
+        let totalAgent = 0;
+        let totalAdminChips = 0;
+        let totalAgentChips = 0;
+
+
         
       if (req.query.Id == undefined || req.query.Id == "undefined" || req.query.Id == "Admin") {
         totalUser = await Users.find().count()
@@ -38,13 +44,17 @@ router.get('/dashboardDataAdmin', async (req, res) => {
   
           } else {
             totalAgent = await Agent.find({authorisedid: req.query.Id.toString()}).count()
-  
+            
         }
         
-        console.log("totalUser ",totalUser,totalAgent)
-      
+        
+        let admindata = await AdminUser.findOne({ _id: MongoID(req.query.Id.toString()) }, { chips: 1 })
+        totalAdminChips = admindata != null ? admindata.chips : 0
+         
+        let agentdata = await Agent.findOne({ _id: MongoID(req.query.Id.toString()) }, { chips: 1 })
+        totalAgentChips = agentdata != null ? agentdata.chips : 0
 
-      res.json({totalUser , totalAgent});
+      res.json({totalUser , totalAgent , totalAdminChips,totalAgentChips});
     } catch (error) {
       logger.error('admin/dahboard.js post bet-list error => ', error);
       res.status(config.INTERNAL_SERVER_ERROR).json(error);
@@ -64,7 +74,12 @@ router.get('/AdminList', async (req, res) => {
     try {
         //console.info('requet => ', req);
 
-        const adminList = await AdminUser.find({}, { name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1 })
+        const adminList = await AdminUser.find({}, {
+            name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1,
+            partnerpercentagejanata : 1 ,
+            partnerpercentageroulette : 1 ,
+            commission:1
+         })
 
         logger.info('admin/dahboard.js post dahboard   adminList ', adminList);
 
@@ -125,7 +140,9 @@ router.put('/AdminUpdate', async (req, res) => {
             $set: {
                 password: req.body.password,
                 name: req.body.name,
-                status: req.body.status
+                status: req.body.status,
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette: req.body.partnerpercentageroulette,
             }
         }
 
@@ -165,6 +182,9 @@ router.post('/AddAdmin', async (req, res) => {
         if (
             req.body.password != undefined && req.body.password != null && req.body.password != "" &&
             req.body.name != undefined && req.body.name != null && req.body.name != "" &&
+            req.body.commission != undefined &&
+            req.body.partnerpercentagejanata != undefined &&
+            req.body.partnerpercentageroulette != undefined &&
             req.body.status != undefined
         ) {
 
@@ -178,6 +198,9 @@ router.post('/AddAdmin', async (req, res) => {
             let response = {
                 password: req.body.password,
                 name: req.body.name,
+                commission: req.body.commission,
+                partnerpercentagejanata: req.body.partnerpercentagejanata,
+                partnerpercentageroulette: req.body.partnerpercentageroulette,
                 status: req.body.status,
             }
 
