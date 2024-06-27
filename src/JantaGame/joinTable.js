@@ -27,7 +27,7 @@ module.exports.JANTA_JOIN_TABLE = async (requestData, client) => {
         let UserInfo = await GameUser.findOne(gwh, {}).lean();
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
-        let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
+        let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
         if (Number(totalWallet) < 1) {
             sendEvent(client, CONST.JANTA_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
@@ -153,7 +153,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, client,requestData) => {
         // };
         // let tbInfo = await JantaTables.findOne(wh,{}).lean();
         // logger.info("findEmptySeatAndUserSeat tbInfo : ", tbInfo)
-        let totalWallet = Number(userInfo.chips) + Number(userInfo.winningChips)
+        let totalWallet = Number(userInfo.chips) //+ Number(userInfo.winningChips)
         let playerDetails = {
             seatIndex: seatIndex,
             _id: userInfo._id,

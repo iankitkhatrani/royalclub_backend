@@ -145,7 +145,7 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
 
 module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, tableid) => {
   try {
-    logger.info('\n addUserWallet : call.-->>>', id, added_chips, tType, t, game, authorisedid, authorisedtype, authorisedname);
+    logger.info('\n addUserWallet : call.-->>>', id, added_chips, tType, t, game, tableid);
 
     const wh = (typeof id == 'string') ? { _id: MongoID(id) } : { _id: id };
     if (typeof wh == 'undefined' || typeof wh._id == 'undefined' || wh._id == null || typeof tType == 'undefined') {
