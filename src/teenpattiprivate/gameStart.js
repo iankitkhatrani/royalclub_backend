@@ -9,7 +9,7 @@ const CONST = require("../../constant");
 const logger = require("../../logger");
 const cardDealActions = require("./cardDeal");
 const roundStartActions = require("./roundStart");
-const walletActions = require("./updateWallet");
+const walletActions = require('../common-function/walletTrackTransaction');
 
 // const leaveTableActions = require("./leaveTable");
 
@@ -108,7 +108,9 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
+                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), "debit", "Teen Patti Boot Amount", "Private Teen Patti", tabInfo._id);
+
 
                 let update = {
                     $inc: {

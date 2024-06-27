@@ -12,7 +12,9 @@ const CONST = require("../../constant");
 const checkUserCardActions = require("./checkUserCard");
 const roundEndActions = require("./roundEnd");
 const roundStartActions = require("./roundStart");
-const walletActions = require("./updateWallet");
+// const walletActions = require("./updateWallet");
+const walletActions = require('../common-function/walletTrackTransaction');
+
 const logger = require("../../logger");
 const { Logger } = require("mongodb");
 
@@ -120,7 +122,9 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playerStatus == "win") {
-                await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Private TeenPatti Win", tabInfo);
+                // await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Private TeenPatti Win", tabInfo);
+                await walletActions.addUserWalletGame(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), "credit", "TeenPatti Win", "Teen Patti Private", tbInfo._id);
+
             }
         }
 
