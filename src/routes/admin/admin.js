@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+
+const MongoID = mongoose.Types.ObjectId;
 const AdminUser = mongoose.model('admin');
 const express = require('express');
 const router = express.Router();
@@ -24,7 +26,11 @@ router.get('/dashboardDataAdmin', async (req, res) => {
     try {
       console.log('requet dashboardDataAdmin1111111111111111 => ', req.query);
       let totalUser = 0;
-      let totalAgent = 0
+        let totalAgent = 0;
+        let totalAdminChips = 0;
+        let totalAgentChips = 0;
+
+
         
       if (req.query.Id == undefined || req.query.Id == "undefined" || req.query.Id == "Admin") {
         totalUser = await Users.find().count()
@@ -38,13 +44,17 @@ router.get('/dashboardDataAdmin', async (req, res) => {
   
           } else {
             totalAgent = await Agent.find({authorisedid: req.query.Id.toString()}).count()
-  
+            
         }
         
         console.log("totalUser ",totalUser,totalAgent)
-      
+        let admindata = await AdminUser.findOne({ _id: MongoID(req.query.Id.toString()) }, { chips: 1 })
+        totalAdminChips = admindata != null ? admindata.chips : 0
+         
+        let agentdata = await Agent.findOne({ _id: MongoID(req.query.Id.toString()) }, { chips: 1 })
+        totalAgentChips = agentdata != null ? agentdata.chips : 0
 
-      res.json({totalUser , totalAgent});
+      res.json({totalUser , totalAgent , totalAdminChips,totalAgentChips});
     } catch (error) {
       logger.error('admin/dahboard.js post bet-list error => ', error);
       res.status(config.INTERNAL_SERVER_ERROR).json(error);
