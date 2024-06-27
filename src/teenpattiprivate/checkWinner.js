@@ -16,8 +16,6 @@ module.exports.autoShow = async (tb) => {
     const tabInfo = await PlayingTables.findOne(wh, {}).lean();
 
     logger.info("autoShow wh tabInfo : ", wh, tabInfo);
-    logger.info("autoShow condition 1: ", tabInfo.callFinalWinner);
-    logger.info("autoShow condition 2: ", tabInfo.gameState);
 
     if (tabInfo.callFinalWinner) return false;
 
@@ -51,8 +49,6 @@ module.exports.winnercall = async (tb, isShow, showUserSeatIndex) => {
     const tabInfo = await PlayingTables.findOne(wh, {}).lean();
 
     logger.info("winnercall wh tabInfo : ", wh, tabInfo);
-    logger.info("winnercall condition 1: ", tabInfo.callFinalWinner);
-    logger.info("winnercall condition 2: ", tabInfo.gameState);
 
     if (tabInfo.callFinalWinner) return false;
 
