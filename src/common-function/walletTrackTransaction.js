@@ -5,6 +5,7 @@ const CONST = require('../../constant');
 const commandAcions = require('../helper/socketFunctions');
 const logger = require('../../logger');
 const adminWalletTracks = require('../models/adminWalletTracks');
+
 const MongoID = mongoose.Types.ObjectId;
 const AdminUser = mongoose.model("admin");
 const Agent = mongoose.model('agent');
@@ -110,10 +111,6 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
         tbaleid: tableid
       }
       await this.trackUserWallet(walletTrack);
-
-
-
-
     }
 
     if ((typeof upReps.chips.toString().split(".")[1] != "undefined" && upReps.chips.toString().split(".")[1].length > 2)) {

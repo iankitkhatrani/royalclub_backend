@@ -64,7 +64,7 @@ module.exports.leaveTable = async (requestData, client) => {
             commandAcions.clearJob(tb.jobId)
         }
         if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playStatus) != -1) {
+            if (["chal", "blind"].indexOf(playerInfo.playerStatus) != -1) {
 
                 let userTrack = {
                     _id: playerInfo._id,
@@ -72,7 +72,7 @@ module.exports.leaveTable = async (requestData, client) => {
                     cards: playerInfo.cards,
                     seatIndex: playerInfo.seatIndex,
                     totalBet: playerInfo.totalBet,
-                    playStatus: "leaveTable"
+                    playerStatus: "leaveTable"
                 }
                 updateData["$push"] = {
                     "gameTracks": userTrack

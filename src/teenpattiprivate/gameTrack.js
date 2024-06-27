@@ -35,7 +35,7 @@ module.exports.gamePlayTracks = async (winner_indexs, playersInfo, table) => {
                 rate: Number(table.boot),
                 rake: (playersInfo[i].playerStatus == "win") ? rake : 0,
                 winningAmount: (playersInfo[i].playerStatus == "win") ? winningAmount : 0,
-                winningStatus: playersInfo[i].playStatus,
+                winningStatus: playersInfo[i].playerStatus,
                 winningCardStatus: playersInfo[i].winningCardStatus,
                 hukum: table.hukum,
                 cards: playersInfo[i].cards,
