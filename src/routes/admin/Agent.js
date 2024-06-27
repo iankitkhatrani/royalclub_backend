@@ -28,10 +28,159 @@ router.get('/AgentList', async (req, res) => {
         //agentId
         let agentList = []
         if (req.query.agentId == "SuperAdmin") {
-            agentList = await Agent.find({}, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentagejanata: 1,partnerpercentageroulette:1, type: 1 })
+            //agentList = await Agent.find({}, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentagejanata: 1,partnerpercentageroulette:1, type: 1 })
 
+            agentList = await Agent.aggregate([
+              
+                {
+                  $project:
+                    /**
+                     * specifications: The fields to
+                     *   include or exclude.
+                     */
+                    {
+                      _id: {
+                        $toString: "$_id"
+                      },
+                        name: 1,
+                        chips: 1,
+                        createdAt: 1,
+                        lastLoginDate: 1,
+                        status: 1,
+                        password: 1,
+                        authorisedid: 1,
+                        authorisedtype: 1,
+                        authorisedname: 1,
+                        commission: 1,
+                        partnerpercentagejanata: 1,
+                        partnerpercentageroulette: 1,
+                        type: 1
+                    }
+                },
+                {
+                  $lookup:
+                    /**
+                     * from: The target collection.
+                     * localField: The local join field.
+                     * foreignField: The target join field.
+                     * as: The name for the results.
+                     * pipeline: Optional pipeline to run on the foreign collection.
+                     * let: Optional variables to use in the pipeline field stages.
+                     */
+                    {
+                      from: "user",
+                      localField: "_id",
+                      foreignField: "authorisedid",
+                      as: "userdata"
+                    }
+                },
+                {
+                  $project:
+                    /**
+                     * specifications: The fields to
+                     *   include or exclude.
+                     */
+                    {
+                        numberOfuser: {
+                            $size: "$userdata"
+                        },
+                        name: 1,
+                        chips: 1,
+                        createdAt: 1,
+                        lastLoginDate: 1,
+                        status: 1,
+                        password: 1,
+                        authorisedid: 1,
+                        authorisedtype: 1,
+                        authorisedname: 1,
+                        commission: 1,
+                        partnerpercentagejanata: 1,
+                        partnerpercentageroulette: 1,
+                        type: 1
+                    }
+                }
+            ])
         } else {
-            agentList = await Agent.find({ authorisedid: MongoID(req.query.agentId) }, { name: 1, chips: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, authorisedid: 1, authorisedtype: 1, authorisedname: 1, commission: 1, partnerpercentagejanata: 1,partnerpercentageroulette:1, type: 1 })
+            // agentList = await Agent.find({ authorisedid: MongoID(req.query.agentId) }, {
+                
+            // })
+
+            agentList = await Agent.aggregate([
+                {
+                    $match: {
+                        authorisedid: req.query.agentId.toString()
+                    }
+                },
+                {
+                  $project:
+                    /**
+                     * specifications: The fields to
+                     *   include or exclude.
+                     */
+                    {
+                      _id: {
+                        $toString: "$_id"
+                      },
+                        name: 1,
+                        chips: 1,
+                        createdAt: 1,
+                        lastLoginDate: 1,
+                        status: 1,
+                        password: 1,
+                        authorisedid: 1,
+                        authorisedtype: 1,
+                        authorisedname: 1,
+                        commission: 1,
+                        partnerpercentagejanata: 1,
+                        partnerpercentageroulette: 1,
+                        type: 1
+                    }
+                },
+                {
+                  $lookup:
+                    /**
+                     * from: The target collection.
+                     * localField: The local join field.
+                     * foreignField: The target join field.
+                     * as: The name for the results.
+                     * pipeline: Optional pipeline to run on the foreign collection.
+                     * let: Optional variables to use in the pipeline field stages.
+                     */
+                    {
+                      from: "user",
+                      localField: "_id",
+                      foreignField: "authorisedid",
+                      as: "userdata"
+                    }
+                },
+                {
+                  $project:
+                    /**
+                     * specifications: The fields to
+                     *   include or exclude.
+                     */
+                    {
+                        numberOfuser: {
+                            $size: "$userdata"
+                        },
+                        name: 1,
+                        chips: 1,
+                        createdAt: 1,
+                        lastLoginDate: 1,
+                        status: 1,
+                        password: 1,
+                        authorisedid: 1,
+                        authorisedtype: 1,
+                        authorisedname: 1,
+                        commission: 1,
+                        partnerpercentagejanata: 1,
+                        partnerpercentageroulette: 1,
+                        type: 1
+                    }
+                }
+            ])
+
+        
         }
         logger.info('ShopList admin/dahboard.js post dahboard  error => ', agentList);
 

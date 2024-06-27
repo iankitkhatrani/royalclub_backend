@@ -74,14 +74,114 @@ router.get('/AdminList', async (req, res) => {
     try {
         //console.info('requet => ', req);
 
-        const adminList = await AdminUser.find({}, {
-            name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1,
-            partnerpercentagejanata : 1 ,
-            partnerpercentageroulette : 1 ,
-            commission:1
-         })
+        // const adminList = await AdminUser.find({}, {
+        //     name: 1, location: 1, createdAt: 1, lastLoginDate: 1, status: 1, password: 1, chips: 1,
+        //     partnerpercentagejanata : 1 ,
+        //     partnerpercentageroulette : 1 ,
+        //     commission:1
+        // })
 
-        logger.info('admin/dahboard.js post dahboard   adminList ', adminList);
+        // for (let i = 0; i <= adminList.length - 1; i++) {
+
+        //     adminList[i]["totalAgent"] = await Agent.find({ authorisedid: adminList[i]._id.toString() }).count()
+        //     adminList[i]["totalUser"] = await Users.find({ authorisedid: adminList[i]._id.toString() }).count()
+
+        //     console.log('admin/dahboard.js post dahboard   adminList ', adminList[i]);
+
+        // }
+
+
+        
+
+        const adminList = await AdminUser.aggregate([
+            {
+              $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                  _id: {
+                    $toString: "$_id"
+                  },
+                  name: 1,
+                  location: 1,
+                  createdAt: 1,
+                  lastLoginDate: 1,
+                  status: 1,
+                  password: 1,
+                  chips: 1,
+                  partnerpercentagejanata: 1,
+                  partnerpercentageroulette: 1,
+                  commission: 1
+                }
+            },
+            {
+              $lookup:
+                /**
+                 * from: The target collection.
+                 * localField: The local join field.
+                 * foreignField: The target join field.
+                 * as: The name for the results.
+                 * pipeline: Optional pipeline to run on the foreign collection.
+                 * let: Optional variables to use in the pipeline field stages.
+                 */
+                {
+                  from: "agent",
+                  localField: "_id",
+                  foreignField: "authorisedid",
+                  as: "agantdata"
+                }
+            },
+            {
+              $lookup:
+                /**
+                 * from: The target collection.
+                 * localField: The local join field.
+                 * foreignField: The target join field.
+                 * as: The name for the results.
+                 * pipeline: Optional pipeline to run on the foreign collection.
+                 * let: Optional variables to use in the pipeline field stages.
+                 */
+                {
+                  from: "user",
+                  localField: "_id",
+                  foreignField: "authorisedid",
+                  as: "userdata"
+                }
+            },
+            {
+              $project:
+                /**
+                 * specifications: The fields to
+                 *   include or exclude.
+                 */
+                {
+                  numberOfagent: {
+                    $size: "$agantdata"
+                  },
+                  numberOfuser: {
+                    $size: "$userdata"
+                  },
+                  _id: {
+                    $toString: "$_id"
+                  },
+                  name: 1,
+                  location: 1,
+                  createdAt: 1,
+                  lastLoginDate: 1,
+                  status: 1,
+                  password: 1,
+                  chips: 1,
+                  partnerpercentagejanata: 1,
+                  partnerpercentageroulette: 1,
+                  commission: 1
+                }
+            }
+        ])
+
+        logger.info('admin/dahboard.js post  adminList => ', adminList);
+
 
         res.json({ adminList });
     } catch (error) {
