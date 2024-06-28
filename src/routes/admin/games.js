@@ -404,9 +404,10 @@ router.put('/GameComSet', async (req, res) => {
 
         console.log("dddddddddddddddddddd 1", process.env.Commission)
 
-        GAMELOGICCONFIG.AdminCommission = parseInt(req.body.selectedcom)
-        GAMELOGICCONFIG.AgentCommission = parseInt(req.body.agentselectedcom)
-        GAMELOGICCONFIG.ShopCommission = parseInt(req.body.shopselectedcom)
+        GAMELOGICCONFIG.TEENPATTICOM= parseFloat(req.body.TEENPATTICOM),
+        GAMELOGICCONFIG.RUMMYCOM= parseFloat(req.body.RUMMYCOM),
+        GAMELOGICCONFIG.LUDOCOM= parseFloat(req.body.LUDOCOM)
+        
 
         console.log("GAMELOGICCONFIG ", GAMELOGICCONFIG)
 
@@ -443,9 +444,9 @@ router.get('/getgamecom', async (req, res) => {
         console.log("dddddddddddddddddddd 1", process.env.Commission)
 
         res.json({
-            admincommission: parseInt(GAMELOGICCONFIG.AdminCommission),
-            agentcommission: parseInt(GAMELOGICCONFIG.AgentCommission),
-            shopcommission: parseInt(GAMELOGICCONFIG.ShopCommission)
+            TEENPATTICOM: parseFloat(GAMELOGICCONFIG.TEENPATTICOM),
+            RUMMYCOM: parseFloat(GAMELOGICCONFIG.RUMMYCOM),
+            LUDOCOM: parseFloat(GAMELOGICCONFIG.LUDOCOM)
         });
 
         logger.info('admin/dahboard.js post dahboard  error => ', CONST);
