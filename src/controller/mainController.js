@@ -212,7 +212,7 @@ async function getTransactiobDetailByUserId(requestBody) {
     logger.info("get transaction requestBody ==>", requestBody)
     let { playerId } = requestBody
     const responseData = await UserWalletTracks.find({ userId: MongoID(playerId) }).sort({ createdAt: -1 }).lean();
-    // logger.info("transaction 1==>", responseData)
+    logger.info("transaction 1==>", responseData)
 
 
     responseData.forEach(doc => {

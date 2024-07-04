@@ -153,6 +153,8 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     }
     added_chips = Number(added_chips.toFixed(2));
     let projection = {
+      id: 1,
+      userId: 1,
       name: 1,
       chips: 1,
       sckId: 1
@@ -204,7 +206,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     if (typeof tType != 'undefined') {
 
       let walletTrack = {
-        userId: wh._id.toString(),
+        userId: id.toString(),
         name: adminInfo.name,
         trnxType: tType,
         trnxTypeTxt: t,
