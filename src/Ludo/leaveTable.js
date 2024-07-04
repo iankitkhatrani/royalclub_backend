@@ -9,11 +9,12 @@ const commandAcions = require("../helper/socketFunctions");
 const roundStartActions = require("./roundStart")
 const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
+const { filterBeforeSendSPEvent } = require("../common-function/manageUserFunction");
 
 
 module.exports.leaveTableLudo = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
-    console.log("leaveTableLudo ",client)
+    console.log("leaveTableLudo ", client)
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
         commandAcions.sendDirectEvent(client.sck, CONST.LEAVETABLELUDO, requestData, false, "User session not set, please restart game!");
         return false;
@@ -81,6 +82,19 @@ module.exports.leaveTableLudo = async (requestData, client) => {
         commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLELUDO, response);
     }
 
+    let userDetails = await GameUser.findOne({
+        _id: MongoID(client.uid.toString()),
+    }).lean();
+
+    logger.info("check user Details =>", userDetails)
+
+    let finaldata = await filterBeforeSendSPEvent(userDetails);
+
+    logger.info("check user Details finaldata =>", finaldata)
+
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
+
+
     await this.manageOnUserLeave(tbInfo);
 }
 
@@ -90,7 +104,7 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
-    logger.info("tb.gameState",tb.gameState)
+    logger.info("tb.gameState", tb.gameState)
 
 
 

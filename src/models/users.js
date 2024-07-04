@@ -38,6 +38,7 @@ const GameUserSchema = new Schema(
     flags: {
       isOnline: { type: Number, default: 0 }
     },
+    winningChips: { type: Number, default: 0 },
     counters: {
       gameWin: { type: Number, default: 0 },
       gameLoss: { type: Number, default: 0 },

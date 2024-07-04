@@ -19,16 +19,16 @@ const walletActions = require("../common-function/walletTrackTransaction");
  * @returns {Object}
  */
 module.exports.privateTableCreate = async (requestBody, socket) => {
-    const { playerId, entryFee, gamePlayType, tableId, deduct } = requestBody;
+    const { playerId, entryFee, gamePlayType, tableId } = requestBody;
     logger.info("req.body => ", requestBody);
     //logger.info(req.files);
     try {
         const user = await PrivateTable.countDocuments({ tableId });
-        //logger.info("avatar =>", avatar.data[0]);
+        logger.info("rummy privateTableCreate user =>", user);
 
         if (user > 0) {
             return {
-                message: "User already exists",
+                message: "User already Created",
                 status: 0,
             };
         } else {
@@ -81,15 +81,14 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
                 return insertInfo;
             } catch (error) {
                 logger.error('joinTable.js createTable error=> ', error);
+                return error;
             }
 
-            // return response;
         }
     } catch (error) {
         logger.info("privateTableCreate error => ", error);
         return {
-            message:
-                "something went wrong while create private table, please try again",
+            message: "something went wrong while create private table, please try again",
             status: 0,
         };
     }

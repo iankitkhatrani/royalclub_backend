@@ -2,7 +2,6 @@ const mongoose = require("mongoose")
 const MongoID = mongoose.Types.ObjectId;
 
 const RouletteTables = mongoose.model('RouletteTables');
-
 const GameUser = mongoose.model("users");
 
 const CONST = require("../../constant");
@@ -10,13 +9,14 @@ const commandAcions = require("../helper/socketFunctions");
 const roundStartActions = require("./roundStart")
 const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
+const { filterBeforeSendSPEvent } = require("../common-function/manageUserFunction");
 
 
 module.exports.leaveTable = async (requestData, client) => {
     var requestData = (requestData != null) ? requestData : {}
     if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        if(requestData.reason == undefined || requestData.reason != 'autoLeave')
-        commandAcions.sendDirectEvent(client.sck, CONST.LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+        if (requestData.reason == undefined || requestData.reason != 'autoLeave')
+            commandAcions.sendDirectEvent(client.sck, CONST.LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
 
         return false;
     }
@@ -56,7 +56,7 @@ module.exports.leaveTable = async (requestData, client) => {
         commandAcions.clearJob(jobId)
         updateData["$set"]["gameState"] = "";
     }
-    
+
 
 
     logger.info("leaveTable updateData : ", wh, updateData);
@@ -70,14 +70,22 @@ module.exports.leaveTable = async (requestData, client) => {
     let tbInfo = await RouletteTables.findOneAndUpdate(wh, updateData, { new: true });
     logger.info("leaveTable tbInfo : ", tbInfo);
 
-    if(requestData.reason == undefined || requestData.reason != 'autoLeave')
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLEROULETTE, response);
+    if (requestData.reason == undefined || requestData.reason != 'autoLeave')
+        commandAcions.sendDirectEvent(client.sck.toString(), CONST.LEAVETABLEROULETTE, response);
     //commandAcions.sendEventInTable(tb._id.toString(), CONST.LEAVETABLEROULETTE, response);
 
-    //if(tbInfo.activePlayer == 0)
-    //{
-        //await RouletteTables.deleteMany({})
-    //}
+    let userDetails = await GameUser.findOne({
+        _id: MongoID(client.uid.toString()),
+    }).lean();
+
+    logger.info("check user Details =>", userDetails)
+
+    let finaldata = await filterBeforeSendSPEvent(userDetails);
+
+    logger.info("check user Details finaldata =>", finaldata)
+
+    commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
+
 
     await this.manageOnUserLeave(tbInfo);
 }
@@ -88,9 +96,9 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
 
-    
+
     if (playerInGame.length == 0 && tb.activePlayer == 0) {
-        
+
         // let wh = {
         //     _id: MongoID(tb._id.toString())
         // }
@@ -98,7 +106,7 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     } else if (tb.activePlayer == 0) {
         this.leaveSingleUser(tb._id)
     }
-    
+
 
 }
 

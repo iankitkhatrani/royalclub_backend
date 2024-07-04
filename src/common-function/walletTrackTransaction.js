@@ -1500,28 +1500,40 @@ module.exports.addWalletWinngChpis = async (id, addCoins, tType, t, Wtype, tabIn
       logger.info('\n AddWallet tType :: ', tType);
 
       let walletTrack = {
-        // id: userInfo._id,
-        uniqueId: tbl.uniqueId,
-        userId: tbl._id,
-        username: tbl.name,
-        transType: tType,
-        transTypeText: t,
-        transAmount: addedCoins,
+
+        userId: wh._id.toString(),
+        name: userInfo.name,
+        trnxType: tType,
+        trnxTypeTxt: t,
+        trnxAmount: tranferAmount,
+        oppChips: opChips,
         chips: tbl.chips,
-        winningChips: tbl.winningChips,
-        bonusChips: tbl.bonusChips,
-        lockbonusChips: tbl.lockbonusChips,
-        type: Wtype,
+        totalBucket: totalRemaningAmount,
+        gameType: game,
+        tbaleid: tableid,
+
+        // id: userInfo._id,
+        // uniqueId: tbl.uniqueId,
+        // userId: tbl._id,
+        // username: tbl.name,
+        // transType: tType,
+        // transTypeText: t,
+        // transAmount: addedCoins,
+        // chips: tbl.chips,
+        // winningChips: tbl.winningChips,
+        // bonusChips: tbl.bonusChips,
+        // lockbonusChips: tbl.lockbonusChips,
+        // type: Wtype,
         // referralChips: tbl.referralChips, // referarl Chips
         // unlockreferralChips: tbl.unlockreferralChips, // referarl Chips unlock Chips  
         // lockreferralChips: tbl.lockreferralChips, // referarl Chips lock Chips 
         // withdrawableChips: tbl.withdrawableChips,
-        totalBucket: Number(totalRemaningAmount),
-        gameId: '',
-        gameType: '', //Game Type
-        maxSeat: 0, //Maxumum Player.
-        betValue: 0,
-        tableId: '',
+        // totalBucket: Number(totalRemaningAmount),
+        // gameId: '',
+        // gameType: '', //Game Type
+        // maxSeat: 0, //Maxumum Player.
+        // betValue: 0,
+        // tableId: '',
       };
       await this.trackUserWallet(walletTrack);
     }

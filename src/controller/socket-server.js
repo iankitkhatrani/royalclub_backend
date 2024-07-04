@@ -253,7 +253,7 @@ myIo.init = function (server) {
                         try {
                             await teenPrivateActions.privateTableCreate(payload.data, socket)
                         } catch (error) {
-                            logger.error('socketServer.js R_CREATE_RUMMY_PRIVATE_TABLE_ID => ', error);
+                            logger.error('socketServer.js R_CREATE_TEEN_PRIVATE_TABLE_ID => ', error);
                         }
                         break;
                     }
