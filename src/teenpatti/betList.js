@@ -15,7 +15,7 @@ module.exports.getBetList = async (requestData, client) => {
                     "boot": '$entryFee',
                     "chalLimit": "$chalLimit",
                     "potLimit": "$potLimit",
-                    "maxSeat": "$totalPlayer",
+                    "maxSeat": "$maxSeat",
                 }
             }
 
