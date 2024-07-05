@@ -14,7 +14,7 @@ const botLogic = require("./botLogic");
 
 module.exports.joinTable = async (requestData, client) => {
     try {
-        logger.info("requestData-->", requestData);
+        logger.info("teen patti requestData-->", requestData);
 
         if (typeof client.uid == "undefined") {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please restart game!!");
@@ -25,10 +25,17 @@ module.exports.joinTable = async (requestData, client) => {
         client.JT = true;
 
         let bwh = {
-            _id: requestData.betId
+            maxSeat: requestData.maxSeat,
+            entryFee: requestData.boot
         }
-        const BetInfo = await BetLists.findOne(bwh, {}).lean();
-        logger.info("Join Table data : ", JSON.stringify(BetInfo));
+        const betInfo = await BetLists.findOne(bwh, {}).lean();
+        logger.info("Teen Join Table data : ", JSON.stringify(betInfo));
+
+        if (betInfo == null) {
+            sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Not Found Bet Details!!!");
+            delete client.JT
+            return false;
+        }
 
         let gwh = {
             _id: MongoID(client.uid)
@@ -37,7 +44,7 @@ module.exports.joinTable = async (requestData, client) => {
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
         let totalWallet = Number(UserInfo.chips)
-        if (Number(totalWallet) < Number(BetInfo.entryFee)) {
+        if (Number(totalWallet) < Number(betInfo.entryFee)) {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
             return false;
@@ -54,26 +61,26 @@ module.exports.joinTable = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable(BetInfo, client)
+        await this.findTable(betInfo, client)
     } catch (error) {
         logger.info("JOIN_TABLE", error);
     }
 }
 
-module.exports.findTable = async (BetInfo, client) => {
-    logger.info("findTable BetInfo : ", JSON.stringify(BetInfo));
+module.exports.findTable = async (betInfo, client) => {
+    logger.info("findTable betInfo : ", JSON.stringify(betInfo));
 
-    let tableInfo = await this.getBetTable(BetInfo);
+    let tableInfo = await this.getBetTable(betInfo);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
-    await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client);
+    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, client);
 }
 
-module.exports.getBetTable = async (BetInfo) => {
-    logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
+module.exports.getBetTable = async (betInfo) => {
+    logger.info("getBetTable betInfo : ", JSON.stringify(betInfo));
     let wh = {
-        boot: Number(BetInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 6 /*BetInfo.maxSeat*/ }
+        boot: Number(betInfo.entryFee),
+        activePlayer: { $gte: 0, $lt: 6 /*betInfo.maxSeat*/ }
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -81,7 +88,7 @@ module.exports.getBetTable = async (BetInfo) => {
     if (tableInfo.length > 0) {
         return tableInfo[0];
     }
-    let table = await this.createTable(BetInfo);
+    let table = await this.createTable(betInfo);
     return table;
 }
 
