@@ -99,7 +99,7 @@ module.exports.createTable = async (betInfo) => {
 
         let insertobj = {
             gameId: "",
-            maxSeat: betInfo.maxPlayer,
+            maxSeat: betInfo.maxSeat,
             gamePlayType: betInfo.gameType,
             activePlayer: 0,
             betId: betInfo._id,
@@ -107,7 +107,7 @@ module.exports.createTable = async (betInfo) => {
             rate: betInfo.rate,
             chalLimit: betInfo.chalLimit,
             potLimit: betInfo.potLimit,
-            playerInfo: this.makeObjects(betInfo.maxPlayer),
+            playerInfo: this.makeObjects(betInfo.maxSeat),
             gameState: "",
             discardCard: '',
         };
