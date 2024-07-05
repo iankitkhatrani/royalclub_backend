@@ -7,7 +7,7 @@ const BetListSchema = new Schema(
     {
         gameName: { type: String },
         gameType: { type: String, required: true },
-        entryFee: { type: Number },//boot Amount
+        boot: { type: Number },//boot Amount
         chalLimit: { type: Number },
         potLimit: { type: Number },//Max Pot
         maxSeat: { type: Number, default: 2 },

@@ -26,7 +26,7 @@ module.exports.joinTable = async (requestData, client) => {
 
         let bwh = {
             maxSeat: requestData.maxSeat,
-            entryFee: requestData.boot
+            boot: requestData.boot
         }
         const betInfo = await BetLists.findOne(bwh, {}).lean();
         logger.info("Teen Join Table data : ", JSON.stringify(betInfo));
@@ -44,7 +44,7 @@ module.exports.joinTable = async (requestData, client) => {
         logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
 
         let totalWallet = Number(UserInfo.chips)
-        if (Number(totalWallet) < Number(betInfo.entryFee)) {
+        if (Number(totalWallet) < Number(betInfo.boot)) {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
             return false;
@@ -79,8 +79,9 @@ module.exports.findTable = async (betInfo, client) => {
 module.exports.getBetTable = async (betInfo) => {
     logger.info("getBetTable betInfo : ", JSON.stringify(betInfo));
     let wh = {
-        boot: Number(betInfo.entryFee),
-        activePlayer: { $gte: 0, $lt: 6 /*betInfo.maxSeat*/ }
+        boot: Number(betInfo.boot),
+        activePlayer: { $gte: 0, $lt: betInfo.maxSeat },
+        maxSeat: betInfo.maxSeat,
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -102,7 +103,7 @@ module.exports.createTable = async (betInfo) => {
             gamePlayType: betInfo.gameType,
             activePlayer: 0,
             betId: betInfo._id,
-            boot: betInfo.entryFee,
+            boot: betInfo.boot,
             rate: betInfo.rate,
             chalLimit: betInfo.chalLimit,
             potLimit: betInfo.potLimit,

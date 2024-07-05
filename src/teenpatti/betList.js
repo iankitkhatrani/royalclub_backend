@@ -12,7 +12,7 @@ module.exports.getBetList = async (requestData, client) => {
                 $project: {
                     "betId": '$_id',
                     "_id": 0,
-                    "boot": '$entryFee',
+                    "boot": '$boot',
                     "chalLimit": "$chalLimit",
                     "potLimit": "$potLimit",
                     "maxSeat": "$maxSeat",
