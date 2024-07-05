@@ -10,7 +10,7 @@ const BetListSchema = new Schema(
         entryFee: { type: Number },//boot Amount
         chalLimit: { type: Number },
         potLimit: { type: Number },//Max Pot
-        maxPlayer: { type: Number, default: 2 },
+        maxSeat: { type: Number, default: 2 },
         activePlayer: { type: Number },
         createdAt: { type: Date, default: Date.now },
         modifiedAt: { type: Date, default: Date.now },
