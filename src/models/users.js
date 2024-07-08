@@ -53,8 +53,8 @@ const GameUserSchema = new Schema(
     lastTableId: [],
     createdAt: { type: Date, default: Date.now },
     modifiedAt: { type: Date, default: Date.now },
-    authorisedid: { type: String },
-    authorisedtype: { type: String },
+    authorisedid: { type: String },// id accroding type
+    authorisedtype: { type: String },// admin , agent , superadmin
     authorisedname: { type: String }
   },
   { versionKey: false }

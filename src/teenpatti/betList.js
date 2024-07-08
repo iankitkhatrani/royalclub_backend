@@ -22,8 +22,14 @@ module.exports.getBetList = async (requestData, client) => {
         ]);
         logger.info("BetList data : ", JSON.stringify(listInfo));
 
+        let entryFeeList = []
+
+        const parsedListInfo = listInfo.map(item => ({
+            entryFeeList: entryFeeList.push(item.entryFee)
+        }));
         let response = {
-            "List": listInfo
+            "List": listInfo,
+            entryFeeList: entryFeeList,
         }
         client.uid = requestData.user_id;
         client.sck = client.id;

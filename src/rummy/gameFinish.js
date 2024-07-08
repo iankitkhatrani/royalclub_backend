@@ -182,6 +182,17 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
     let insertInfo = await Commission.create(insertobj);
     logger.info('Commison ->', insertInfo);
 
+    //agent commison 10
+    //admin 10
+
+    //amount 2
+    //find plaeyr agent or admin 
+    //first commison give admin 20%10 = 2 = remining 18
+    //2 scond commison give admin 2%10 = 0.20 = remining 
+
+    //winning amount partnership give janta rolletae
+
+
     table.tableAmount -= parseFloat(amount.toFixed(2));
     logger.info('table.tableAmount ->', table.tableAmount);
 

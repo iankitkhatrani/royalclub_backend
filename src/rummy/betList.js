@@ -33,16 +33,21 @@ module.exports.rummyGetBetList = async (requestData, socket) => {
             }
         ]);
 
+        let entryFeeList = []
         // Parse the list info as needed
         const parsedListInfo = listInfo.map(item => ({
             _id: item._id,
             entryFee: parseFloat(item.entryFee),
             gamePlayType: item.gamePlayType,
-            maxSeat: item.maxSeat
+            maxSeat: item.maxSeat,
+            entryFeeList: entryFeeList.push(item.entryFee)
         }));
+
+        logger.info('betList.js getBetList response=> ', parsedListInfo);
 
         let response = {
             List: parsedListInfo,
+            entryFeeList: entryFeeList
         };
 
         socket.uid = requestData.playerId;
