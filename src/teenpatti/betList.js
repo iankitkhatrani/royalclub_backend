@@ -25,7 +25,7 @@ module.exports.getBetList = async (requestData, client) => {
         let entryFeeList = []
 
         const parsedListInfo = listInfo.map(item => ({
-            entryFeeList: entryFeeList.push(item.entryFee)
+            entryFeeList: entryFeeList.push(item.boot)
         }));
         let response = {
             "List": listInfo,

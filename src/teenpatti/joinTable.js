@@ -16,11 +16,11 @@ module.exports.joinTable = async (requestData, client) => {
     try {
         logger.info("teen patti requestData-->", requestData);
 
-        if (typeof client.uid == "undefined") {
+        if (typeof client.uid == "undefined" || requestData.playerId == '' || requestData.playerId == null) {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please restart game!!");
             return false;
         }
-        if (typeof client.JT != "undefined" && client.JT) return false;
+        if (typeof client.JT != "undefined" && client.JT) { return false };
 
         client.JT = true;
 
