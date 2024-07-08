@@ -22,15 +22,19 @@ module.exports.getBetList = async (requestData, client) => {
         ]);
         logger.info("BetList data : ", JSON.stringify(listInfo));
 
-        let entryFeeList = []
+        let entryFeeSet = new Set();
 
-        const parsedListInfo = listInfo.map(item => ({
-            entryFeeList: entryFeeList.push(item.boot)
-        }));
+        listInfo.forEach(item => {
+            entryFeeSet.add(item.boot);
+        });
+
+        let entryFeeList = Array.from(entryFeeSet);
+
         let response = {
             "List": listInfo,
             entryFeeList: entryFeeList,
-        }
+        };
+
         client.uid = requestData.user_id;
         client.sck = client.id;
         commandAcions.sendEvent(client, CONST.GET_TEEN_PATTI_ROOM_LIST, response);
