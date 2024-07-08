@@ -425,6 +425,15 @@ const CONST = {
     PRIVATE_TEEN: 'TeenPrivateTable',
   },
 
+  TRANSACTION_TYPE: {
+    DEBIT: "debit",
+    CREDIT: 'credit',
+    BOOT_VALUE: "BootValue",
+    WIN: "Win",
+    LOSS: "Loss",
+    TABLE_CHARGE: "TableCharge"
+  },
+
   COUNTRY_CODE: process.env.COUNTRY_CODE || '+91',
 
   MONTHS: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],

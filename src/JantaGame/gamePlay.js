@@ -19,7 +19,7 @@ const walletActions = require("../common-function/walletTrackTransaction");
     }
 
 */
-module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
+module.exports.actionJanta = async (pastbet, requestData, client, callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined" || typeof requestData.bet == "undefined" || typeof requestData.type == "undefined") {
@@ -78,7 +78,7 @@ module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
 
             },
             $push: {
-                
+
             }
         }
         let chalvalue = currentBet;
@@ -97,7 +97,7 @@ module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.deductuserWalletGame(client.uid,-Number(chalvalue),"debit", "Janta Bet","Janta",tabInfo._id);
+        await walletActions.deductuserWalletGame(client.uid, -Number(chalvalue), CONST.TRANSACTION_TYPE.DEBIT, "Janta Bet", "Janta", tabInfo._id);
 
         if (requestData.type == "NORMAL") {
             updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
@@ -149,7 +149,7 @@ module.exports.actionJanta = async (pastbet,requestData, client,callback) => {
             item: requestData.item,
             type: requestData.type,
             betAnimationType: requestData.betAnimationType,
-            pastbet:pastbet
+            pastbet: pastbet
         }
 
         commandAcions.sendEvent(client, CONST.ACTIONJANTA, response, false, "");
@@ -226,8 +226,8 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
 
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-       
-        await walletActions.addUserWalletGame(client.uid,Number(chalvalue),"credit", "Janta Clear Bet","Janta",tabInfo._id);
+
+        await walletActions.addUserWalletGame(client.uid, Number(chalvalue), CONST.TRANSACTION_TYPE.CREDIT, "Janta Clear Bet", "Janta", tabInfo._id);
 
 
         // {
@@ -246,11 +246,11 @@ module.exports.REMOVEBETJANTA = async (requestData, client) => {
                 return e.type != requestData.type;
         })
         logger.info(" REMOVEBETJANTA betObject  :: ", betObject);
-            
+
 
         logger.info(" REMOVEBETJANTA leftberObject  :: ", leftberObject);
 
-        
+
         if (requestData.type == "NORMAL") {
             updateData.$inc["playerInfo.$.selectObj." + requestData.item] = -chalvalue;
         } else if (requestData.type == "Odd") {
@@ -342,7 +342,7 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
             "playerInfo.seatIndex": Number(client.seatIndex)
         }
         const project = {
-            "playerInfo.$":1
+            "playerInfo.$": 1
         }
         const tabInfo = await JantaTables.findOne(wh, project).lean();
         logger.info("ClearBetJANTA tabInfo : ", tabInfo);
@@ -376,9 +376,9 @@ module.exports.ClearBetJANTA = async (requestData, client) => {
 
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        
+
         //await walletActions.addWalletAdmin(client.uid, Number(chalvalue), 2, "Janta Bet Return", "Janta");
-        await walletActions.addUserWalletGame(client.uid,Number(chalvalue),"credit", "Janta Clear Bet","Janta",tabInfo._id);
+        await walletActions.addUserWalletGame(client.uid, Number(chalvalue), CONST.TRANSACTION_TYPE.CREDIT, "Janta Clear Bet", "Janta", tabInfo._id);
 
 
         // if (requestData.type == "NORMAL") {
@@ -456,7 +456,7 @@ module.exports.PASTBET = async (requestData, client) => {
         }
 
         logger.info("requestData.playerId : ", requestData.playerId);
-        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tableId) , "playerInfo._id": MongoID(requestData.playerId) }, {"playerInfo.$":1})
+        const PlayerInfo = await JantaTables.findOne({ _id: MongoID(requestData.tableId), "playerInfo._id": MongoID(requestData.playerId) }, { "playerInfo.$": 1 })
         logger.info("PASTBET PlayerInfo : ", PlayerInfo);
 
         if (PlayerInfo == null) {
@@ -565,13 +565,13 @@ module.exports.BETACTIONCALL = async (pastbetObject, client) => {
 
         logger.info("userBet ", userBet)
         logger.info("pastbetObject ", pastbetObject)
-        
-            this.actionJanta(true,userBet[0], client, (d) => {
-                
-                this.BETACTIONCALL(pastbetObject, client)
 
-            })
-        
+        this.actionJanta(true, userBet[0], client, (d) => {
+
+            this.BETACTIONCALL(pastbetObject, client)
+
+        })
+
 
     } catch (e) {
         logger.info("BETACTIONCALL BETACTIONCALL : ", e);

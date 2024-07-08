@@ -20,19 +20,19 @@ module.exports.gameTimerStart = async (tb) => {
         if (tb.gameState != "" && tb.gameState != "WinnerDecalre") return false;
 
         let wh = {
-            _id:MongoID(tb._id),
-            "playerInfo._id": {$exists:true}
+            _id: MongoID(tb._id),
+            "playerInfo._id": { $exists: true }
         }
         let update = {
             $set: {
                 gameState: "JantaGameStartTimer",
                 "gameTimer.GST": new Date(),
-                "totalbet":0,
+                "totalbet": 0,
                 "playerInfo.$.selectObj": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 "playerInfo.$.betObject": [],
-                "isFinalWinner":false,
-                sumofcard:-1,
-                opencards:[],
+                "isFinalWinner": false,
+                sumofcard: -1,
+                opencards: [],
                 uuid: uuidv4(),
             }
         }
@@ -42,7 +42,7 @@ module.exports.gameTimerStart = async (tb) => {
         logger.info("gameTimerStart tabInfo :: ", tabInfo);
 
         let roundTime = 3;
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_GAME_START_TIMER, { timer: roundTime,history:tabInfo.history });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_GAME_START_TIMER, { timer: roundTime, history: tabInfo.history });
 
         let tbId = tabInfo._id;
         let jobId = CONST.JANTA_GAME_START_TIMER + ":" + tbId;
@@ -50,11 +50,11 @@ module.exports.gameTimerStart = async (tb) => {
 
         const delayRes = await commandAcions.setDelay(jobId, new Date(delay));
 
-        setTimeout(async ()=>{
+        setTimeout(async () => {
             this.StartJantaGame(tbId)
-        },500)
+        }, 500)
 
-        
+
 
     } catch (error) {
         logger.error("gameTimerStart.js error ->", error)
@@ -79,10 +79,10 @@ module.exports.StartJantaGame = async (tbId) => {
 
         // NORMAL 
         let cards = _.shuffle(tb.cards).slice(0, 3);
-        
+
         let sumofcard = cards.reduce((accumulator, currentValue) => {
-            return accumulator + parseInt(currentValue.split("-")[1] == "10"?0:currentValue.split("-")[1])
-        },0);
+            return accumulator + parseInt(currentValue.split("-")[1] == "10" ? 0 : currentValue.split("-")[1])
+        }, 0);
 
         // if(CONST.SORATLOGIC == "Client"){ // Client SIDE
         //     if(tb.totalbet >= 5){
@@ -94,26 +94,26 @@ module.exports.StartJantaGame = async (tbId) => {
         //      Number = this.generateNumber()
         // }   
         let WinnerNumber = -1
-        if(sumofcard.toString().length > 1){
-            WinnerNumber  = sumofcard.toString()[1]
-        }else{
+        if (sumofcard.toString().length > 1) {
+            WinnerNumber = sumofcard.toString()[1]
+        } else {
             WinnerNumber = sumofcard.toString()
 
         }
 
-        console.log("WinnerNumber ::::::::::::::::",WinnerNumber)
-        
+        console.log("WinnerNumber ::::::::::::::::", WinnerNumber)
+
         let wh = {
             _id: tbId
         }
         let update = {
             $set: {
                 gameState: "StartJanta",
-                sumofcard:WinnerNumber,
-                opencards:cards,
-                turnStartTimer:new Date()
+                sumofcard: WinnerNumber,
+                opencards: cards,
+                turnStartTimer: new Date()
             },
-            $push:{
+            $push: {
                 "history": {
                     $each: [WinnerNumber],
                     $slice: -7
@@ -125,28 +125,28 @@ module.exports.StartJantaGame = async (tbId) => {
         const tabInfo = await JantaTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("StartJanta tabInfo :: ", tabInfo);
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards,sumofcard:WinnerNumber,timelimit:30 });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.JANTA_ROUND_START_TIMER, { opencards: cards, sumofcard: WinnerNumber, timelimit: 30 });
 
-        setTimeout(async ()=> {
-            
-            this.winnerJanta(tabInfo,WinnerNumber);
-        },31000);
+        setTimeout(async () => {
+
+            this.winnerJanta(tabInfo, WinnerNumber);
+        }, 31000);
 
         //botLogic.PlayRobot(tabInfo,tabInfo.playerInfo,itemObject)
 
     } catch (error) {
         logger.error("StartJantaGame.js error ->", error)
     }
-}       
+}
 
 // Generate a random whole number between a specified range (min and max)
-module.exports.getRandomInt = (min, max) =>{
+module.exports.getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports.winnerJanta = async (tabInfo, itemObject) =>{
+module.exports.winnerJanta = async (tabInfo, itemObject) => {
 
     try {
         logger.info("winnerSorat winner ::  -->", itemObject, tabInfo);
@@ -159,7 +159,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         const tb = await JantaTables.findOne({
             _id: MongoID(tbid.toString()),
         }, {})
-        console.log("winner JANTA tb ",tb)
+        console.log("winner JANTA tb ", tb)
         if (typeof itemObject == "undefined" || (typeof tb != "undefined" && tb.playerInfo.length == 0)) {
             logger.info("winner JANTA  winner ::", itemObject);
             logger.info("winner JANTA  winner tb.playerInfo.length ::", tb.playerInfo.length);
@@ -189,7 +189,7 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
         ]
 
         let itemIndex = tbInfo.TableObject.indexOf(itemObject)
-        console.log("itemIndex ",itemIndex)
+        console.log("itemIndex ", itemIndex)
         for (let i = 0; i < tbInfo.playerInfo.length; i++) {
             if (tbInfo.playerInfo[i].seatIndex != undefined) {
                 //"playerInfo.$.betObject": [],
@@ -212,16 +212,16 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
 
                     await JantaTables.findOneAndUpdate(upWh, updateData, { new: true });
                 }
-                logger.info("winnerJanta Data :  ", tbInfo.playerInfo[i].selectObj[itemIndex] , tbInfo.playerInfo[i].selectObj[itemIndex] * 9);
-                
+                logger.info("winnerJanta Data :  ", tbInfo.playerInfo[i].selectObj[itemIndex], tbInfo.playerInfo[i].selectObj[itemIndex] * 9);
+
 
                 for (let j = 0; j < betObjectData.length; j++) {
                     if (betObjectData[j].bet != undefined) {
 
-                        
+
                         if (betObjectData[j].type == "NORMAL" && parseInt(betObjectData[j].item) == parseInt(itemObject)) {
-                          
-                            console.log("betObjectData[j] ",betObjectData[j])
+
+                            console.log("betObjectData[j] ", betObjectData[j])
 
                             TotalWinAmount = TotalWinAmount + betObjectData[j].bet * 9;
 
@@ -229,48 +229,48 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
                             TotalBetAmount = TotalBetAmount + betObjectData[j].bet
                         }
 
-                        if (betObjectData[j].type == "sixtozeroc" && [0,6,7,8,9].indexOf(parseInt(itemObject)) != -1) {
-                          
-                            console.log("betObjectData[j] ",betObjectData[j])
+                        if (betObjectData[j].type == "sixtozeroc" && [0, 6, 7, 8, 9].indexOf(parseInt(itemObject)) != -1) {
 
-                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+                            console.log("betObjectData[j] ", betObjectData[j])
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet / 5) * 9));
+
+                            console.log("TotalWinAmount normal", TotalWinAmount)
+                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
+
+                        }
+
+
+
+                        if (betObjectData[j].type == "onetofive" && [1, 2, 3, 4, 5].indexOf(parseInt(itemObject)) != -1) {
+
+                            console.log("betObjectData[j] ", betObjectData[j])
+
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet / 5) * 9));
 
                             console.log("TotalWinAmount normal", TotalWinAmount)
                             TotalBetAmount = TotalBetAmount + betObjectData[j].bet
 
                         }
 
-                        
 
-                        if (betObjectData[j].type == "onetofive" && [1,2,3,4,5].indexOf(parseInt(itemObject)) != -1) {
-                          
-                            console.log("betObjectData[j] ",betObjectData[j])
 
-                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
 
-                            console.log("TotalWinAmount normal", TotalWinAmount)
-                            TotalBetAmount = TotalBetAmount + betObjectData[j].bet
-
-                        }
-                        
-
-                        
-
-                        if (betObjectData[j].type == "Odd" && itemObject%2 == 1) {
+                        if (betObjectData[j].type == "Odd" && itemObject % 2 == 1) {
                             console.log("betObjectData[j] ", betObjectData[j])
 
 
-                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet / 5) * 9));
                             console.log("TotalWinAmount odd", TotalWinAmount)
                             TotalBetAmount = TotalBetAmount + betObjectData[j].bet
 
                         }
 
-                        if (betObjectData[j].type == "Even" && itemObject%2 == 0) {
+                        if (betObjectData[j].type == "Even" && itemObject % 2 == 0) {
                             console.log("betObjectData[j] ", betObjectData[j])
 
 
-                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet/5) * 9));
+                            TotalWinAmount = (TotalWinAmount + ((betObjectData[j].bet / 5) * 9));
                             TotalBetAmount = TotalBetAmount + betObjectData[j].bet
 
 
@@ -282,23 +282,23 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
 
                 }
                 console.log("TotalWinAmount ", TotalWinAmount)
-                
-             
-        
+
+
+
 
                 if (TotalWinAmount != 0) {
                     winnerData.push({
-                        uid:tbInfo.playerInfo[i]._id,
-                        seatIndex:tbInfo.playerInfo[i].seatIndex,
-                        winAmount:TotalWinAmount,
+                        uid: tbInfo.playerInfo[i]._id,
+                        seatIndex: tbInfo.playerInfo[i].seatIndex,
+                        winAmount: TotalWinAmount,
                     })
 
-                    await walletActions.addUserWalletGame(tbInfo.playerInfo[i]._id,Number(TotalWinAmount),"credit", "Janta Win","Janta",tbInfo._id);
+                    await walletActions.addUserWalletGame(tbInfo.playerInfo[i]._id, Number(TotalWinAmount), CONST.TRANSACTION_TYPE.WIN, "Janta Win", "Janta", tbInfo._id);
 
                 }
-                
-                
-                
+
+
+
                 // if(tbInfo.playerInfo[i].selectObj[itemIndex] != -1){
                 //     
 
@@ -306,17 +306,17 @@ module.exports.winnerJanta = async (tabInfo, itemObject) =>{
                 //     //await walletActions.addWallet(tbInfo.playerInfo[i]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", tabInfo,"","","Janta");
                 //     await WinwalletActions.addWalletAdmin(tbInfo.playerInfo[x]._id, Number(tbInfo.playerInfo[i].selectObj[itemIndex] * 9), 4, "Janta Win", "Janta");
                 // }
-               
-                
+
+
             }
         }
         const playerInGame = await roundStartActions.getPlayingUserInRound(tbInfo.playerInfo);
         logger.info("getWinner playerInGame ::", playerInGame);
 
-      
+
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.JANTAWINNER, {
-            WinnerData:winnerData,
-            itemObject:itemObject
+            WinnerData: winnerData,
+            itemObject: itemObject
         });
 
         let jobId = CONST.JANTA_GAME_START_TIMER + ":" + tbInfo._id.toString();
@@ -343,7 +343,8 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductWallet(playerInfo[i]._id,-Number(tabInfo.boot), 1, "Sorat Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex,"Janta");
+                // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "Sorat Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex, "Janta");
+                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Janta Boot Amount", "Janta", tabInfo._id);
 
                 let update = {
                     $inc: {

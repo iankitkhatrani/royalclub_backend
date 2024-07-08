@@ -148,7 +148,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
         let itemObject = -1
         let AdminWinlossData = []
         if (GAMELOGICCONFIG.DAY != undefined && GAMELOGICCONFIG.DAY != 1) {
-            let datebeforecount = this.AddTimeLAST(-((GAMELOGICCONFIG.DAY-1)* 86400));
+            let datebeforecount = this.AddTimeLAST(-((GAMELOGICCONFIG.DAY - 1) * 86400));
 
             logger.info("datebeforecount ", datebeforecount)
 
@@ -163,8 +163,8 @@ module.exports.StartSpinnerGame = async (tbId) => {
 
         logger.info("AdminWinlossData ", AdminWinlossData)
 
-        let totalWin = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => {return total + Math.round(num.win);}, 0) : 0
-        let totalLoss = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => {return total + Math.round(num.loss);}, 0) : 0
+        let totalWin = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => { return total + Math.round(num.win); }, 0) : 0
+        let totalLoss = (AdminWinlossData.length > 0) ? AdminWinlossData.reduce((total, num) => { return total + Math.round(num.loss); }, 0) : 0
         let perwin = 100 - ((totalLoss * 100) / totalWin)
 
         logger.info("totalWin", totalWin);
@@ -180,7 +180,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
 
         if (GAMELOGICCONFIG.BLUEFIXNUMBERWON != undefined && GAMELOGICCONFIG.BLUEFIXNUMBERWON != -1 && GAMELOGICCONFIG.BLUEFIXNUMBERWON >= 0 && GAMELOGICCONFIG.BLUEFIXNUMBERWON <= 36) {
             itemObject = GAMELOGICCONFIG.BLUEFIXNUMBERWON
-        } 
+        }
         // else if (tb.whichTable == "greenTable" && GAMELOGICCONFIG.GREENFIXNUMBERWON != undefined && GAMELOGICCONFIG.GREENFIXNUMBERWON != -1 && GAMELOGICCONFIG.GREENFIXNUMBERWON >= 0 && GAMELOGICCONFIG.GREENFIXNUMBERWON <= 36) {
         //     itemObject = GAMELOGICCONFIG.GREENFIXNUMBERWON
         // } 
@@ -417,7 +417,7 @@ module.exports.StartSpinnerGame = async (tbId) => {
         }
 
 
-        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.START_ROULETTE, { itemObject: itemObject,winnerData:winnerData, timelimit: 10 });
+        commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.START_ROULETTE, { itemObject: itemObject, winnerData: winnerData, timelimit: 10 });
 
         setTimeout(async () => {
             // Clear destory 
@@ -523,7 +523,7 @@ module.exports.winnerSpinner = async (tabInfo) => {
                 var TotalBetAmount = 0
 
 
-                console.log("pastbetObject Winner ",betObjectData)
+                console.log("pastbetObject Winner ", betObjectData)
                 const upWh = {
                     _id: MongoID(tbid),
                     "playerInfo.seatIndex": tbInfo.playerInfo[x].seatIndex
@@ -555,13 +555,13 @@ module.exports.winnerSpinner = async (tabInfo) => {
                 for (let i = 0; i < betObjectData.length; i++) {
                     if (betObjectData[i].bet != undefined) {
 
-                        console.log("betObjectData[i] ",betObjectData[i])
+                        console.log("betObjectData[i] ", betObjectData[i])
 
                         if (betObjectData[i].type == "number" && betObjectData[i].number.indexOf(itemIndex) != -1) {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 35) ,
+                                winAmount: (betObjectData[i].bet * 35),
                             })
 
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 35;
@@ -571,9 +571,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 3) ,
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -581,9 +581,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 3) ,
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -592,9 +592,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 3) ,
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                           
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -602,9 +602,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 3) ,
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -612,9 +612,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 3 ),
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -622,9 +622,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount:( betObjectData[i].bet * 3 ),
+                                winAmount: (betObjectData[i].bet * 3),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 3;
                         }
 
@@ -632,9 +632,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 2) ,
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -643,9 +643,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 2) ,
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -653,9 +653,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 2) ,
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -663,9 +663,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 2 ),
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -674,9 +674,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount:( betObjectData[i].bet * 2 ),
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -684,9 +684,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount:( betObjectData[i].bet * 2) ,
+                                winAmount: (betObjectData[i].bet * 2),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 2;
                         }
 
@@ -695,9 +695,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount:( betObjectData[i].bet * 17.5) ,
+                                winAmount: (betObjectData[i].bet * 17.5),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 17.5;
                         }
 
@@ -706,9 +706,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount: (betObjectData[i].bet * 11.66) ,
+                                winAmount: (betObjectData[i].bet * 11.66),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 11.66;
                         }
 
@@ -716,9 +716,9 @@ module.exports.winnerSpinner = async (tabInfo) => {
                             winnerData.push({
                                 uid: tbInfo.playerInfo[x]._id,
                                 seatIndex: 0,
-                                winAmount:( betObjectData[i].bet * 8.75) ,
+                                winAmount: (betObjectData[i].bet * 8.75),
                             })
-                            
+
                             TotalWinAmount = TotalWinAmount + betObjectData[i].bet * 8.75;
                         }
 
@@ -740,20 +740,20 @@ module.exports.winnerSpinner = async (tabInfo) => {
                 }
                 console.log("TotalWinAmount ", TotalWinAmount)
 
-                TotalWinAmount != 0 && await walletActions.addUserWalletGame(tbInfo.playerInfo[x]._id,Number(TotalWinAmount),"credit", "roulette Win","Roulette",tbInfo._id);
+                TotalWinAmount != 0 && await walletActions.addUserWalletGame(tbInfo.playerInfo[x]._id, Number(TotalWinAmount), CONST.TRANSACTION_TYPE.WIN, "roulette Win", "Roulette", tbInfo._id);
 
-                
+
                 gamePlayActionsRoulette.AdminWinLossData(Number(TotalWinAmount), "loss")
 
                 let insertobj = {
                     userId: tbInfo.playerInfo[x]._id.toString(),
                     ballposition: itemIndex,
-                    beforeplaypoint: tbInfo.playerInfo[x].coins +  tbInfo.playerInfo[x].totalbet,
+                    beforeplaypoint: tbInfo.playerInfo[x].coins + tbInfo.playerInfo[x].totalbet,
                     play: tbInfo.playerInfo[x].totalbet,
                     won: TotalWinAmount,
                     afterplaypoint: tbInfo.playerInfo[x].coins + TotalWinAmount,
                     uuid: tbInfo.uuid,
-                    betObjectData:betObjectData
+                    betObjectData: betObjectData
 
                 };
                 console.log("RouletteUserHistory ", insertobj)

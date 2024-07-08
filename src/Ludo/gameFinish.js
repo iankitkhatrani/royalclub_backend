@@ -19,10 +19,10 @@ const logger = require("../../logger");
 const { Logger } = require("mongodb");
 
 module.exports.lastUserWinnerDeclareCall = async (tb) => {
-    if (tb.isLastUserFinish){
+    if (tb.isLastUserFinish) {
         logger.info("lastUserWinnerDeclareCall isLastUserFinish")
         return false;
-    } 
+    }
     const upWh = {
         _id: tb._id,
     }
@@ -102,7 +102,7 @@ module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
         logger.info("getWinner playerInGame ::", playerInGame);
 
         for (let i = 0; i < playerInGame.length; i++) {
-            
+
             tbInfo.gameTracks.push(
                 {
                     _id: playerInGame[i]._id,
@@ -123,7 +123,7 @@ module.exports.winnerDeclareCallLudo = async (winner, tabInfo) => {
         for (let i = 0; i < tbInfo.gameTracks.length; i++) {
             if (tbInfo.gameTracks[i].playStatus == "win") {
                 //await walletActions.addWallet(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), 4, "Ludo Win", tabInfo);
-                await walletActions.addUserWalletGame(tbInfo.gameTracks[i]._id,Number(winnerTrack.winningAmount),"credit", "Ludo Win","Ludo Game",tbInfo._id);
+                await walletActions.addUserWalletGame(tbInfo.gameTracks[i]._id, Number(winnerTrack.winningAmount), CONST.TRANSACTION_TYPE.WIN, "Ludo Win", "Ludo Game", tbInfo._id);
 
             }
         }

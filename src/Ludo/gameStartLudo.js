@@ -137,7 +137,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
             if (playerInfo[i] != {} && typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
-                await walletActions.deductuserWalletGame(playerInfo[i]._id,-Number(tabInfo.boot),"debit", "Ludo Bet","Ludo Game",tabInfo._id);
+                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Ludo Bet", "Ludo Game", tabInfo._id);
 
                 let update = {
                     $inc: {

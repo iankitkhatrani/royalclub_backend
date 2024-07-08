@@ -32,7 +32,7 @@ const adminwinloss = mongoose.model('adminwinloss');
     
 
 */
-module.exports.actionSpin = async (requestData, client,callback) => {
+module.exports.actionSpin = async (requestData, client, callback) => {
     try {
         logger.info("action requestData : ", requestData);
         if (typeof client.tbid == "undefined"
@@ -56,11 +56,11 @@ module.exports.actionSpin = async (requestData, client,callback) => {
             return false
         }
 
-        logger.info("typeof requestData.betaction.number ",typeof requestData.betaction.number)
-        requestData.betaction.number = (typeof requestData.betaction.number == "string")? JSON.parse(requestData.betaction.number):requestData.betaction.number
-        requestData.betaction.coin = (typeof requestData.betaction.coin == "string")? JSON.parse(requestData.betaction.coin):requestData.betaction.coin
+        logger.info("typeof requestData.betaction.number ", typeof requestData.betaction.number)
+        requestData.betaction.number = (typeof requestData.betaction.number == "string") ? JSON.parse(requestData.betaction.number) : requestData.betaction.number
+        requestData.betaction.coin = (typeof requestData.betaction.coin == "string") ? JSON.parse(requestData.betaction.coin) : requestData.betaction.coin
 
-       
+
 
         logger.info("requestData.betaction. ", requestData.betaction)
 
@@ -102,7 +102,7 @@ module.exports.actionSpin = async (requestData, client,callback) => {
 
             },
             $inc: {
-                
+
             }
         }
         let chalvalue = currentBet;
@@ -114,7 +114,7 @@ module.exports.actionSpin = async (requestData, client,callback) => {
         if (Number(chalvalue) > Number(totalWallet)) {
             logger.info("action client.su ::", client.seatIndex);
             delete client.action;
-           
+
             if (typeof callback == "function") {
                 return callback("error")
             }
@@ -123,8 +123,8 @@ module.exports.actionSpin = async (requestData, client,callback) => {
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        
-        await walletActions.deductuserWalletGame(client.uid,-Number(chalvalue),"debit", "roulette Bet","Roulette",tabInfo._id);
+
+        await walletActions.deductuserWalletGame(client.uid, -Number(chalvalue), CONST.TRANSACTION_TYPE.DEBIT, "roulette Bet", "Roulette", tabInfo._id);
 
 
         //updateData.$inc["playerInfo.$.selectObj." + requestData.item] = chalvalue;
@@ -300,7 +300,7 @@ module.exports.REMOVEBETROULETTE = async (requestData, client) => {
             return false
         }
 
-        await walletActions.addUserWalletGame(client.uid,Number(chalvalue),"credit", "roulette Clear Bet","Roulette",tabInfo._id);
+        await walletActions.addUserWalletGame(client.uid, Number(chalvalue), CONST.TRANSACTION_TYPE.CREDIT, "roulette Clear Bet", "Roulette", tabInfo._id);
 
 
         updateData.$inc["playerInfo.$.totalbet"] = -chalvalue;
@@ -408,16 +408,16 @@ module.exports.ClearBet = async (requestData, client) => {
                 ],
                 "playerInfo.$.betObject": [],
                 "playerInfo.$.totalbet": 0,
-                
+
             },
             $inc: {
                 "totalbet": -Number(playerInfo.totalbet),
-                "playerInfo.$.coins" : Number(playerInfo.totalbet)
+                "playerInfo.$.coins": Number(playerInfo.totalbet)
             }
         }
 
-       
-        await walletActions.addUserWalletGame(client.uid,Number(playerInfo.totalbet),"credit", "roulette Clear Bet","Roulette",tabInfo._id);
+
+        await walletActions.addUserWalletGame(client.uid, Number(playerInfo.totalbet), CONST.TRANSACTION_TYPE.CREDIT, "roulette Clear Bet", "Roulette", tabInfo._id);
 
 
         const upWh = {
@@ -500,7 +500,8 @@ module.exports.DoubleBet = async (requestData, client) => {
 
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
-        await walletActions.deductWallet(client.uid, -chalvalue, 2, "roulette Bet", "roulette");
+        // await walletActions.deductWallet(client.uid, -chalvalue, 2, "roulette Bet", "roulette");
+        await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), CONST.TRANSACTION_TYPE.DEBIT, "roulette Bet", "roulette", tabInfo._id);
 
         let updateData = {
             $set: {
@@ -701,16 +702,16 @@ module.exports.BETACTIONCALL = async (pastbetObject, client) => {
             return false;
 
         let userBet = pastbetObject.splice(0, 1)
-        logger.info("userBet ",userBet)
-        logger.info("pastbetObject ",pastbetObject)
+        logger.info("userBet ", userBet)
+        logger.info("pastbetObject ", pastbetObject)
 
         this.actionSpin({
             tableId: client.tbid,
-            playerId:client.uid,
+            playerId: client.uid,
             bet: userBet[0].bet,
             betaction: userBet[0]
         }, client, (d) => {
-            logger.info("d :::::::::::::::::::::::::::::",d)
+            logger.info("d :::::::::::::::::::::::::::::", d)
             this.BETACTIONCALL(pastbetObject, client)
 
         })

@@ -109,7 +109,7 @@ module.exports.deduct = async (tabInfo, playerInfo) => {
                 seatIndexs.push(playerInfo[i].seatIndex);
 
                 // await walletActions.deductWallet(playerInfo[i]._id, -Number(tabInfo.boot), 1, "TeenPatti Bet", tabInfo, playerInfo[i].sck, playerInfo[i].seatIndex);
-                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), "debit", "Teen Patti Boot Amount", "Private Teen Patti", tabInfo._id);
+                await walletActions.deductuserWalletGame(playerInfo[i]._id, -Number(tabInfo.boot), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Teen Patti Boot Amount", "Private Teen Patti", tabInfo._id);
 
 
                 let update = {

@@ -219,7 +219,7 @@ module.exports.winnerDeclareCall = async (tblInfo) => {
         let winningwallet = Number(winnerTrack.winningAmount)
 
 
-        await walletActions.addUserWalletGame(tableInfo.gameTracks[i]._id, Number(winningwallet), "credit", "Game Win", "Rummy", tableInfo._id);
+        await walletActions.addUserWalletGame(tableInfo.gameTracks[i]._id, Number(winningwallet), CONST.TRANSACTION_TYPE.WIN, "Game Win", "Rummy", tableInfo._id);
 
       }
     }

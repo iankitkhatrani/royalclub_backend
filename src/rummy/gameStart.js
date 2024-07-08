@@ -204,7 +204,7 @@ module.exports.deduct = async (tbInfo, playerInfo) => {
         let playerGameChips = tabInfo.entryFee * 80;
         let gameDepositChips = playerGameChips;
 
-        await walletActions.deductuserWalletGame(pId, -Number(gameDepositChips), "debit", "Ruumy Entry Fee Deduct", "Rummy", tabInfo._id);
+        await walletActions.deductuserWalletGame(pId, -Number(gameDepositChips), CONST.TRANSACTION_TYPE.BOOT_VALUE, "Ruumy Entry Fee Deduct", "Rummy", tabInfo._id);
 
         const upWh = {
           _id: MongoID(tabInfo._id),
