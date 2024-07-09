@@ -152,7 +152,9 @@ module.exports.roundFinish = async (tb) => {
             _id: MongoID(tableId.toString())
         }
         const tabInfo = await PlayingTables.findOne(wh1, {}).lean();
-        if (tabInfo.activePlayer >= 2)
+        logger.info("roundFinish tabInfo : ", tabInfo);
+
+        if (tbInfo.activePlayer >= 2)
             await gameStartActions.gameTimerStart(tabInfo);
 
         return true;

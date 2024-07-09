@@ -113,6 +113,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         const playerInGame = await this.getPlayingUserInRound(tb.playerInfo);
         logger.info("startUserTurn playerInGame ::", playerInGame);
+        logger.info("startUserTurn playerInGame length::", playerInGame.length);
 
         if (playerInGame.length == 1) {
             await lastUserWinnerDeclareCall(tb);
@@ -219,7 +220,7 @@ module.exports.userTurnExpaire = async (tbid) => {
 
             if (taabInfo == null) {
                 logger.info("table not found::", taabInfo);
-                return false
+                return false
             }
 
             const playerInGame = await this.getPlayingUserInRound(taabInfo.playerInfo);

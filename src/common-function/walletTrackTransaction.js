@@ -320,7 +320,7 @@ module.exports.deductuserWallet = async (id, deductChips, tType, t, game, author
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType,
         authorisedid: authorisedid,
         authorisedtype: authorisedtype,
         authorisedname: authorisedname,
@@ -1797,91 +1797,6 @@ module.exports.locktounlockbonus = async (id, addCoins, tType, t, Wtype, tabInfo
   }
 };
 
-// //Sinup Bonus & Deposit Bonus 
-// module.exports.addReffralBonusDeposit = async (id, addCoins, tType, t) => {
-//   try {
-//     logger.info('\n add addReffralBonusDeposit : call -->>>', id, addCoins, t);
-//     const wh = typeof id === 'string' ? { _id: MongoID(id).toString() } : { _id: id };
-//     logger.info('Wh  =  ==  ==>', wh);
-
-//     if (typeof wh === 'undefined' || typeof wh._id === 'undefined' || wh._id === null || typeof tType === 'undefined') {
-//       return false;
-//     }
-//     const addedCoins = Number(addCoins.toFixed(2));
-
-//     const whr = typeof id === 'string' ? { referalUserId: MongoID(id).toString(), reffralStatus: false } : { _id: id };
-//     const UserReferTrackInfo = await UserReferTracks.findOne(whr, {}).lean();
-//     if (UserReferTrackInfo) {
-//       const userInfo = await GameUser.findOne(wh, {}).lean();
-//       logger.info('Add addReffralBonusDeposit userInfo ::=> ', userInfo);
-
-//       if (userInfo === null) {
-//         return false;
-//       }
-
-//       let setInfo = {
-//         $inc: {
-//           referralChips: addedCoins
-//         },
-//       };
-
-//       logger.info('\n Add* addReffralBonusDeposit setInfo :: ==>', setInfo);
-//       logger.info('\n Add* addReffralBonusDeposit addedCoins :: ==>', addedCoins);
-
-//       let tbl = await GameUser.findOneAndUpdate(wh, setInfo, { new: true });
-//       logger.info('\n Add addReffralBonusDeposit up Reps :::: ', tbl);
-
-//       let setInfos = {
-//         $set: {
-//           reffralStatus: true
-//         },
-//       };
-//       let updatereffralSatus = await UserReferTracks.findOneAndUpdate(wh, setInfos, { new: true });
-//       logger.info('\n Add addReffralBonusDeposit updatereffralSatus Reps :::: ', updatereffralSatus);
-
-//       let totalRemaningAmount = Number(tbl.chips);
-//       logger.info('\n Dedudct addReffralBonusDeposit total RemaningAmount :: ', Number(totalRemaningAmount));
-
-//       if (typeof tType !== 'undefined') {
-//         logger.info('\n AddWallet tType :: ', tType);
-
-//         let walletTrack = {
-//           // id: userInfo._id,
-//           uniqueId: tbl.uniqueId,
-//           userId: tbl._id,
-//           transType: tType,
-//           transTypeText: t,
-//           transAmount: addedCoins,
-//           chips: tbl.chips,
-//           winningChips: tbl.winningChips,
-//           bonusChips: tbl.bonusChips,
-//           referralChips: tbl.referralChips, // referarl Chips
-//           unlockreferralChips: tbl.unlockreferralChips, // referarl Chips unlock Chips  
-//           lockreferralChips: tbl.lockreferralChips, // referarl Chips lock Chips 
-//           // withdrawableChips: tbl.withdrawableChips,
-//           totalBucket: Number(totalRemaningAmount),
-//           gameId: '',
-//           gameType: '', //Game Type
-//           maxSeat: 0, //Maxumum Player.
-//           betValue: 0,
-//           tableId: '',
-//         };
-//         await this.trackUserWallet(walletTrack);
-//       }
-//       console.log("tbl.sckId ", tbl.sckId)
-
-//       commandAcions.sendDirectEvent(tbl.sckId, CONST.PLAYER_BALANCE, { chips: tbl.chips, addCoins: addCoins });
-
-//       return totalRemaningAmount;
-//     } else {
-//       logger.info("reffral id or user not found")
-//     }
-
-//   } catch (e) {
-//     logger.error('userWalletTracks.js addWallet error =>', e);
-//     return 0;
-//   }
-// };
 
 //Sinup Bonus & Deposit Bonus 
 module.exports.addWalletBonusDeposit = async (id, addCoins, tType, t, Wtype) => {

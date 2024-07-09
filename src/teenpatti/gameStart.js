@@ -155,10 +155,13 @@ module.exports.resetUserData = async (tbId, playerInfo) => {
                         "playerInfo.$.isSee": false
                     }
                 }
+
                 playerInfo[i].status = "play";
+                playerInfo[i].playerStatus = "blind";
                 let uWh = { _id: MongoID(tbId.toString()), "playerInfo.seatIndex": Number(playerInfo[i].seatIndex) }
                 logger.info("updateUserState uWh update ::", uWh, update)
-                await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
+                let res = await PlayingTables.findOneAndUpdate(uWh, update, { new: true });
+                logger.info("updateUserState res ::", res)
             }
 
         logger.info("updateUserState playerInfo::", playerInfo, playerInfo.length);
@@ -197,7 +200,7 @@ module.exports.checkUserInRound = async (playerInfo, tb) => {
 
         for (let i = 0; i < userInfos.length; i++)
             if (typeof userInfos[i]._id != "undefined") {
-                let totalWallet = Number(userInfos[i].chips) + Number(userInfos[i].winningChips)
+                let totalWallet = Number(userInfos[i].chips) //+ Number(userInfos[i].winningChips)
                 userInfo[userInfos[i]._id] = {
                     coins: totalWallet,
                 }

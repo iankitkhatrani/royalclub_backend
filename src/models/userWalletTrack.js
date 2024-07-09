@@ -20,6 +20,7 @@ const UserWalletTracksSchema = new Schema(
     totalBucket: { type: Number, defualt: 0 },
     gameId: { type: String },
     gameType: { type: String },
+    gamePlayType: { type: String },
     maxSeat: { type: Number },
     betValue: { type: Number },
     tableId: { type: String },
