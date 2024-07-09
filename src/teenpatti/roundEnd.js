@@ -17,7 +17,7 @@ module.exports.roundFinish = async (tb) => {
         const playerInGame = await this.getPlayingUserInRound(tb.playerInfo);
         logger.info('roundFinish Player In game =>', playerInGame);
 
-        const list = ['play', 'pack', 'blind', 'win', 'loss', 'chal'];
+        const list = ['play', 'pack', 'blind', 'win', 'loss', 'chal', 'winner', 'leaveTable'];
 
         playerInGame.forEach(async (player) => {
             logger.info('teen roundFinish player ->', player);
@@ -31,10 +31,13 @@ module.exports.roundFinish = async (tb) => {
 
                 let dataUpdate = {
                     $set: {
-                        'playerInfo.$.playerStatus': CONST.WAITING,
+                        'playerInfo.$.playerStatus': "",
                         'playerInfo.$.status': CONST.WAITING,
                         'playerInfo.$.finished': false,
                         'playerInfo.$.seeCard': false,
+                        'playerInfo.$.cards': [],
+                        'playerInfo.$.chalValue': 0,
+                        'playerInfo.$.totalBet': 0,
                     },
                 };
 
@@ -127,6 +130,7 @@ module.exports.roundFinish = async (tb) => {
                 isFinalWinner: false,
                 callFinalWinner: false,
                 turnSeatIndex: -1,
+                dealerSeatIndex: -1,
                 hukum: "",
                 chalValue: 0,
                 potValue: 0,

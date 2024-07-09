@@ -164,7 +164,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             username: userInfo.username,
             profile: userInfo.profileUrl,
             coins: totalWallet,
-            status: "WAITING",
+            status: CONST.WAITING,
             playerStatus: "",
             chalValue: 0,
             cards: [],
