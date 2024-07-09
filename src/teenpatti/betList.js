@@ -25,7 +25,7 @@ module.exports.getBetList = async (requestData, client) => {
         let entryFeeSet = new Set();
 
         listInfo.forEach(item => {
-            entryFeeSet.add(item.boot);
+            entryFeeSet.add(item.boot.toString());
         });
 
         let entryFeeList = Array.from(entryFeeSet);
