@@ -20,7 +20,9 @@ module.exports.roundStarted = async (tbid) => {
         const project = {
             gameState: 1,
             playerInfo: 1,
-            activePlayer: 1
+            activePlayer: 1,
+            currentPlayerTurnIndex: 1,
+
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("roundStarted tabInfo : ", tabInfo);
@@ -37,7 +39,7 @@ module.exports.roundStarted = async (tbid) => {
 
         const update = {
             $set: {
-                gameState: "RoundStated"
+                gameState: CONST.ROUND_STARTED//"RoundStated"
             }
         }
         logger.info("roundStarted update : ", wh, update);
@@ -45,7 +47,9 @@ module.exports.roundStarted = async (tbid) => {
         const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("roundStarted tb : ", tb);
 
-        await this.setFirstTurn(tb);
+        // await this.setFirstTurn(tb);
+        await this.nextUserTurnstart(tb);
+
 
     } catch (error) {
         logger.error('roundStart.js roundStarted error : ', error);
@@ -62,7 +66,7 @@ module.exports.nextUserTurnstart = async (tb) => {
     try {
 
         logger.info("nextUserTurnstart tb :: ", tb);
-        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0);
+        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
         logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
         await this.startUserTurn(nextTurnIndex, tb, false);
     } catch (error) {
@@ -101,6 +105,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         let update = {
             $set: {
                 turnSeatIndex: seatIndex,
+                currentPlayerTurnIndex: seatIndex,
                 turnDone: false,
                 "gameTimer.ttimer": new Date(),
                 jobId: jobId
@@ -134,6 +139,10 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         logger.info("startUserTurn isShow :", isShow);
 
         let response = {
+            si: tb.currentPlayerTurnIndex,
+            pi: tb.playerInfo[tb.currentPlayerTurnIndex]._id,
+            playerName: tb.playerInfo[tb.currentPlayerTurnIndex].name,
+
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
             chalValue: tb.chalValue,
@@ -303,7 +312,8 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
             return index;
         }
         else {
-            return (x);
+            logger.info('teen getUserTurnSeatIndex x', x);
+            return x;
         }
     } catch (error) {
         logger.error('roundStart.js getUserTurnSeatIndex error : ', error);

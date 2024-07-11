@@ -12,6 +12,10 @@ const PlayingTablesSchema = new Schema({
     activePlayer: { type: Number, default: 0 },
     betId: { type: mongoose.Schema.Types.ObjectId, ref: BetLists },
     boot: { type: Number, default: 0 },
+    currentPlayerTurnIndex: { type: Number, default: -1 },
+    startTimer: { type: String, default: -1 },
+    tableAmount: { type: Number, default: 0 },
+    commission: { type: Number, default: 10 },
 
     chalValue: { type: Number, default: 0 },
     potValue: { type: Number, default: 0 },
