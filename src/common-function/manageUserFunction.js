@@ -105,11 +105,11 @@ module.exports.filterBeforeSendSPEvent = async (userData) => {
     // chips: userData.chips,
     chips: Number(userData.chips),//+ Number(userData.winningChips)).toFixed(2),
     email: userData.email,
-    winningChips: userData.winningChips,
+    // winningChips: userData.winningChips,
     activePlayerCounter: findCountPlayer.length > 0 ? findCountPlayer[0].numberOfPlayers : 0,
     tableId: userData.tableId || 0,
     createdAt: userData.createdAt,
-    msg: ""
+    msg: "After leave Dashboard"
   };
 
   //logger.info('filter Before Send SP Event -->', res);

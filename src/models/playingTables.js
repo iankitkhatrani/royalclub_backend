@@ -37,6 +37,8 @@ const PlayingTablesSchema = new Schema({
     callFinalWinner: { type: Boolean, default: false },
     isLastUserFinish: { type: Boolean, default: false },
     isFinalWinner: { type: Boolean, default: false },
+    winStatus: { type: Boolean, default: false },
+    finished: { type: Boolean, default: false },
 }, { versionKey: false });
 
 module.exports = mongoose.model(collectionName, PlayingTablesSchema, collectionName);

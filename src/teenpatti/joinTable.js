@@ -73,6 +73,25 @@ module.exports.findTable = async (betInfo, client) => {
     let tableInfo = await this.getBetTable(betInfo);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
+    if (tableInfo.gameTimer !== null && tableInfo.gameTimer !== undefined) {
+        let currentDateTime = new Date();
+        let time = currentDateTime.getSeconds();
+        let turnTime = new Date(tableInfo.gameTimer.GST);
+        let Gtime = turnTime.getSeconds();
+        let diff = Gtime - time;
+
+        if (Math.abs(diff) > 6 && Math.abs(diff) < 10) {
+            let tbId = tableInfo._id;
+            let jobId = 'WAITING:' + tbId;
+            let delay = AddTime(6);
+
+            await setDelay(jobId, new Date(delay));
+            await this.findTable(betInfo, socket);
+        } else {
+            // logger.info('time is greater than 4 sec');
+        }
+    }
+
     await this.findEmptySeatAndUserSeat(tableInfo, betInfo, client);
 }
 
@@ -81,7 +100,7 @@ module.exports.getBetTable = async (betInfo) => {
     let wh = {
         boot: Number(betInfo.boot),
         activePlayer: { $gte: 0, $lt: betInfo.maxSeat },
-        maxSeat: betInfo.maxSeat,
+        maxSeat: parseInt(betInfo.maxSeat),
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
@@ -107,7 +126,7 @@ module.exports.createTable = async (betInfo) => {
             rate: betInfo.rate,
             chalLimit: betInfo.chalLimit,
             potLimit: betInfo.potLimit,
-            playerInfo: this.makeObjects(betInfo.maxSeat),
+            playerInfo: this.makeObjects(Number(betInfo.maxSeat)),
             gameState: "",
             discardCard: '',
         };
@@ -160,6 +179,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
         let playerDetails = {
             seatIndex: seatIndex,
             _id: userInfo._id,
+            name: userInfo.name,
             playerId: userInfo._id,
             username: userInfo.username,
             profile: userInfo.profileUrl,
@@ -173,6 +193,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
             sck: client.id,
             playerSocketId: client.id,
             playerLostChips: 0,
+            winStatus: false,
+            finished: false,
             isSee: false,
             Iscom: userInfo.Iscom != undefined ? userInfo.Iscom : 0
         }
@@ -186,7 +208,6 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, client) => {
 
         let setPlayerInfo = {
             $set: {
-                gameState: ""
             },
             $inc: {
                 activePlayer: 1

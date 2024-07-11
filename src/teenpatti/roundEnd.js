@@ -51,7 +51,7 @@ module.exports.roundFinish = async (tb) => {
                 // let totalWallet = Number(userInfo.chips);
                 let requireGameChips = restartTable.boot;
 
-                if ((userInfo.chips + userInfo.winningChips) > requireGameChips) {
+                if ((userInfo.chips) > requireGameChips) {
                     logger.info('sufficient local chips');
                 } else {
 
@@ -135,6 +135,7 @@ module.exports.roundFinish = async (tb) => {
                 chalValue: 0,
                 potValue: 0,
                 turnDone: false,
+                currentPlayerTurnIndex: -1,
                 jobId: "",
             },
             $unset: {
@@ -158,7 +159,12 @@ module.exports.roundFinish = async (tb) => {
         const tabInfo = await PlayingTables.findOne(wh1, {}).lean();
         logger.info("roundFinish tabInfo : ", tabInfo);
 
-        if (tbInfo.activePlayer >= 2)
+        if (!tabInfo) {
+            logger.info('roundEnd.js table is Null:', tabInfo);
+            return false;
+        }
+
+        if (tabInfo.activePlayer >= 2)
             await gameStartActions.gameTimerStart(tabInfo);
 
         return true;

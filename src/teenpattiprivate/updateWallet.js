@@ -325,7 +325,7 @@ module.exports.addWallet = async (id, added_chips, tType, t, tbInfo, client, sea
 }
 
 module.exports.trackUserWallet = async (obj) => {
-    logger.info("\ntrackUserWallet obj ::", obj);
+    logger.info("\n4 trackUserWallet obj ::", obj);
 
     await UserWalletTracks.create(obj)
     return true;

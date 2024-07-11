@@ -120,11 +120,12 @@ module.exports.deductWallet = async (id, deductChips, tType, t, tbInfo, client, 
                 withdrawId: (tbInfo && tbInfo.withdrawId) ? tbInfo.withdrawId : "",
                 gameId: (tbInfo && tbInfo.gameId) ? tbInfo.game_id : "",
                 isRobot: (typeof userInfo.flags != "undefined" && userInfo.flags.isRobot) ? userInfo.flags.isRobot : 0,
-                gameType: "Teen Patti",//(tbInfo && tbInfo.gameType) ? tbInfo.gameType : "", //Game Type
+                gameType: "teenpatti",//(tbInfo && tbInfo.gameType) ? tbInfo.gameType : "", //Game Type
                 maxSeat: (tbInfo && tbInfo.maxSeat) ? tbInfo.maxSeat : 0,//Maxumum Player.
                 betValue: (tbInfo && tbInfo.betValue) ? tbInfo.betValue : 0,
                 tableId: (tbInfo && tbInfo._id) ? tbInfo._id.toString() : ""
             }
+            logger.info("\n1 dedudctWallet walletTrack :: ", walletTrack);
             await this.trackUserWallet(walletTrack);
         }
 
@@ -253,25 +254,27 @@ module.exports.addWallet = async (id, added_chips, tType, t, tbInfo, client, sea
 
             let walletTrack = {
                 id: userInfo.id,
-                unique_id: userInfo.unique_id,
-                user_id: wh._id.toString(),
-                trnx_type: tType,
-                trnx_type_txt: t,
-                trnx_amount: tranferAmount,
-                opChips: opChips,
-                opGameWinning: opGameWinning,
+                uniqueId: userInfo.unique_id,
+                userId: wh._id.toString(),
+                trnxType: tType,
+                trnxTypeTxt: t,
+                trnxAmount: tranferAmount,
+                oppChips: opChips,
+                name: userInfo.name,
+                // oppWinningChips: opGameWinning,
                 chips: upReps.chips,
                 winningChips: upReps.winningChips,
-                total_bucket: totalRemaningAmount,
-                deposit_id: (tbInfo && tbInfo.diposit_id) ? tbInfo.diposit_id : "",
-                withdraw_id: (tbInfo && tbInfo.withdraw_id) ? tbInfo.withdraw_id : "",
-                game_id: (tbInfo && tbInfo.game_id) ? tbInfo.game_id : "",
-                is_robot: (typeof userInfo.flags != "undefined" && userInfo.flags.is_robot) ? userInfo.flags.is_robot : 0,
-                game_type: (tbInfo && tbInfo.game_type) ? tbInfo.game_type : "", //Game Type
-                max_seat: (tbInfo && tbInfo.max_seat) ? tbInfo.max_seat : 0,//Maxumum Player.
-                bet: (tbInfo && tbInfo.bet) ? tbInfo.bet : 0,
-                table_id: (tbInfo && tbInfo._id) ? tbInfo._id.toString() : ""
+                totalBucket: totalRemaningAmount,
+                depositId: (tbInfo && tbInfo.depositId) ? tbInfo.depositId : "",
+                withdrawId: (tbInfo && tbInfo.withdrawId) ? tbInfo.withdrawId : "",
+                gameId: (tbInfo && tbInfo.gameId) ? tbInfo.game_id : "",
+                isRobot: (typeof userInfo.flags != "undefined" && userInfo.flags.isRobot) ? userInfo.flags.isRobot : 0,
+                gameType: "teenpatti",//(tbInfo && tbInfo.gameType) ? tbInfo.gameType : "", //Game Type
+                maxSeat: (tbInfo && tbInfo.maxSeat) ? tbInfo.maxSeat : 0,//Maxumum Player.
+                betValue: (tbInfo && tbInfo.betValue) ? tbInfo.betValue : 0,
+                tableId: (tbInfo && tbInfo._id) ? tbInfo._id.toString() : ""
             }
+            logger.info("2 dedudctWallet walletTrack :: ", walletTrack);
             await this.trackUserWallet(walletTrack);
         }
 
@@ -327,7 +330,7 @@ module.exports.addWallet = async (id, added_chips, tType, t, tbInfo, client, sea
 }
 
 module.exports.trackUserWallet = async (obj) => {
-    logger.info("\ntrackUserWallet obj ::", obj);
+    logger.info("\n3 trackUserWallet obj ::", obj);
 
     await UserWalletTracks.create(obj)
     return true;

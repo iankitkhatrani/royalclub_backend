@@ -18,14 +18,12 @@ const SuperAdminWalletTracks = mongoose.model("superadminWalletTracks");
 const UserWalletTracks = mongoose.model('userWalletTracks');
 
 
-
-
 //==========================================================================================================================================
 // User Game =========================
 
 module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, tableid) => {
   try {
-    logger.info('\deductuserWallet : call.-->>>', id, deductChips, t);
+    logger.info('\d check deductuserWalletGame : call.-->>>', id, deductChips, t, tType, t, game, tableid);
     const wh = (typeof id == 'string') ? { _id: MongoID(id) } : { _id: id };
 
     if (typeof wh == 'undefined' || typeof wh._id == 'undefined' || wh._id == null || typeof tType == 'undefined') {
@@ -42,19 +40,19 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
     }
 
     const adminInfo = await GameUser.findOne(wh, projection);
-    logger.info("deductuserWallet adminInfo : ", adminInfo);
+    logger.info("deductuserWalletGame adminInfo : ", adminInfo);
 
     if (adminInfo == null) {
       return false;
     }
-    logger.info("deductuserWallet adminInfo :: ", adminInfo);
+    logger.info("deductuserWalletGame adminInfo :: ", adminInfo);
 
     adminInfo.chips = (typeof adminInfo.chips == 'undefined' || isNaN(adminInfo.chips)) ? 0 : Number(adminInfo.chips);
 
     let opChips = adminInfo.chips;
 
 
-    logger.info("deductuserWallet.chips =>", adminInfo.chips)
+    logger.info("deductuserWalletGame .chips =>", adminInfo.chips)
 
     let setInfo = {
       $inc: {}
@@ -75,9 +73,9 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
       deductChips = Number(Number(deductChips).toFixed(2));
     }
 
-    logger.info("\deductuserWallet setInfo :: --->", setInfo);
+    logger.info("\deductuserWalletGame setInfo :: --->", setInfo);
     let tranferAmount = totalDeductChips;
-    logger.info("deductuserWallet adminInfo :: ==>", adminInfo);
+    logger.info("deductuserWalletGame adminInfo :: ==>", adminInfo);
 
     if (Object.keys(setInfo["$inc"]).length > 0) {
       for (let key in setInfo["$inc"]) {
@@ -88,9 +86,9 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
       delete setInfo["$inc"];
     }
 
-    logger.info("\deductuserWallet wh :: ", wh, setInfo);
+    logger.info("\d deductuserWalletGame wh :: ", wh, setInfo);
     let upReps = await GameUser.findOneAndUpdate(wh, setInfo, { new: true });
-    logger.info("\deductuserWallet upReps :: ", upReps);
+    logger.info("\d new edeductuserWalletGame upReps :: ", upReps);
 
     upReps.chips = (typeof upReps.chips == 'undefined' || isNaN(upReps.chips)) ? 0 : Number(upReps.chips);
     //upReps.winningChips = (typeof upReps.winningChips == 'undefined' || isNaN(upReps.winningChips)) ? 0 : Number(upReps.winningChips);
@@ -110,6 +108,7 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
         gameType: game,
         tbaleid: tableid
       }
+      logger.info("\n 1111 deductuserWalletGame walletTrack :: ", walletTrack);
       await this.trackUserWallet(walletTrack);
     }
 
@@ -121,12 +120,12 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
       updateData["$set"]["chips"] = parseFloat(upReps.chips.toFixed(2))
       if (Object.keys(updateData.$set).length > 0) {
         let upRepss = await GameUser.findOneAndUpdate(wh, updateData, { new: true });
-        logger.info("\ndedudctWallet upRepss  :: ", upRepss);
+        logger.info("\deductuserWalletGame upRepss  :: ", upRepss);
       }
     }
 
-    logger.info(" adminInfo.sckId.toString() => ", adminInfo.sckId)
-    logger.info(" upReps adminInfo.sckId => ", upReps.sckId)
+    logger.info(" deductuserWalletGame adminInfo.sckId.toString() => ", adminInfo.sckId)
+    logger.info(" deductuserWalletGame upReps adminInfo.sckId => ", upReps.sckId)
 
     commandAcions.sendDirectEvent(adminInfo.sckId, CONST.WALLET_UPDATE, {
       chips: upReps.chips,
@@ -137,15 +136,14 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
 
     return totalRemaningAmount;
   } catch (e) {
-    logger.info("deductuserWallet : 1 : Exception : 1", e)
+    logger.info("deductuserWalletGame  : 1 : Exception : 1", e)
     return 0
   }
 }
 
-
 module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, tableid) => {
   try {
-    logger.info('\n addUserWallet : call.-->>>', id, added_chips, tType, t, game, tableid);
+    logger.info('\n addUserWalletGame : call.-->>>', id, added_chips, tType, t, game, tableid);
 
     const wh = (typeof id == 'string') ? { _id: MongoID(id) } : { _id: id };
     if (typeof wh == 'undefined' || typeof wh._id == 'undefined' || wh._id == null || typeof tType == 'undefined') {
@@ -161,11 +159,11 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     }
 
     const adminInfo = await GameUser.findOne(wh, projection);
-    logger.info("addUserWallet adminInfo : ", adminInfo);
+    logger.info("addUserWalletGame adminInfo : ", adminInfo);
     if (adminInfo == null) {
       return false;
     }
-    logger.info("addUserWallet adminInfo :: ", adminInfo);
+    logger.info("addUserWalletGame adminInfo :: ", adminInfo);
 
     adminInfo.chips = (typeof adminInfo.chips == 'undefined' || isNaN(adminInfo.chips)) ? 0 : Number(adminInfo.chips);
 
@@ -183,9 +181,9 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     adminInfo.chips = Number(adminInfo.chips.toFixed(2))
 
 
-    logger.info("\addUserWallet setInfo :: ", setInfo);
+    logger.info("\addUserWalletGame setInfo :: ", setInfo);
     let tranferAmount = totalDeductChips;
-    logger.info("addUserWallet adminInfo :: ", adminInfo);
+    logger.info("addUserWalletGame adminInfo :: ", adminInfo);
 
     if (Object.keys(setInfo["$inc"]).length > 0) {
       for (let key in setInfo["$inc"]) {
@@ -196,9 +194,9 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
       delete setInfo["$inc"];
     }
 
-    logger.info("\addUserWallet wh :: ", wh, setInfo);
+    logger.info("\addUserWalletGame wh :: ", wh, setInfo);
     let upReps = await GameUser.findOneAndUpdate(wh, setInfo, { new: true });
-    logger.info("\addUserWallet upReps :: ", upReps);
+    logger.info("\addUserWalletGame upReps :: ", upReps);
 
     upReps.chips = (typeof upReps.chips == 'undefined' || isNaN(upReps.chips)) ? 0 : Number(upReps.chips);
     let totalRemaningAmount = upReps.chips
@@ -230,7 +228,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
 
     return totalRemaningAmount;
   } catch (e) {
-    logger.info("addUserWallet : 1 : Exception : 1", e)
+    logger.info("addUserWalletGame : 1 : Exception : 1", e)
     return 0
   }
 }
@@ -242,6 +240,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
 module.exports.deductuserWallet = async (id, deductChips, tType, t, game, authorisedid, authorisedtype, authorisedname, added_id, type, name) => {
   try {
     logger.info('\deductuserWallet : call.-->>>', id, deductChips, t);
+    logger.info('\deductuserWallet : call game-->>>', game, authorisedid, authorisedtype, authorisedname, added_id, type, name);
     const wh = (typeof id == 'string') ? { _id: MongoID(id) } : { _id: id };
 
     if (typeof wh == 'undefined' || typeof wh._id == 'undefined' || wh._id == null || typeof tType == 'undefined') {
@@ -303,7 +302,7 @@ module.exports.deductuserWallet = async (id, deductChips, tType, t, game, author
 
     logger.info("\deductuserWallet wh :: ", wh, setInfo);
     let upReps = await GameUser.findOneAndUpdate(wh, setInfo, { new: true });
-    logger.info("\deductuserWallet upReps :: ", upReps);
+    logger.info("\dcheck eductuserWallet upReps :: ", upReps);
 
     upReps.chips = (typeof upReps.chips == 'undefined' || isNaN(upReps.chips)) ? 0 : Number(upReps.chips);
     //upReps.winningChips = (typeof upReps.winningChips == 'undefined' || isNaN(upReps.winningChips)) ? 0 : Number(upReps.winningChips);
@@ -328,6 +327,7 @@ module.exports.deductuserWallet = async (id, deductChips, tType, t, game, author
         type: type != undefined ? type : "",
         trackname: name != undefined ? name : ""
       }
+      logger.info("2222 deductuserWallet walletTrack :: ==>", walletTrack);
       await this.trackUserWallet(walletTrack);
 
 
@@ -1178,11 +1178,36 @@ module.exports.trackAgentWallet = async (obj) => {
 
 
 module.exports.trackUserWallet = async (obj) => {
-  logger.info("\ntrackUserWallet obj ::", obj);
+  try {
+    logger.info("\n insert UserWalletTracks obj find ::", obj);
 
-  await UserWalletTracks.create(obj)
-  return true;
-}
+    const walletTrackObj = {
+      userId: mongoose.Types.ObjectId(obj.userId),
+      uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
+      username: obj.name,
+      transType: obj.trnxType,
+      transTypeText: obj.trnxTypeTxt,
+      transAmount: obj.trnxAmount,
+      chips: obj.chips,
+      winningChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
+      totalBucket: obj.totalBucket || 0,
+      gameId: obj.gameId || '', // Assuming 'gameId' might be missing
+      gameType: obj.gameType || '', // Assuming 'gameType' might be missing
+      gamePlayType: obj.gamePlayType || '', // Assuming 'gamePlayType' might be missing
+      maxSeat: obj.maxSeat || 0, // Assuming 'maxSeat' might be missing
+      betValue: obj.boot || 0, // Assuming 'boot' might be missing
+      tableId: obj.tbaleid ? obj.tbaleid.toString() : '', // Correcting 'tbaleid' field and handling missing value
+    };
+
+    logger.info("\n1 trackUserWallet obj ::", walletTrackObj);
+
+    await UserWalletTracks.create(walletTrackObj);
+    return true;
+  } catch (e) {
+    logger.error('userWalletTracks.js trackUserWallet error=> ', e);
+    return false;
+  }
+};
 
 module.exports.trackSuperAdminWallet = async (obj) => {
   logger.info("\n SuperAdminWalletTracks obj ::", obj);
@@ -1888,18 +1913,41 @@ module.exports.addWalletBonusDeposit = async (id, addCoins, tType, t, Wtype) => 
 };
 
 
-module.exports.trackUserWallet = async (obj) => {
-  try {
-    logger.info('\ntrackUserWallet obj ::', obj);
+// module.exports.trackUserWallet = async (obj) => {
+//   try {
+//     logger.info('\ntttt trackUserWallet obj :: ==>', obj);
 
-    let insertInfo = await UserWalletTracks.create(obj);
-    logger.info('createTable UserWalletTracks : ', insertInfo);
-    return true;
-  } catch (e) {
-    logger.error('userWalletTracks.js trackUserWallet error=> ', e);
-    return false;
-  }
-};
+//     const walletTrackObj = {
+//       userId: mongoose.Types.ObjectId(obj.userId),
+//       uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
+//       username: obj.name,
+//       transType: obj.trnxType,
+//       transTypeText: obj.trnxTypeTxt,
+//       transAmount: obj.trnxAmount,
+//       chips: obj.chips,
+//       winningChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
+//       bonusChips: 0, // Default value, adjust if necessary
+//       lockbonusChips: 0, // Default value, adjust if necessary
+//       paymentGateway: 'Null', // Default value as per schema
+//       type: obj.type || '', // Assuming 'type' corresponds to 'type' in schema
+//       totalBucket: obj.totalBucket || 0,
+//       gameId: obj.gameId,
+//       gameType: obj.gameType,
+//       gamePlayType: obj.gamePlayType,
+//       maxSeat: obj.maxSeat,
+//       betValue: obj.boot, // Assuming 'boot' corresponds to 'betValue'
+//       tableId: obj._id.toString(), // Assuming '_id' of authorisedid is 'tableId'
+//     };
+
+//     let insertInfo = await UserWalletTracks.create(walletTrackObj);
+//     logger.info('createTable UserWalletTracks : ', insertInfo);
+
+//     return true;
+//   } catch (e) {
+//     logger.error('common function userWalletTracks.js trackUserWallet error=> ', e);
+//     return false;
+//   }
+// };
 
 module.exports.getWalletDetails = async (obj, client) => {
   try {

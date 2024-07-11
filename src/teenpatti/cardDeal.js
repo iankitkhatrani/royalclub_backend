@@ -10,6 +10,7 @@ const roundStartActions = require("./roundStart");
 const PlayingTables = mongoose.model("playingTables");
 const _ = require("underscore")
 const cardLogic = require("./cardLogic");
+const { createDealer } = require("../helper/helperFunction");
 
 module.exports.cardDealStart = async (tbid) => {
     logger.info("collectBoot tbid : ", tbid);
@@ -21,11 +22,14 @@ module.exports.cardDealStart = async (tbid) => {
 
     let cardDetails = this.getCards(tb.playerInfo);
     logger.info("collectBoot cardDetails : ", cardDetails);
+    let dealerSeatIndex = createDealer(tb.activePlayer - 1);
 
     const update = {
         $set: {
             hukum: cardDetails.hukum,
-            gameState: "CardDealing",
+            dealerSeatIndex,
+            currentPlayerTurnIndex: dealerSeatIndex,
+            gameState: CONST.CARD_DEALING,
         }
     }
     const cardDealIndexs = await this.setUserCards(cardDetails, tb);
@@ -38,6 +42,7 @@ module.exports.cardDealStart = async (tbid) => {
 
     const eventResponse = {
         hukum: tabInfo.hukum,
+        di: tabInfo.dealerSeatIndex,
         cardDealIndexs: cardDealIndexs
     }
     commandAcions.sendEventInTable(tabInfo._id.toString(), CONST.TEEN_PATTI_GAME_CARD_DISTRIBUTION, eventResponse);
@@ -98,17 +103,17 @@ module.exports.getCards = (playerInfo) => {
 
 
 
-    for (let i = 0; i < playerInfo.length; i++) {
-        if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].Iscom == 1) {
-            let card = [];
+    // for (let i = 0; i < playerInfo.length; i++) {
+    //     if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play" && playerInfo[i].Iscom == 1) {
+    //         let card = [];
 
-            logger.info(playerInfo[i].Iscom)
+    //         logger.info(playerInfo[i].Iscom)
 
-            card = this.HighCard(deckCards, color, number)
+    //         card = this.HighCard(deckCards, color, number)
 
-            cards[playerInfo[i].seatIndex] = card;
-        }
-    }
+    //         cards[playerInfo[i].seatIndex] = card;
+    //     }
+    // }
 
     for (let i = 0; i < playerInfo.length; i++) {
         if (typeof playerInfo[i].seatIndex != "undefined" && playerInfo[i].status == "play") {

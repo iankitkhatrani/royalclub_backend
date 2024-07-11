@@ -183,7 +183,9 @@ module.exports.userTurnExpaire = async (tbid) => {
             playerInfo: 1,
             activePlayer: 1,
             turnSeatIndex: 1,
-            turnDone: 1
+            turnDone: 1,
+            currentPlayerTurnIndex: 1,
+
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("userTurnExpaire tabInfo : ", tabInfo);
@@ -191,6 +193,7 @@ module.exports.userTurnExpaire = async (tbid) => {
         if (tabInfo == null || tabInfo.gameState != "RoundStated") return false;
 
         let activePlayerInRound = await this.getPlayingUserInRound(tabInfo.playerInfo);
+
         if (activePlayerInRound.length == 0 || tabInfo.turnDone) {
             logger.info("userTurnExpaire : user not activate found!!", activePlayerInRound, tabInfo.turnDone)
             return false;
@@ -205,6 +208,9 @@ module.exports.userTurnExpaire = async (tbid) => {
             "playerInfo.seatIndex": Number(tabInfo.turnSeatIndex)
         }
         let update = {
+            $set: {
+                'turnDone': true,
+            },
             $inc: {
                 "playerInfo.$.turnMissCounter": 1
             }
