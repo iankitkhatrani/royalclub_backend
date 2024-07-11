@@ -43,6 +43,15 @@ module.exports.joinTable = async (requestData, socket) => {
     const betInfo = await BetLists.findOne(query).lean();
     // logger.info("betInfo =>", betInfo);
 
+    if (betInfo == null) {
+      sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
+        flag: false,
+        msg: 'Please check Bet List Detail!!',
+      });
+      delete socket.JT;
+      return false;
+    }
+
     let condition = { _id: MongoID(socket.uid) };
     let userInfo = await Users.findOne(condition, {}).lean();
     // logger.info("userInfo", userInfo)
@@ -74,7 +83,7 @@ module.exports.joinTable = async (requestData, socket) => {
       return false;
 
     } else {
-      return await this.findTable(betInfo, socket, userInfo,requestData);
+      return await this.findTable(betInfo, socket, userInfo, requestData);
     }
   } catch (error) {
     sendEvent(socket, CONST.R_JOIN_TABLE, requestData, {
@@ -86,7 +95,7 @@ module.exports.joinTable = async (requestData, socket) => {
   }
 };
 
-module.exports.findTable = async (betInfo, socket, userInfo,requestData) => {
+module.exports.findTable = async (betInfo, socket, userInfo, requestData) => {
   try {
     let tableInfo = await this.getBetTable(betInfo, userInfo);
 
@@ -108,7 +117,7 @@ module.exports.findTable = async (betInfo, socket, userInfo,requestData) => {
         // logger.info('time is greater than 4 sec');
       }
     }
-    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket,requestData);
+    await this.findEmptySeatAndUserSeat(tableInfo, betInfo, socket, requestData);
   } catch (error) {
     logger.error('joinTable.js findTable error=> ', error, betInfo);
   }
@@ -175,7 +184,7 @@ module.exports.makeObjects = (length = 0) => {
   }
 };
 
-module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestData) => {
+module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket, requestData) => {
   try {
     // logger.info("\n findEmptySeatAndUserSeat socket  -->", socket.isBot)
     // logger.info("\n findEmptySeatAndUserSeat socket table -->", table)
@@ -287,7 +296,7 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
     }
 
     sendEvent(socket, CONST.R_JOIN_SIGN_UP, {});
-    const tokenNO = getToken(requestData.agoraAppId,requestData.agoraCertificate,tableInfo._id.toString(),requestData.agoraUid)
+    const tokenNO = getToken(requestData.agoraAppId, requestData.agoraCertificate, tableInfo._id.toString(), requestData.agoraUid)
     //GTI event
     sendEvent(socket, CONST.R_GAME_TABLE_INFO, {
       ssi: tableInfo.playerInfo[seatIndex].seatIndex,
@@ -300,8 +309,8 @@ module.exports.findEmptySeatAndUserSeat = async (table, betInfo, socket,requestD
       type: tableInfo.gamePlayType,
       openDecks: tableInfo.openDeck,
       tableAmount: tableInfo.tableAmount,
-      tokenNo:tokenNO,
-      agoraUid:requestData.agoraUid
+      tokenNo: tokenNO,
+      agoraUid: requestData.agoraUid
     });
 
     //JT event
