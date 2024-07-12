@@ -56,7 +56,7 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
             if (response.status) {
                 sendEvent(socket, CONST.CREATE_TEEN_PRIVATE_TABLE_ID, { privateTableId: privateTableId }, "Create Teen Patti Private Table Id");
                 // await walletActions.addWalletPayin(playerId, - Number(100), 'Debit', 'Teen Patti Private Table Charges', 'Teen Private');
-                await walletActions.deductuserWalletGame(socket.uid, - Number(100), CONST.TRANSACTION_TYPE.TABLE_CHARGE, "Teen Patti Private Table Charges", 'Teen Private',);
+                await walletActions.deductuserWalletGame(socket.uid, - Number(100), CONST.TRANSACTION_TYPE.TABLE_CHARGE, "Teen Patti Private Table Charges", 'Teen Private', privateTableId);
 
             } else {
                 sendEvent(socket, CONST.CREATE_TEEN_PRIVATE_TABLE_ID, {}, false, "Private table Invalid Credential");

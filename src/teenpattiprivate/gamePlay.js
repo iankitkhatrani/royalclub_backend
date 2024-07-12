@@ -91,7 +91,7 @@ module.exports.chal = async (requestData, client) => {
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
         // await walletActions.deductWallet(client.uid, -chalvalue, 2, "TeenPatti chal", tabInfo, client.id, client.seatIndex);
-        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", 'TeenPatti', tabInfo, client.id, client.seatIndex);
+        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", 'TeenPatti', client.tbid);
 
         updateData.$set["chalValue"] = chalvalue;
         updateData.$inc["potValue"] = chalvalue;
@@ -214,7 +214,7 @@ module.exports.show = async (requestData, client) => {
         chalvalue = Number(Number(chalvalue).toFixed(2));
 
         // await walletActions.deductWallet(client.uid, -chalvalue, 3, "TeenPatti show", tabInfo, client.id, client.seatIndex);
-        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti Show", 'TeenPatti', tabInfo, client.id, client.seatIndex);
+        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti Show", 'TeenPatti', client.tbid);
 
 
         updateData.$set["chalValue"] = chalvalue;

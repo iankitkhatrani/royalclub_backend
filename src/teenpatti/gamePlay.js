@@ -90,7 +90,7 @@ module.exports.chal = async (requestData, client) => {
         chalvalue = Number(Number(chalvalue).toFixed(2))
 
         // await walletActions.deductWallet(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", tabInfo, client.id, client.seatIndex);
-        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", tabInfo, client.id, client.seatIndex);
+        await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", "Teen Patti", client.tbid);
 
         updateData.$set["chalValue"] = chalvalue;
         updateData.$inc["potValue"] = chalvalue;

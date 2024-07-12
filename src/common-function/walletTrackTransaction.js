@@ -105,7 +105,7 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game.gameType || '',
+        gameType: game,
         tbaleid: tableid
       }
       logger.info("\n 1111 deductuserWalletGame walletTrack :: ", walletTrack);
@@ -212,7 +212,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game.gameType || '',
+        gameType: game,
         tbaleid: tableid
       }
       await this.trackUserWallet(walletTrack);
