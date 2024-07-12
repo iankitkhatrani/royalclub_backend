@@ -1177,37 +1177,37 @@ module.exports.trackAgentWallet = async (obj) => {
 }
 
 
-module.exports.trackUserWallet = async (obj) => {
-  try {
-    logger.info("\n insert UserWalletTracks obj find ::", obj);
+// module.exports.trackUserWallet = async (obj) => {
+//   try {
+//     logger.info("\n insert UserWalletTracks obj find ::", obj);
 
-    const walletTrackObj = {
-      userId: mongoose.Types.ObjectId(obj.userId),
-      uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
-      username: obj.name,
-      transType: obj.trnxType,
-      transTypeText: obj.trnxTypeTxt,
-      transAmount: obj.trnxAmount,
-      chips: obj.chips,
-      winningChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
-      totalBucket: obj.totalBucket || 0,
-      gameId: obj.gameId || '', // Assuming 'gameId' might be missing
-      gameType: obj.gameType || '', // Assuming 'gameType' might be missing
-      gamePlayType: obj.gamePlayType || '', // Assuming 'gamePlayType' might be missing
-      maxSeat: obj.maxSeat || 0, // Assuming 'maxSeat' might be missing
-      betValue: obj.boot || 0, // Assuming 'boot' might be missing
-      tableId: obj.tbaleid ? obj.tbaleid.toString() : '', // Correcting 'tbaleid' field and handling missing value
-    };
+//     const walletTrackObj = {
+//       userId: mongoose.Types.ObjectId(obj.userId),
+//       uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
+//       username: obj.name,
+//       transType: obj.trnxType,
+//       transTypeText: obj.trnxTypeTxt,
+//       transAmount: obj.trnxAmount,
+//       chips: obj.chips,
+//       winningChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
+//       totalBucket: obj.totalBucket || 0,
+//       gameId: obj.gameId || '', // Assuming 'gameId' might be missing
+//       gameType: obj.gameType || '', // Assuming 'gameType' might be missing
+//       gamePlayType: obj.gamePlayType || '', // Assuming 'gamePlayType' might be missing
+//       maxSeat: obj.maxSeat || 0, // Assuming 'maxSeat' might be missing
+//       betValue: obj.boot || 0, // Assuming 'boot' might be missing
+//       tableId: obj.tbaleid ? obj.tbaleid.toString() : '', // Correcting 'tbaleid' field and handling missing value
+//     };
 
-    logger.info("\n1 trackUserWallet obj ::", walletTrackObj);
+//     logger.info("\n1 trackUserWallet obj ::", walletTrackObj);
 
-    await UserWalletTracks.create(walletTrackObj);
-    return true;
-  } catch (e) {
-    logger.error('userWalletTracks.js trackUserWallet error=> ', e);
-    return false;
-  }
-};
+//     await UserWalletTracks.create(walletTrackObj);
+//     return true;
+//   } catch (e) {
+//     logger.error('userWalletTracks.js trackUserWallet error=> ', e);
+//     return false;
+//   }
+// };
 
 module.exports.trackSuperAdminWallet = async (obj) => {
   logger.info("\n SuperAdminWalletTracks obj ::", obj);
@@ -1913,41 +1913,40 @@ module.exports.addWalletBonusDeposit = async (id, addCoins, tType, t, Wtype) => 
 };
 
 
-// module.exports.trackUserWallet = async (obj) => {
-//   try {
-//     logger.info('\ntttt trackUserWallet obj :: ==>', obj);
+module.exports.trackUserWallet = async (obj) => {
+  try {
+    logger.info('\ncheck when trackUserWallet obj :: ==>', obj);
 
-//     const walletTrackObj = {
-//       userId: mongoose.Types.ObjectId(obj.userId),
-//       uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
-//       username: obj.name,
-//       transType: obj.trnxType,
-//       transTypeText: obj.trnxTypeTxt,
-//       transAmount: obj.trnxAmount,
-//       chips: obj.chips,
-//       winningChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
-//       bonusChips: 0, // Default value, adjust if necessary
-//       lockbonusChips: 0, // Default value, adjust if necessary
-//       paymentGateway: 'Null', // Default value as per schema
-//       type: obj.type || '', // Assuming 'type' corresponds to 'type' in schema
-//       totalBucket: obj.totalBucket || 0,
-//       gameId: obj.gameId,
-//       gameType: obj.gameType,
-//       gamePlayType: obj.gamePlayType,
-//       maxSeat: obj.maxSeat,
-//       betValue: obj.boot, // Assuming 'boot' corresponds to 'betValue'
-//       tableId: obj._id.toString(), // Assuming '_id' of authorisedid is 'tableId'
-//     };
+    const walletTrackObj = {
+      userId: mongoose.Types.ObjectId(obj.userId),
+      uniqueId: obj.id || '', // Assuming 'id' corresponds to 'uniqueId' in schema
+      name: obj.name,
+      trnxType: obj.trnxType,
+      trnxTypeTxt: obj.trnxTypeTxt,
+      trnxAmount: obj.trnxAmount,
+      chips: obj.chips,
+      oppChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
+      bonusChips: 0, // Default value, adjust if necessary
+      lockbonusChips: 0, // Default value, adjust if necessary
+      type: obj.type || '', // Assuming 'type' corresponds to 'type' in schema
+      totalBucket: obj.totalBucket || 0,
+      gameId: obj.gameId || '', // Assuming 'gameId' corresponds to 'gameId' in schema
+      gameType: obj.gameType,
+      gamePlayType: obj.gamePlayType || '', // Assuming 'gamePlayType' corresponds to 'gamePlayType' in schema
+      maxSeat: obj.maxSeat || 0, // Assuming'maxSeat' corresponds to'maxSeat' in schema
+      betValue: obj.boot || 0, // Assuming 'boot' corresponds to 'betValue'
+      tableId: obj.tbaleid ? obj.tbaleid : '',
+    };
 
-//     let insertInfo = await UserWalletTracks.create(walletTrackObj);
-//     logger.info('createTable UserWalletTracks : ', insertInfo);
+    let insertInfo = await UserWalletTracks.create(walletTrackObj);
+    logger.info('createTable UserWalletTracks : ', insertInfo);
 
-//     return true;
-//   } catch (e) {
-//     logger.error('common function userWalletTracks.js trackUserWallet error=> ', e);
-//     return false;
-//   }
-// };
+    return true;
+  } catch (e) {
+    logger.error('common function userWalletTracks.js trackUserWallet error=> ', e);
+    return false;
+  }
+};
 
 module.exports.getWalletDetails = async (obj, client) => {
   try {

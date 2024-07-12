@@ -99,10 +99,11 @@ module.exports.manageOnUserLeave = async (tb, client) => {
 
     if (playerInGame.length == 0 && tb.activePlayer == 0) {
 
-        // let wh = {
-        //     _id: MongoID(tb._id.toString())
-        // }
-        // await RouletteTables.deleteOne(wh);
+        let wh = {
+            _id: MongoID(tb._id.toString())
+        }
+        let rs = await RouletteTables.deleteOne(wh);
+        logger.info("manageOnUserLeave rs : ", rs);
     } else if (tb.activePlayer == 0) {
         this.leaveSingleUser(tb._id)
     }

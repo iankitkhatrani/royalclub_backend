@@ -122,6 +122,12 @@ module.exports.manageOnUserLeave = async (tb, client) => {
             await roundStartActions.nextUserTurnstart(tb, false);
         } else if (playerInGame.length == 1) {
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
+        } else if (playerInGame.length == 0 && tb.activePlayer == 0) {
+            let whr = {
+                _id: MongoID(tb._id.toString())
+            }
+            let rees = await JantaTables.deleteOne(whr);
+            logger.info("manageOnUserLeave rees remove table : ", rees);
         }
     } else if (["", "JantaGameStartTimer"].indexOf(tb.gameState) != -1) {
         if (playerInGame.length == 0 && tb.activePlayer == 0) {
