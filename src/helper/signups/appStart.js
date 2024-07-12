@@ -7,19 +7,20 @@ const IdCounter = mongoose.model('idCounter');
 const CONST = require('../../../constant');
 const logger = require('../../../logger');
 const commandAcions = require('../socketFunctions');
+// const { filterBeforeSendSPEvent } = require('../../common-function/manageUserFunction');
 
 module.exports.appLunchDetails = async (requestData, client) => {
   try {
-    let { playerId, mobileNumber } = requestData;
-    let query = { _id: MongoID(playerId) };
+    const { playerId, mobileNumber } = requestData;
+    const query = { _id: MongoID(playerId) };
 
-    let result = await GameUser.findOne(query, {});
+    const result = await GameUser.findOne(query, {});
     logger.info('appLunchDetails Guest User Details : ', result);
 
     if (result) {
       await this.userSesssionSet(result, client);
 
-      let response = await this.filterBeforeSendSPEvent(result);
+      const response = await this.filterBeforeSendSPEvent(result);
       logger.info('Guest Final response Dashboard', response);
 
       commandAcions.sendEvent(client, CONST.DASHBOARD, response);
@@ -36,7 +37,7 @@ module.exports.appLunchDetails = async (requestData, client) => {
 };
 
 module.exports.referralReward = async (referal_code) => {
-  let wh = {
+  const wh = {
     referal_code: referal_code,
   };
 

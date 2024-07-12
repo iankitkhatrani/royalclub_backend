@@ -105,7 +105,7 @@ module.exports.deductuserWalletGame = async (id, deductChips, tType, t, game, ta
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType || '',
         tbaleid: tableid
       }
       logger.info("\n 1111 deductuserWalletGame walletTrack :: ", walletTrack);
@@ -212,7 +212,7 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType || '',
         tbaleid: tableid
       }
       await this.trackUserWallet(walletTrack);
@@ -319,7 +319,7 @@ module.exports.deductuserWallet = async (id, deductChips, tType, t, game, author
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game.gameType,
+        gameType: game.gameType || '',
         authorisedid: authorisedid,
         authorisedtype: authorisedtype,
         authorisedname: authorisedname,
@@ -337,7 +337,7 @@ module.exports.deductuserWallet = async (id, deductChips, tType, t, game, author
           name: authorisedname,
           trnxType: "credit",
           trnxTypeTxt: t,
-          gameType: game,
+          gameType: game.gameType,
           trnxAmount: Math.abs(tranferAmount),
           id: wh._id.toString(),
           type: "User",
@@ -424,7 +424,7 @@ module.exports.addUserWallet = async (id, added_chips, tType, t, game, authorise
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType || '',
         authorisedid: authorisedid,
         authorisedtype: authorisedtype,
         authorisedname: authorisedname,
@@ -441,7 +441,7 @@ module.exports.addUserWallet = async (id, added_chips, tType, t, game, authorise
           name: authorisedname,
           trnxType: "debit",
           trnxTypeTxt: t,
-          gameType: game,
+          gameType: game.gameType,
           trnxAmount: tranferAmount,
           id: wh._id.toString(),
           type: "User",
@@ -579,7 +579,7 @@ module.exports.deductadminWallet = async (id, deductChips, tType, t, game, autho
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType || "",
         authorisedid: authorisedid,
         authorisedtype: authorisedtype,
         authorisedname: authorisedname,
@@ -596,7 +596,7 @@ module.exports.deductadminWallet = async (id, deductChips, tType, t, game, autho
           name: authorisedname,
           trnxType: "credit",
           trnxTypeTxt: t,
-          gameType: game,
+          gameType: game.gameType,
           trnxAmount: Math.abs(tranferAmount),
           id: wh._id.toString(),
           type: "admin",
@@ -1131,7 +1131,7 @@ module.exports.addagentWalletAdmin = async (id, added_chips, tType, t, game, aut
         oppChips: opChips,
         chips: upReps.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gameType || "",
         authorisedid: authorisedid,
         authorisedtype: authorisedtype,
         authorisedname: authorisedname,
@@ -1148,7 +1148,7 @@ module.exports.addagentWalletAdmin = async (id, added_chips, tType, t, game, aut
           name: authorisedname,
           trnxType: "credit",
           trnxTypeTxt: t,
-          gameType: game,
+          gameType: game.gameType || "",
           trnxAmount: tranferAmount,
           id: wh._id.toString(),
           type: "Agent",
@@ -1536,7 +1536,7 @@ module.exports.addWalletWinngChpis = async (id, addCoins, tType, t, Wtype, tabIn
         oppChips: opChips,
         chips: tbl.chips,
         totalBucket: totalRemaningAmount,
-        gameType: game,
+        gameType: game.gamePlayType || 0,
         tbaleid: tableid,
 
         // id: userInfo._id,
@@ -1931,7 +1931,7 @@ module.exports.trackUserWallet = async (obj) => {
       type: obj.type || '', // Assuming 'type' corresponds to 'type' in schema
       totalBucket: obj.totalBucket || 0,
       gameId: obj.gameId || '', // Assuming 'gameId' corresponds to 'gameId' in schema
-      gameType: obj.gameType,
+      gameType: obj.gameType || '', // Assuming 'gameType' corresponds to 'gameType' in schema
       gamePlayType: obj.gamePlayType || '', // Assuming 'gamePlayType' corresponds to 'gamePlayType' in schema
       maxSeat: obj.maxSeat || 0, // Assuming'maxSeat' corresponds to'maxSeat' in schema
       betValue: obj.boot || 0, // Assuming 'boot' corresponds to 'betValue'
