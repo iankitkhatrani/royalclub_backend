@@ -84,36 +84,34 @@ module.exports.getPlayingAndDropUserRound = async (p) => {
 };
 
 module.exports.filterBeforeSendSPEvent = async (userData) => {
-  logger.info("filterBeforeSendSPEvent =>", userData)
-  let findCountPlayer = await PlayingTables.aggregate([
-    {
-      $project: {
-        numberOfPlayers: { $size: "$playerInfo" }
+  try {
+    logger.info("filterBeforeSendSPEvent =>", userData)
+    let findCountPlayer = await PlayingTables.aggregate([
+      {
+        $project: {
+          numberOfPlayers: { $size: "$playerInfo" }
+        }
       }
-    }
-  ])
-
-  let res = {
-    _id: userData._id,
-    name: userData.name,
-    username: userData.username,
-    mobileNumber: userData.mobileNumber,
-    avatar: userData.avatar,
-    loginType: userData.loginType,
-    uniqueId: userData.uniqueId,
-    deviceId: userData.deviceId,
-    // chips: userData.chips,
-    chips: Number(userData.chips),//+ Number(userData.winningChips)).toFixed(2),
-    email: userData.email,
-    // winningChips: userData.winningChips,
-    activePlayerCounter: findCountPlayer.length > 0 ? findCountPlayer[0].numberOfPlayers : 0,
-    tableId: userData.tableId || 0,
-    createdAt: userData.createdAt,
-    msg: "After leave Dashboard"
-  };
-
-  //logger.info('filter Before Send SP Event -->', res);
-  return res;
+    ])
+    let res = {
+      _id: userData._id,
+      name: userData.name,
+      username: userData.username,
+      mobileNumber: userData.mobileNumber,
+      avatar: userData.avatar,
+      loginType: userData.loginType,
+      uniqueId: userData.uniqueId,
+      deviceId: userData.deviceId,
+      chips: userData.chips,
+      activePlayerCounter: findCountPlayer.length > 0 ? findCountPlayer[0].numberOfPlayers : 0,
+      tableId: userData.tableId || 0,
+      createdAt: userData.createdAt,
+    };
+    //logger.info('filter Before Send SP Event -->', res);
+    return res;
+  } catch (error) {
+    logger.error('filterBeforeSendSPEvent error : ', error);
+  }
 };
 
 module.exports.getPlayingInTable = async (p, entryFee) => {

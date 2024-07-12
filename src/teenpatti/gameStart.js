@@ -230,19 +230,25 @@ module.exports.checkUserInRound = async (playerInfo, tb) => {
 }
 
 module.exports.getCount = async (type) => {
-    let wh = {
-        type: type
-    }
-    let update = {
-        $set: {
-            type: type
-        },
-        $inc: {
-            counter: 1
-        }
-    }
-    logger.info("\ngetUserCount wh : ", wh, update);
+    try {
+        let wh = { type: type };
 
-    let resp2 = await IdCounter.findOneAndUpdate(wh, update, { upsert: true, new: true });
-    return resp2.counter;
-}
+        let update = {
+            $set: {
+                type: type,
+            },
+            $inc: {
+                counter: 1,
+            },
+        };
+
+        let resp2 = await IdCounter.findOneAndUpdate(wh, update, {
+            upsert: true,
+            new: true,
+        });
+
+        return resp2.counter;
+    } catch (error) {
+        logger.error('\nteen patti gameStart.js getCount error :-> ', error);
+    }
+};

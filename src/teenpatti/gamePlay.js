@@ -94,9 +94,10 @@ module.exports.chal = async (requestData, client) => {
 
         updateData.$set["chalValue"] = chalvalue;
         updateData.$inc["potValue"] = chalvalue;
-
         updateData.$set["turnDone"] = true;
-        commandAcions.clearJob(tabInfo.job_id);
+
+        //clear the Schedule
+        // commandAcions.clearJob(tabInfo.jobId);
 
         const upWh = {
             _id: MongoID(client.tbid.toString()),
@@ -218,7 +219,9 @@ module.exports.show = async (requestData, client) => {
         updateData.$set["chalValue"] = chalvalue;
         updateData.$inc["potValue"] = chalvalue;
 
-        commandAcions.clearJob(tabInfo.job_id);
+        //clear jobId schudle
+        commandAcions.clearJob(tabInfo.jobId);
+
         const upWh = {
             _id: MongoID(client.tbid.toString()),
             "playerInfo.seatIndex": Number(client.seatIndex)
@@ -274,7 +277,9 @@ module.exports.cardPack = async (requestData, client) => {
         }
         let playerInfo = tabInfo.playerInfo[client.seatIndex];
 
-        commandAcions.clearJob(tabInfo.job_id);
+        //clear schedule job
+        commandAcions.clearJob(tabInfo.jobId);
+
         let winner_state = checkUserCardActions.getWinState(playerInfo.cards, tabInfo.hukum);
         let userTrack = {
             _id: playerInfo._id,
