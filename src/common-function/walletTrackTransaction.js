@@ -1925,7 +1925,7 @@ module.exports.trackUserWallet = async (obj) => {
       trnxTypeTxt: obj.trnxTypeTxt,
       trnxAmount: obj.trnxAmount,
       chips: obj.chips,
-      oppChips: obj.oppChips - obj.chips, // Assuming this logic for winningChips
+      oppChips: obj.oppChips, // Assuming this logic for winningChips
       bonusChips: 0, // Default value, adjust if necessary
       lockbonusChips: 0, // Default value, adjust if necessary
       type: obj.type || '', // Assuming 'type' corresponds to 'type' in schema
