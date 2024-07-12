@@ -213,24 +213,23 @@ module.exports.userSesssionSet = async (userData, client) => {
   }
 };
 
-module.exports.filterBeforeSendSPEvent = async (userData) => {
-  logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', userData);
+module.exports.filterBeforeSendSPEvent = async (Response) => {
+  logger.info('filter Before Send SP Event filterBeforeSendSPEvent -->', Response);
 
   let res = {
-    _id: userData._id,
-    name: userData.name,
-    username: userData.username,
-    mobileNumber: userData.mobileNumber,
-    avatar: userData.avatar,
-    loginType: userData.loginType,
-    uniqueId: userData.uniqueId,
-    deviceId: userData.deviceId,
-    chips: userData.chips,
-    // winningChips: userData.winningChips,
-    tableId: userData.tableId || 0,
-    createdAt: userData.createdAt,
+    _id: Response._id,
+    name: Response.name,
+    username: Response.username,
+    mobileNumber: Response.mobileNumber,
+    avatar: Response.avatar,
+    loginType: Response.loginType,
+    uniqueId: Response.uniqueId,
+    deviceId: Response.deviceId,
+    chips: Response.chips,
+    tableId: 0,
+    createdAt: Response.createdAt,
   };
 
-  //logger.info('filter Before Send SP Event -->', res);
+  logger.info('filter Before Send SP Event -->', res);
   return res;
 };
