@@ -52,6 +52,10 @@ module.exports.chal = async (requestData, client) => {
         }
 
         let playerInfo = tabInfo.playerInfo[client.seatIndex];
+        logger.info("\n chal Bet PlayerInfo ::", playerInfo);
+        logger.info("\n playerInfo.isSee  ==>", playerInfo.isSee);
+        logger.info("\n playerInfo.playerStatus  ==>", playerInfo.playerStatus);
+
         let currentBet = Number(tabInfo.chalValue);
         logger.info("chal currentBet ::", currentBet);
 
@@ -62,22 +66,26 @@ module.exports.chal = async (requestData, client) => {
         logger.info("chal UserInfo : ", gwh, JSON.stringify(UserInfo));
 
         let updateData = {
-            $set: {
-
-            },
-            $inc: {
-
-            }
+            $set: {}, $inc: {}
         }
+
         let chalvalue = tabInfo.chalValue;
+        logger.info("1 Before chal chalvalue ::", chalvalue);
+
 
         if (typeof requestData.isIncrement != "undefined" && requestData.isIncrement) {
             chalvalue = chalvalue * 2;
+            logger.info("2 Incriment chal chalvalue ::", chalvalue);
         }
+        updateData.$set["chalValue"] = chalvalue;
+
+
 
         if (playerInfo.playerStatus == "blind" && playerInfo.isSee) {
             chalvalue = chalvalue * 2;
             updateData.$set["playerInfo.$.playerStatus"] = "chal"
+            // updateData.$set["playerInfo.$.isSee"] = true
+            logger.info("3 playerInfo.isSee SEEN PLAYER chalv value", playerInfo._id, ' + ', chalvalue);
         }
         let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
 
@@ -88,11 +96,12 @@ module.exports.chal = async (requestData, client) => {
             return false;
         }
         chalvalue = Number(Number(chalvalue).toFixed(2))
+        logger.info("4 After chal chalvalue ::", chalvalue);
 
         // await walletActions.deductWallet(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", tabInfo, client.id, client.seatIndex);
         await walletActions.deductuserWalletGame(client.uid, -chalvalue, CONST.TRANSACTION_TYPE.DEBIT, "TeenPatti chal", "Teen Patti", client.tbid);
 
-        updateData.$set["chalValue"] = chalvalue;
+        // updateData.$set["chalValue"] = chalvalue;
         updateData.$inc["potValue"] = chalvalue;
         updateData.$set["turnDone"] = true;
 
@@ -107,6 +116,7 @@ module.exports.chal = async (requestData, client) => {
 
         const tb = await PlayingTables.findOneAndUpdate(upWh, updateData, { new: true });
         logger.info("chal tb : ", tb);
+        logger.info("\n final table chal value: ", tb.chalValue);
 
         let response = {
             seatIndex: tb.turnSeatIndex,
@@ -115,6 +125,7 @@ module.exports.chal = async (requestData, client) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_CHAL, response);
         delete client.chal;
+
         if (Number(tb.potLimit) <= Number(tb.potValue)) {
             await checkWinnerActions.autoShow(tb);
         } else {

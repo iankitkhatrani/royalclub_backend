@@ -22,6 +22,7 @@ const PlayingTablesSchema = new Schema({
 
     chalLimit: { type: Number, default: 0 },
     potLimit: { type: Number, default: 0 },
+    gameTimer: { type: Object, default: {} },
 
     rate: { type: Number },
     hukum: { type: String, default: "" },
@@ -32,7 +33,6 @@ const PlayingTablesSchema = new Schema({
     turnSeatIndex: { type: Number, default: -1 },
     jobId: { type: String, default: "" },
     turnDone: { type: Boolean, default: false },
-    gameTimer: {},
     gameTracks: [],
     callFinalWinner: { type: Boolean, default: false },
     isLastUserFinish: { type: Boolean, default: false },

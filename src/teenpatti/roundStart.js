@@ -62,18 +62,20 @@ module.exports.setFirstTurn = async (tb) => {
     await this.startUserTurn(tb.dealerSeatIndex, tb, true);
 }
 
-module.exports.nextUserTurnstart = async (tb) => {
-    try {
+module.exports.
 
-        logger.info("nextUserTurnstart tb :: ", tb);
-        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
-        logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
-        await this.startUserTurn(nextTurnIndex, tb, false);
-    } catch (error) {
-        logger.error('roundStart.js nextUserTurnstart error : ', error);
+    nextUserTurnstart = async (tb) => {
+        try {
+
+            logger.info("nextUserTurnstart tb :: ", tb);
+            let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
+            logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
+            await this.startUserTurn(nextTurnIndex, tb, false);
+        } catch (error) {
+            logger.error('roundStart.js nextUserTurnstart error : ', error);
+        }
+
     }
-
-}
 
 module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
     try {
@@ -136,7 +138,13 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
         // }
         let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
-        logger.info("startUserTurn isShow :", isShow);
+        logger.info("startUserTurn isShow :=>", isShow);
+
+        let chalvalue = tb.chalValue;
+
+        if (isShow) {
+            chalvalue = chalvalue * 2;
+        }
 
         let response = {
             si: tb.currentPlayerTurnIndex,
@@ -145,9 +153,10 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
 
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
-            chalValue: tb.chalValue,
+            chalValue: chalvalue,
             isShow: isShow
         }
+
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_USER_TURN_START, response);
 
         // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {

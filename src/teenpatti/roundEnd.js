@@ -34,12 +34,15 @@ module.exports.roundFinish = async (tb) => {
                         'playerInfo.$.playerStatus': "",
                         'playerInfo.$.status': CONST.WAITING,
                         'playerInfo.$.finished': false,
-                        'playerInfo.$.seeCard': false,
+                        'playerInfo.$.isSee': false,
                         'playerInfo.$.cards': [],
                         'playerInfo.$.chalValue': 0,
                         'playerInfo.$.totalBet': 0,
                     },
                 };
+
+                logger.info('\n roundFinish player uWh1 ->', uWh1);
+                logger.info('\n roundFinish player update ->', dataUpdate);
 
                 const restartTable = await PlayingTables.findOneAndUpdate(uWh1, dataUpdate, { new: true });
                 logger.info('\n roundFinish restart Table ->', restartTable);
@@ -164,8 +167,9 @@ module.exports.roundFinish = async (tb) => {
             return false;
         }
 
-        if (tabInfo.activePlayer >= 2)
+        if (tabInfo.activePlayer >= 2) {
             await gameStartActions.gameTimerStart(tabInfo);
+        }
 
         return true;
     } catch (err) {
