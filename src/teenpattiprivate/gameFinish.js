@@ -134,6 +134,10 @@ module.exports.winnerDeclareCall = async (winner, tabInfo) => {
 
         commandAcions.sendEventInTable(tbInfo._id.toString(), CONST.TEEN_PATTI_WINNER, winnerViewResponse);
 
+        let jobId = commandAcions.GetRandomString(10);
+        let delay = commandAcions.AddTime(4);
+        await commandAcions.setDelay(jobId, new Date(delay));
+
         await roundEndActions.roundFinish(tbInfo);
 
     } catch (err) {

@@ -7,6 +7,8 @@ const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
 const botLogic = require("./botLogic");
 const { lastUserWinnerDeclareCall } = require("./gameFinish");
+const { createDealer } = require("../helper/helperFunction");
+
 
 const PlayingTables = mongoose.model("playingTables");
 
@@ -62,20 +64,18 @@ module.exports.setFirstTurn = async (tb) => {
     await this.startUserTurn(tb.dealerSeatIndex, tb, true);
 }
 
-module.exports.
+module.exports.nextUserTurnstart = async (tb) => {
+    try {
 
-    nextUserTurnstart = async (tb) => {
-        try {
-
-            logger.info("nextUserTurnstart tb :: ", tb);
-            let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
-            logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
-            await this.startUserTurn(nextTurnIndex, tb, false);
-        } catch (error) {
-            logger.error('roundStart.js nextUserTurnstart error : ', error);
-        }
-
+        logger.info("nextUserTurnstart tb :: ", tb);
+        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
+        logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
+        await this.startUserTurn(nextTurnIndex, tb, false);
+    } catch (error) {
+        logger.error('roundStart.js nextUserTurnstart error : ', error);
     }
+
+}
 
 module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
     try {
@@ -334,7 +334,6 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
         logger.error('roundStart.js getUserTurnSeatIndex error : ', error);
     }
 }
-
 
 module.exports.checkShileShowSeatIndex = (seatIndex, p) => {
     let pl = [];

@@ -5,7 +5,7 @@ const CONST = require("../../constant");
 const commandAcions = require('../helper/socketFunctions');
 const gamePlayActions = require("./gamePlay");
 const logger = require("../../logger");
-const botLogic = require("./botLogic");
+const { lastUserWinnerDeclareCall } = require("./gameFinish");
 
 const PlayingTables = mongoose.model("TeenPrivatePlayingTables");
 
@@ -19,7 +19,8 @@ module.exports.roundStarted = async (tbid) => {
         const project = {
             gameState: 1,
             playerInfo: 1,
-            activePlayer: 1
+            activePlayer: 1,
+            currentPlayerTurnIndex: 1,
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("roundStarted tabInfo : ", tabInfo);
@@ -44,7 +45,8 @@ module.exports.roundStarted = async (tbid) => {
         const tb = await PlayingTables.findOneAndUpdate(wh, update, { new: true });
         logger.info("roundStarted tb : ", tb);
 
-        await this.setFirstTurn(tb);
+        // await this.setFirstTurn(tb);
+        await this.nextUserTurnstart(tb);
 
     } catch (error) {
         logger.error('roundStart.js roundStarted error : ', error);
@@ -61,7 +63,7 @@ module.exports.nextUserTurnstart = async (tb) => {
     try {
 
         logger.info("nextUserTurnstart tb :: ", tb);
-        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.turnSeatIndex, 0);
+        let nextTurnIndex = await this.getUserTurnSeatIndex(tb, tb.currentPlayerTurnIndex, 0);
         logger.info("nextUserTurnstart nextTurnIndex :: ", nextTurnIndex);
         await this.startUserTurn(nextTurnIndex, tb, false);
     } catch (error) {
@@ -94,6 +96,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         let update = {
             $set: {
                 turnSeatIndex: seatIndex,
+                currentPlayerTurnIndex: seatIndex,
                 turnDone: false,
                 "gameTimer.ttimer": new Date(),
                 jobId: jobId
@@ -108,6 +111,7 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         logger.info("startUserTurn playerInGame ::", playerInGame);
 
         if (playerInGame.length == 1) {
+            await lastUserWinnerDeclareCall(tb);
             logger.info("startUserTurn single user in game so game goes on winner state..!");
             return false
         }
@@ -120,9 +124,13 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         // if(typeof tb.playerInfo[tb.turnSeatIndex].seatIndex != "undefined"){
 
         // }
-        let isShow = await this.checShowButton(tb.playerInfo,tb.turnSeatIndex);
+        let isShow = await this.checShowButton(tb.playerInfo, tb.turnSeatIndex);
 
         let response = {
+            si: tb.currentPlayerTurnIndex,
+            pi: tb.playerInfo[tb.currentPlayerTurnIndex]._id,
+            playerName: tb.playerInfo[tb.currentPlayerTurnIndex].name,
+
             previousTurn: objData.turnSeatIndex,
             nextTurn: tb.turnSeatIndex,
             chalValue: tb.chalValue,
@@ -130,10 +138,10 @@ module.exports.startUserTurn = async (seatIndex, objData, firstTurnStart) => {
         }
         commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_USER_TURN_START, response);
 
-        if(tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1){
-            // Rboot Logic Start Playing 
-            botLogic.PlayRobot(tb,tb.playerInfo[tb.turnSeatIndex],playerInGame)
-        }
+        // if (tb.playerInfo != undefined && tb.playerInfo[tb.turnSeatIndex] != undefined && tb.playerInfo[tb.turnSeatIndex].Iscom == 1) {
+        //     // Rboot Logic Start Playing 
+        //     botLogic.PlayRobot(tb, tb.playerInfo[tb.turnSeatIndex], playerInGame)
+        // }
 
 
         let tbid = tb._id.toString();
@@ -165,7 +173,8 @@ module.exports.userTurnExpaire = async (tbid) => {
             playerInfo: 1,
             activePlayer: 1,
             turnSeatIndex: 1,
-            turnDone: 1
+            turnDone: 1,
+            currentPlayerTurnIndex: 1,
         }
         let tabInfo = await PlayingTables.findOne(wh, project).lean();
         logger.info("userTurnExpaire tabInfo : ", tabInfo);
@@ -187,6 +196,9 @@ module.exports.userTurnExpaire = async (tbid) => {
             "playerInfo.seatIndex": Number(tabInfo.turnSeatIndex)
         }
         let update = {
+            $set: {
+                'turnDone': true,
+            },
             $inc: {
                 "playerInfo.$.turnMissCounter": 1
             }
@@ -294,10 +306,6 @@ module.exports.getUserTurnSeatIndex = async (tbInfo, prevTurn, cnt) => {
     }
 }
 
-module.exports.checkShileShow = (tb) => {
-
-}
-
 module.exports.checkShileShowSeatIndex = (seatIndex, p) => {
     let pl = [];
     let pr_seatIndex = ((seatIndex - 1) == -1) ? 4 : seatIndex - 1;
@@ -305,18 +313,18 @@ module.exports.checkShileShowSeatIndex = (seatIndex, p) => {
         return pl;
 }
 
-module.exports.checShowButton = async (p,playerIndex) => {
+module.exports.checShowButton = async (p, playerIndex) => {
     try {
         //&&  (p[i].playerStatus == "chal" || (p[i].playerStatus == "blind" &&
         let counter = 0;
-        logger.info("checShowButton  :playerIndex  ", playerIndex );
-       
+        logger.info("checShowButton  :playerIndex  ", playerIndex);
+
 
 
         for (let i = 0; i < p.length; i++) {
-            logger.info("checShowButton  :seatIndex  ", p[i].seatIndex );
-            logger.info("checShowButton  :p[i].isSee  ",p[i].isSee);
-            if (p[i].seatIndex != "undefined" && playerIndex == p[i].seatIndex &&  p[i].isSee == true) {
+            logger.info("checShowButton  :seatIndex  ", p[i].seatIndex);
+            logger.info("checShowButton  :p[i].isSee  ", p[i].isSee);
+            if (p[i].seatIndex != "undefined" && playerIndex == p[i].seatIndex && p[i].isSee == true) {
                 counter++;
             }
         }
