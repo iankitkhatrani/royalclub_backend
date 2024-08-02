@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const collectionName = 'TeenPrivatePlayingTables';
-const BetLists = mongoose.model('teenPrivatebetList');
+const BetLists = require('./teenPrivatebetList');
+
 
 const PlayingTablesSchema = new Schema({
     gameId: { type: String, default: "" },
