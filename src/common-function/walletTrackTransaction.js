@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 
 const GameUser = mongoose.model('users');
+const SuperAdmin = mongoose.model('superadmin');
+const Agent = mongoose.model('agent');
+const Admin = mongoose.model("admin");
+
 const CONST = require('../../constant');
 const commandAcions = require('../helper/socketFunctions');
 const logger = require('../../logger');
 const adminWalletTracks = require('../models/adminWalletTracks');
 
 const MongoID = mongoose.Types.ObjectId;
-const AdminUser = mongoose.model("admin");
-const Agent = mongoose.model('agent');
-const Superadmin = mongoose.model('superadmin');
+
 
 
 const AgentWalletTracks = mongoose.model("agentWalletTracks");
@@ -232,6 +234,44 @@ module.exports.addUserWalletGame = async (id, added_chips, tType, t, game, table
     return 0
   }
 }
+
+//manage commison 
+module.exports.distributeCommission = async (amount, superAdminId, adminId, agentId) => {
+  try {
+    // Fetch the users from the database
+    const superAdmin = await SuperAdmin.findById(superAdminId);
+    const admin = await Admin.findById(adminId);
+    const agent = await Agent.findById(agentId);
+
+    if (!superAdmin || !admin || !agent) {
+      throw new Error('One of the users not found');
+    }
+
+    // Define the commission percentages
+    const superAdminCommissionPercentage = 10;
+    const adminCommissionPercentage = 10;
+
+    // Calculate the commissions
+    const superAdminCommission = (amount * superAdminCommissionPercentage) / 100;
+    const adminCommission = (superAdminCommission * adminCommissionPercentage) / 100;
+    const agentCommission = (adminCommission * adminCommissionPercentage) / 100;
+
+    // Update the chips/commission for each user
+    superAdmin.chips += superAdminCommission;
+    admin.chips += adminCommission;
+    agent.chips += agentCommission;
+
+    // Save the updated users
+    await superAdmin.save();
+    await admin.save();
+    await agent.save();
+
+    logger.info('Commission distributed successfully');
+  } catch (error) {
+    logger.error('Error distributing commission:', error);
+  }
+}
+
 
 
 //==========================================================================================================================================
