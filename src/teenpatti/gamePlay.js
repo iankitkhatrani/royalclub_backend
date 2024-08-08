@@ -81,11 +81,13 @@ module.exports.chal = async (requestData, client) => {
 
 
 
-        if (playerInfo.playerStatus == "blind" && playerInfo.isSee) {
+        if (playerInfo.playerStatus === "blind" && playerInfo.isSee) {
             chalvalue = chalvalue * 2;
             updateData.$set["playerInfo.$.playerStatus"] = "chal"
             // updateData.$set["playerInfo.$.isSee"] = true
-            logger.info("3 playerInfo.isSee SEEN PLAYER chalv value", playerInfo._id, ' + ', chalvalue);
+            logger.info("3 playerInfo.isSee SEEN PLAYER chalv value =>", playerInfo._id, ' + ', chalvalue);
+        } else if (playerInfo.isSee) {
+            chalvalue = chalvalue * 2;
         }
         let totalWallet = Number(UserInfo.chips) //+ Number(UserInfo.winningChips)
 
@@ -95,6 +97,8 @@ module.exports.chal = async (requestData, client) => {
             commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_CHAL, requestData, false, "Please add wallet!!");
             return false;
         }
+
+
         chalvalue = Number(Number(chalvalue).toFixed(2))
         logger.info("4 After chal chalvalue ::", chalvalue);
 
@@ -119,6 +123,7 @@ module.exports.chal = async (requestData, client) => {
         logger.info("\n final table chal value: ", tb.chalValue);
 
         let response = {
+
             seatIndex: tb.turnSeatIndex,
             chalValue: chalvalue,
             potValue: tb.potValue
