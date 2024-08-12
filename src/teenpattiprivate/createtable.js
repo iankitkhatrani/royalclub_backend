@@ -133,9 +133,10 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
         logger.info("Teen Patti isExist => ", isExist);
         if (isExist) {
             return {
-                message: "already exists",
+                message: "Already Table Exists",
                 status: 0,
-                tableId: isExist.tableId
+                tableId: isExist.tableId,
+                entryFee: isExist.entryFee,
             };
         } else {
 

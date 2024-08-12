@@ -76,9 +76,12 @@ module.exports.chal = async (requestData, client) => {
             chalvalue = chalvalue * 2;
         }
 
-        if (playerInfo.playerStatus == "blind" && playerInfo.isSee) {
+        if (playerInfo.playerStatus === "blind" && playerInfo.isSee) {
             chalvalue = chalvalue * 2;
             updateData.$set["playerInfo.$.playerStatus"] = "chal"
+            logger.info("3 playerInfo.isSee SEEN PLAYER chalv value =>", playerInfo._id, ' + ', chalvalue);
+        } else if (playerInfo.isSee) {
+            chalvalue = chalvalue * 2;
         }
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
 
