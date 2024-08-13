@@ -34,10 +34,12 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
             };
         } else {
 
-            let privateTableId = uuidv4();
+            let privateTableId = generateNumericId(6); // Generates a 6-digit numeric ID
+            // console.log(privateTableId);
+            // let privateTableId = uuidv4();
 
-            // Trim to the first 6 characters
-            privateTableId = privateTableId.substring(0, 6);
+            // // Trim to the first 6 characters
+            // privateTableId = privateTableId.substring(0, 6);
 
             const newData = {
                 createTableplayerId: playerId,
@@ -163,3 +165,18 @@ module.exports.checkPrivateTableExists = async (requestBody, socket) => {
         };
     }
 }
+
+
+function generateNumericId(length) {
+    let numericId = '';
+    const digits = '0123456789';
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * digits.length);
+        numericId += digits[randomIndex];
+    }
+
+    return numericId;
+}
+
+
