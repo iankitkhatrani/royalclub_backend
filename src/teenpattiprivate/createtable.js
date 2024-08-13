@@ -69,6 +69,7 @@ module.exports.privateTableCreate = async (requestBody, socket) => {
                     maxSeat: 5,
                     entryFee: entryFee,
                     boot: entryFee,
+                    tableId: response.data.tableId,
                     commission: 10,
                     privateTableId: privateTableId,
                     activePlayer: 0,

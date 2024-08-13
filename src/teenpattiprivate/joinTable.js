@@ -66,17 +66,26 @@ module.exports.findTable = async (BetInfo, client) => {
     let tableInfo = await this.getBetTable(BetInfo);
     logger.info("findTable tableInfo : ", JSON.stringify(tableInfo));
 
+    if (tableInfo == false) {
+        sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, {}, false, "No Seat Available!!");
+        delete client.JT
+        return false;
+    }
+
     await this.findEmptySeatAndUserSeat(tableInfo, BetInfo, client);
 }
 
 module.exports.getBetTable = async (BetInfo) => {
     logger.info("getBetTable BetInfo : ", JSON.stringify(BetInfo));
     let wh = {
-        boot: Number(BetInfo.entryFee),
+        tableId: BetInfo.tableId,
+        // boot: Number(BetInfo.entryFee),
         activePlayer: { $gte: 0, $lt: 5 /*BetInfo.maxSeat*/ }
     }
     logger.info("getBetTable wh : ", JSON.stringify(wh));
+
     let tableInfo = await PlayingTables.find(wh, {}).sort({ activePlayer: 1 }).lean();
+    logger.info("getBetTable BetInfo  tableInfo =>: ", JSON.stringify(tableInfo));
 
     if (tableInfo.length > 0) {
         return tableInfo[0];
@@ -86,7 +95,6 @@ module.exports.getBetTable = async (BetInfo) => {
     // let table = await this.createTable(BetInfo);
     // return table;
 }
-
 module.exports.createTable = async (betInfo) => {
     try {
         let insertobj = {

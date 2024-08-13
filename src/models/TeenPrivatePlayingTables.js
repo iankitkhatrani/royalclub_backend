@@ -24,6 +24,7 @@ const PlayingTablesSchema = new Schema({
     chalLimit: { type: Number, default: 0 },
     potLimit: { type: Number, default: 0 },
     gameTimer: { type: Object, default: {} },
+    tableId: { type: String, default: "" },
 
     rate: { type: Number },
     hukum: { type: String, default: "" },

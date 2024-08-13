@@ -107,11 +107,12 @@ module.exports.leaveTable = async (requestData, client) => {
 
     commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
 
-    await this.manageOnUserLeave(tbInfo);
+    await this.manageOnUserLeave(tbInfo, client);
 }
 
 module.exports.manageOnUserLeave = async (tb, client) => {
     logger.info("\nmanageOnUserLeave tb : ", tb);
+    logger.info("\nmanageOnUserLeave tb client SeatIndex: ", client.seatIndex);
 
     const playerInGame = await roundStartActions.getPlayingUserInRound(tb.playerInfo);
     logger.info("manageOnUserLeave playerInGame : ", playerInGame);
@@ -119,6 +120,7 @@ module.exports.manageOnUserLeave = async (tb, client) => {
     const list = ['RoundStated', 'CollectBoot', 'CardDealing'];
 
     if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex === client.seatIndex) {
+        /*
         if (playerInGame.length == 0) {
             if (tb.activePlayer === 0) {
                 let wh = {
@@ -126,33 +128,36 @@ module.exports.manageOnUserLeave = async (tb, client) => {
                 };
                 await PlayingTables.deleteOne(wh);
             }
-        } else if (playerInGame.length >= 2) {
+        } else
+        */ if (playerInGame.length >= 2) {
             await roundStartActions.nextUserTurnstart(tb, false);
         } else if (playerInGame.length === 1) {
 
             await roundStartActions.nextUserTurnstart(tb);
         }
     } else if (list.includes(tb.gameState) && tb.currentPlayerTurnIndex !== client.seatIndex) {
-
-        if (playerInGame.length == 0) {
-            // await this.leaveallrobot(tb._id)
-            if (tb.activePlayer === 0) {
-                let wh = {
-                    _id: MongoID(tb._id.toString()),
-                };
-                await PlayingTables.deleteOne(wh);
-            }
-        } else if (playerInGame.length === 1) {
+        /*
+                if (playerInGame.length == 0) {
+                    // await this.leaveallrobot(tb._id)
+                    if (tb.activePlayer === 0) {
+                        let wh = {
+                            _id: MongoID(tb._id.toString()),
+                        };
+                        await PlayingTables.deleteOne(wh);
+                    }
+                } else */
+        if (playerInGame.length === 1) {
 
             await gameFinishActions.lastUserWinnerDeclareCall(tb);
         }
     } else if (["", "GameStartTimer"].indexOf(tb.gameState) != -1) {
-        if (playerInGame.length == 0 && tb.activePlayer == 0) {
-            let wh = {
-                _id: MongoID(tb._id.toString())
-            }
-            await PlayingTables.deleteOne(wh);
-        } else if (tb.activePlayer == 0) {
+        // if (playerInGame.length == 0 && tb.activePlayer == 0) {
+        //     let wh = {
+        //         _id: MongoID(tb._id.toString())
+        //     }
+        //     await PlayingTables.deleteOne(wh);
+        // } else
+        if (tb.activePlayer == 0) {
             this.leaveSingleUser(tb._id)
         }
     }
@@ -187,5 +192,7 @@ module.exports.leaveSingleUser = async (tbid) => {
             }
         }
 
+    } else {
+        logger.info("leaveSingleUser tabInfo.activePlayer : ", tabInfo.activePlayer);
     }
 }
