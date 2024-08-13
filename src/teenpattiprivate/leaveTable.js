@@ -9,105 +9,123 @@ const commandAcions = require("../helper/socketFunctions");
 const roundStartActions = require("./roundStart")
 const gameFinishActions = require("./gameFinish");
 const logger = require("../../logger");
-const { filterBeforeSendSPEvent } = require("../common-function/manageUserFunction");
+const { filterBeforeSendSPEvent, getPlayingUserInTable } = require("../common-function/manageUserFunction");
 
 
 module.exports.leaveTable = async (requestData, client) => {
-    var requestData = (requestData != null) ? requestData : {}
-    if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
-        commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
-        return false;
-    }
+    try {
 
-    let userWh = {
-        _id: MongoID(client.uid.toString()),
-    }
-    let userInfo = await GameUser.findOne(userWh, {});
-    logger.info("leaveTable userInfo : ", userInfo)
-
-    let wh = {
-        _id: MongoID(client.tbid.toString()),
-        "playerInfo._id": MongoID(client.uid.toString())
-    };
-    let tb = await PlayingTables.findOne(wh, {});
-    logger.info("leaveTable tb : ", tb);
-
-    if (tb == null) return false;
-
-    if (typeof client.id != "undefined")
-        client.leave(tb._id.toString());
-
-    let reason = (requestData != null && typeof requestData.reason != "undefined" && requestData.reason) ? requestData.reason : "ManuallyLeave"
-    let playerInfo = tb.playerInfo[client.seatIndex];
-    logger.info("leaveTable playerInfo : =>", playerInfo)
-
-    let updateData = {
-        $set: {
-            "playerInfo.$": {}
-        },
-        $inc: {
-            activePlayer: -1
+        // const requestData = (requestData != null) ? requestData : {}
+        if (typeof client.tbid == "undefined" || typeof client.uid == "undefined" || typeof client.seatIndex == "undefined") {
+            commandAcions.sendDirectEvent(client.sck, CONST.TEEN_PATTI_LEAVE_TABLE, requestData, false, "User session not set, please restart game!");
+            return false;
         }
-    }
-    if (tb.activePlayer == 2 && tb.gameState == "GameStartTimer") {
-        let jobId = CONST.GAME_START_TIMER + ":" + tb._id.toString();
-        commandAcions.clearJob(jobId)
-        updateData["$set"]["gameState"] = "";
-    }
-    if (tb.activePlayer == 1) {
-        let jobId = "LEAVE_SINGLE_USER:" + tb._id;
-        commandAcions.clearJob(jobId)
-    }
 
-    if (tb.gameState == "RoundStated") {
-        if (client.seatIndex == tb.turnSeatIndex) {
-            commandAcions.clearJob(tb.jobId)
+        let userWh = {
+            _id: MongoID(client.uid.toString()),
         }
-        if (playerInfo.cards.length == 3) {
-            if (["chal", "blind"].indexOf(playerInfo.playerStatus) != -1) {
+        let userInfo = await GameUser.findOne(userWh, {});
+        logger.info("leaveTable userInfo : ", userInfo)
 
-                let userTrack = {
-                    _id: playerInfo._id,
-                    username: playerInfo.username,
-                    cards: playerInfo.cards,
-                    seatIndex: playerInfo.seatIndex,
-                    totalBet: playerInfo.totalBet,
-                    playerStatus: "leaveTable"
-                }
-                updateData["$push"] = {
-                    "gameTracks": userTrack
+        let wh = {
+            _id: MongoID(client.tbid.toString()),
+            "playerInfo._id": MongoID(client.uid.toString())
+        };
+        let tb = await PlayingTables.findOne(wh, {});
+        logger.info("leaveTable tb : ", tb);
+
+        if (tb == null) return false;
+
+        if (typeof client.id != "undefined")
+            client.leave(tb._id.toString());
+
+        let reason = (requestData != null && typeof requestData.reason != "undefined" && requestData.reason) ? requestData.reason : "ManuallyLeave"
+        let playerInfo = tb.playerInfo[client.seatIndex];
+        logger.info("leaveTable playerInfo : =>", playerInfo)
+
+        let updateData = {
+            $set: {
+                "playerInfo.$": {}
+            },
+            $inc: {
+                activePlayer: -1
+            }
+        }
+        if (tb.activePlayer == 2 && tb.gameState == "GameStartTimer") {
+            let jobId = CONST.GAME_START_TIMER + ":" + tb._id.toString();
+            commandAcions.clearJob(jobId)
+            updateData["$set"]["gameState"] = "";
+        }
+        if (tb.activePlayer == 1) {
+            let jobId = "LEAVE_SINGLE_USER:" + tb._id;
+            commandAcions.clearJob(jobId)
+        }
+
+        if (tb.gameState == "RoundStated") {
+            if (client.seatIndex == tb.turnSeatIndex) {
+                commandAcions.clearJob(tb.jobId)
+            }
+            if (playerInfo.cards.length == 3) {
+                if (["chal", "blind"].indexOf(playerInfo.playerStatus) != -1) {
+
+                    let userTrack = {
+                        _id: playerInfo._id,
+                        username: playerInfo.username,
+                        cards: playerInfo.cards,
+                        seatIndex: playerInfo.seatIndex,
+                        totalBet: playerInfo.totalBet,
+                        playerStatus: "leaveTable"
+                    }
+                    updateData["$push"] = {
+                        "gameTracks": userTrack
+                    }
                 }
             }
         }
+
+        logger.info("leaveTable updateData : ", wh, updateData);
+
+        let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, {
+            new: true,
+        });
+
+        if (!tbInfo) return;
+
+
+        let activePlayerInRound = await getPlayingUserInTable(tbInfo.playerInfo);
+        logger.info("leaveTable activePlayerInRound : ", activePlayerInRound);
+
+        let response = {
+            reason: reason,
+            tbid: tb._id,
+            seatIndex: client.seatIndex,
+            ap: activePlayerInRound.length,
+        }
+
+        // let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, { new: true });
+        // logger.info("leaveTable tbInfo : ", tbInfo);
+
+        commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
+        commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
+
+        let userDetails = await GameUser.findOne({
+            _id: MongoID(client.uid.toString()),
+        }).lean();
+
+        logger.info("check user Details =>", userDetails)
+
+        let finaldata = await filterBeforeSendSPEvent(userDetails);
+
+        logger.info("check user Details finaldata =>", finaldata)
+
+        commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
+
+        await this.manageOnUserLeave(tbInfo, client);
+    } catch (error) {
+        logger.error("leaveTable Error : ", error);
+
+        // return false;
     }
-
-    logger.info("leaveTable updateData : ", wh, updateData);
-
-    let response = {
-        reason: reason,
-        tbid: tb._id,
-        seatIndex: client.seatIndex
-    }
-
-    let tbInfo = await PlayingTables.findOneAndUpdate(wh, updateData, { new: true });
-    logger.info("leaveTable tbInfo : ", tbInfo);
-
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
-    commandAcions.sendEventInTable(tb._id.toString(), CONST.TEEN_PATTI_LEAVE_TABLE, response);
-
-    let userDetails = await GameUser.findOne({
-        _id: MongoID(client.uid.toString()),
-    }).lean();
-
-    logger.info("check user Details =>", userDetails)
-
-    let finaldata = await filterBeforeSendSPEvent(userDetails);
-
-    logger.info("check user Details finaldata =>", finaldata)
-
-    commandAcions.sendDirectEvent(client.sck.toString(), CONST.DASHBOARD, finaldata);
-
-    await this.manageOnUserLeave(tbInfo, client);
 }
 
 module.exports.manageOnUserLeave = async (tb, client) => {

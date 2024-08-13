@@ -27,17 +27,19 @@ module.exports.joinTable = async (requestData, client) => {
         let bwh = {
             tableId: requestData.privateTableId
         }
-        const BetInfo = await BetLists.findOne(bwh, {}).lean();
-        logger.info("Join Table data : ", JSON.stringify(BetInfo));
+        logger.info("Join Tbwh : ", bwh);
+
+        const betInfo = await BetLists.findOne(bwh, {}).lean();
+        logger.info("Join Table data : ", JSON.stringify(betInfo));
 
         let gwh = {
             _id: MongoID(client.uid)
         }
         let UserInfo = await GameUser.findOne(gwh, {}).lean();
-        logger.info("JoinTable UserInfo : ", gwh, JSON.stringify(UserInfo));
+        logger.info("JoinTable UserInfo : ==>", gwh, JSON.stringify(UserInfo));
 
         let totalWallet = Number(UserInfo.chips) + Number(UserInfo.winningChips)
-        if (Number(totalWallet) < Number(BetInfo.entryFee)) {
+        if (Number(totalWallet) < Number(betInfo.entryFee)) {
             sendEvent(client, CONST.TEEN_PATTI_JOIN_TABLE, requestData, false, "Please add Wallet!!");
             delete client.JT
             return false;
@@ -54,7 +56,7 @@ module.exports.joinTable = async (requestData, client) => {
             delete client.JT
             return false;
         }
-        await this.findTable(BetInfo, client)
+        await this.findTable(betInfo, client)
     } catch (error) {
         logger.info("JOIN_TABLE", error);
     }
